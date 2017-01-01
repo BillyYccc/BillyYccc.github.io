@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Refactoring,Agile," />
+  <meta name="keywords" content="Android,Retrofit,Java," />
 
 
 
@@ -84,52 +84,22 @@
 
 
 
-<meta name="description" content="何谓重构所谓重构(Refactoring)是这样一个过程：在不改变代码外在行为的前提下，对代码做出修改，以改进程序的内部结构。重构是一种经千锤百炼形成的有条不紊的程序整理方法，可以最大限度地减少整理过程中引入错误的几率。本质上说，重构就是在代码写好之后改进它的设计。
-
-为何重构
-重构改进软件设计
-重构使软件更容易理解
-重构帮助找到bug
-重构提高编程速度
-
-
-何时重构
-三次法则
-添加功能时重构
-修">
+<meta name="description" content="Retrofit介绍A type-safe HTTP client for Android and JavaRetrofit是Square推出的一款开源的HTTP客户端库，基于REST风格
+在module的build.gradle添加依赖app/build.gradle1compile &apos;com.squareup.retrofit2:retrofit:2.1.0&apos;
+在Manifest.xml中声明">
 <meta property="og:type" content="article">
-<meta property="og:title" content="重构原则">
-<meta property="og:url" content="http://billyyccc.github.io/2016/12/24/重构原则/index.html">
+<meta property="og:title" content="Retrofit2.1.0的基本使用(一)">
+<meta property="og:url" content="http://billyyccc.github.io/2017/01/01/Retrofit2_1的基本使用(一)/index.html">
 <meta property="og:site_name" content="BillyYccc">
-<meta property="og:description" content="何谓重构所谓重构(Refactoring)是这样一个过程：在不改变代码外在行为的前提下，对代码做出修改，以改进程序的内部结构。重构是一种经千锤百炼形成的有条不紊的程序整理方法，可以最大限度地减少整理过程中引入错误的几率。本质上说，重构就是在代码写好之后改进它的设计。
-
-为何重构
-重构改进软件设计
-重构使软件更容易理解
-重构帮助找到bug
-重构提高编程速度
-
-
-何时重构
-三次法则
-添加功能时重构
-修">
-<meta property="og:updated_time" content="2016-12-24T04:58:34.222Z">
+<meta property="og:description" content="Retrofit介绍A type-safe HTTP client for Android and JavaRetrofit是Square推出的一款开源的HTTP客户端库，基于REST风格
+在module的build.gradle添加依赖app/build.gradle1compile &apos;com.squareup.retrofit2:retrofit:2.1.0&apos;
+在Manifest.xml中声明">
+<meta property="og:updated_time" content="2017-01-01T18:09:53.360Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="重构原则">
-<meta name="twitter:description" content="何谓重构所谓重构(Refactoring)是这样一个过程：在不改变代码外在行为的前提下，对代码做出修改，以改进程序的内部结构。重构是一种经千锤百炼形成的有条不紊的程序整理方法，可以最大限度地减少整理过程中引入错误的几率。本质上说，重构就是在代码写好之后改进它的设计。
-
-为何重构
-重构改进软件设计
-重构使软件更容易理解
-重构帮助找到bug
-重构提高编程速度
-
-
-何时重构
-三次法则
-添加功能时重构
-修">
+<meta name="twitter:title" content="Retrofit2.1.0的基本使用(一)">
+<meta name="twitter:description" content="Retrofit介绍A type-safe HTTP client for Android and JavaRetrofit是Square推出的一款开源的HTTP客户端库，基于REST风格
+在module的build.gradle添加依赖app/build.gradle1compile &apos;com.squareup.retrofit2:retrofit:2.1.0&apos;
+在Manifest.xml中声明">
 
 
 
@@ -157,13 +127,13 @@
 
 
 
-  <link rel="canonical" href="http://billyyccc.github.io/2016/12/24/重构原则/"/>
+  <link rel="canonical" href="http://billyyccc.github.io/2017/01/01/Retrofit2_1的基本使用(一)/"/>
 
 
 
 
 
-  <title> 重构原则 | BillyYccc </title>
+  <title> Retrofit2.1.0的基本使用(一) | BillyYccc </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -306,7 +276,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2016/12/24/重构原则/">
+  <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/01/01/Retrofit2_1的基本使用(一)/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Billy Yuan">
@@ -330,7 +300,7 @@
             
             
               
-                重构原则
+                Retrofit2.1.0的基本使用(一)
               
             
           </h1>
@@ -345,8 +315,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2016-12-24T03:15:15+08:00">
-                2016-12-24
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-01-01T23:53:20+08:00">
+                2017-01-01
               </time>
             
 
@@ -368,8 +338,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Agile-software-development/" itemprop="url" rel="index">
-                    <span itemprop="name">Agile software development</span>
+                  <a href="/categories/Android/" itemprop="url" rel="index">
+                    <span itemprop="name">Android</span>
                   </a>
                 </span>
 
@@ -386,8 +356,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2016/12/24/重构原则/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/12/24/重构原则/" itemprop="commentCount"></span>
+                <a href="/2017/01/01/Retrofit2_1的基本使用(一)/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/01/Retrofit2_1的基本使用(一)/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -413,22 +383,14 @@
       
 
       
-        <h2 id="何谓重构"><a href="#何谓重构" class="headerlink" title="何谓重构"></a>何谓重构</h2><blockquote><p>所谓重构(Refactoring)是这样一个过程：在不改变代码外在行为的前提下，对代码做出修改，以改进程序的内部结构。重构是一种经千锤百炼形成的有条不紊的程序整理方法，可以最大限度地减少整理过程中引入错误的几率。本质上说，重构就是在代码写好之后改进它的设计。</p>
-</blockquote>
-<h2 id="为何重构"><a href="#为何重构" class="headerlink" title="为何重构"></a>为何重构</h2><blockquote><ul>
-<li>重构改进软件设计</li>
-<li>重构使软件更容易理解</li>
-<li>重构帮助找到bug</li>
-<li>重构提高编程速度</li>
-</ul>
-</blockquote>
-<h2 id="何时重构"><a href="#何时重构" class="headerlink" title="何时重构"></a>何时重构</h2><blockquote><ul>
-<li>三次法则</li>
-<li>添加功能时重构</li>
-<li>修补错误时重构</li>
-<li>复审代码时重构</li>
-</ul>
-</blockquote>
+        <h2 id="Retrofit介绍"><a href="#Retrofit介绍" class="headerlink" title="Retrofit介绍"></a>Retrofit介绍</h2><p>A type-safe HTTP client for Android and Java<br>Retrofit是Square推出的一款开源的HTTP客户端库，基于REST风格</p>
+<h2 id="在module的build-gradle添加依赖"><a href="#在module的build-gradle添加依赖" class="headerlink" title="在module的build.gradle添加依赖"></a>在module的build.gradle添加依赖</h2><p>app/build.gradle<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile <span class="string">'com.squareup.retrofit2:retrofit:2.1.0'</span></div></pre></td></tr></table></figure></p>
+<h2 id="在Manifest-xml中声明网络权限"><a href="#在Manifest-xml中声明网络权限" class="headerlink" title="在Manifest.xml中声明网络权限"></a>在Manifest.xml中声明网络权限</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.INTERNET"</span>/&gt;</span></div></pre></td></tr></table></figure>
+<h2 id="声明接口"><a href="#声明接口" class="headerlink" title="声明接口"></a>声明接口</h2><p>Retrofit可以将HTTP API转换成接口<br>首先声明一个我们需要的服务接口，比如IuserService<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IuserService</span> </span>&#123;</div><div class="line">  <span class="meta">@GET</span>(<span class="string">"users/&#123;id&#125;"</span>)</div><div class="line">  <span class="function">Call&lt;ResponseBody&gt; <span class="title">showUserInfo</span><span class="params">(@Path(<span class="string">"id"</span>)</span> String userId)</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="接口参数"><a href="#接口参数" class="headerlink" title="接口参数"></a>接口参数</h2><p>在这个接口中，通过注解和参数声明需要的HTTP操作以及请求如何处理<br>每一个注解后面提供了HTTP的请求类型以及相对URL。Retrofit提供了GET，POST，PUT，DELETE，HEAD五个操作,Call&lt;&gt;里面包含的是返回的类型，后面接着的是要被调用的方法名及参数。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@GET</span>(<span class="string">"users/&#123;id&#125;"</span>)</div><div class="line"><span class="function">Call&lt;ResponseBody&gt; <span class="title">showUserInfo</span><span class="params">(@Path(<span class="string">"id"</span>)</span> String userId)</span>;</div></pre></td></tr></table></figure></p>
+<h2 id="生成Retrofit实例"><a href="#生成Retrofit实例" class="headerlink" title="生成Retrofit实例"></a>生成Retrofit实例</h2><p>Retrofit会把baseUrl和接口中的url拼接起来,并且能自动帮我们创建需要的类。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()</div><div class="line">    .baseUrl(<span class="string">"https://api.github.com/"</span>)</div><div class="line">    .build();</div><div class="line"></div><div class="line">IuserService mIuserService = retrofit.create(IuserService.class);</div></pre></td></tr></table></figure></p>
+<h2 id="注册请求"><a href="#注册请求" class="headerlink" title="注册请求"></a>注册请求</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Call&lt;ResponseBody&gt; call = mIuserService.showUserInfo(userId);</div></pre></td></tr></table></figure>
+<h2 id="异步调用"><a href="#异步调用" class="headerlink" title="异步调用"></a>异步调用</h2><p>使用call.enqueue进行异步调用，覆盖onResponse和onFailure两个方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">call.enqueue(<span class="keyword">new</span> Callback&lt;ResponseBody&gt;() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResponse</span><span class="params">(Call&lt;ResponseBody&gt; call, retrofit2.Response&lt;ResponseBody&gt; response)</span> </span>&#123;</div><div class="line">          <span class="keyword">try</span> &#123;</div><div class="line">              Log.i(<span class="string">"USERINFO"</span>, <span class="string">"response="</span> + response.body().string());</div><div class="line">              &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">                &#125;</div><div class="line"></div><div class="line">          &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(Call&lt;ResponseBody&gt; call, Throwable t)</span> </span>&#123;</div><div class="line">              Log.i(<span class="string">"FAILURE"</span>, <span class="string">"onFailure="</span> + t.getMessage());</div><div class="line">          &#125;</div><div class="line">    &#125;);</div></pre></td></tr></table></figure></p>
 
       
     </div>
@@ -452,9 +414,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Refactoring/" rel="tag"># Refactoring</a>
+            <a href="/tags/Android/" rel="tag"># Android</a>
           
-            <a href="/tags/Agile/" rel="tag"># Agile</a>
+            <a href="/tags/Retrofit/" rel="tag"># Retrofit</a>
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
           
         </div>
       
@@ -463,15 +427,15 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
+              <a href="/2016/12/26/遇到多个构造器参数时要考虑用构建器(Builder)/" rel="next" title="遇到多个构造器参数时要考虑用构建器(Builder)">
+                <i class="fa fa-chevron-left"></i> 遇到多个构造器参数时要考虑用构建器(Builder)
+              </a>
+            
           </div>
 
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2016/12/26/遇到多个构造器参数时要考虑用构建器(Builder)/" rel="prev" title="遇到多个构造器参数时要考虑用构建器(Builder)">
-                遇到多个构造器参数时要考虑用构建器(Builder) <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -486,10 +450,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2016/12/24/重构原则/"
-     data-title="重构原则"
+        <div class="ds-share flat" data-thread-key="2017/01/01/Retrofit2_1的基本使用(一)/"
+     data-title="Retrofit2.1.0的基本使用(一)"
      data-content=""
-     data-url="http://billyyccc.github.io/2016/12/24/重构原则/">
+     data-url="http://billyyccc.github.io/2017/01/01/Retrofit2_1的基本使用(一)/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -516,8 +480,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/12/24/重构原则/"
-           data-title="重构原则" data-url="http://billyyccc.github.io/2016/12/24/重构原则/">
+      <div class="ds-thread" data-thread-key="2017/01/01/Retrofit2_1的基本使用(一)/"
+           data-title="Retrofit2.1.0的基本使用(一)" data-url="http://billyyccc.github.io/2017/01/01/Retrofit2_1的基本使用(一)/">
       </div>
     
   </div>
@@ -617,7 +581,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#何谓重构"><span class="nav-number">1.</span> <span class="nav-text">何谓重构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#为何重构"><span class="nav-number">2.</span> <span class="nav-text">为何重构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#何时重构"><span class="nav-number">3.</span> <span class="nav-text">何时重构</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Retrofit介绍"><span class="nav-number">1.</span> <span class="nav-text">Retrofit介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在module的build-gradle添加依赖"><span class="nav-number">2.</span> <span class="nav-text">在module的build.gradle添加依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在Manifest-xml中声明网络权限"><span class="nav-number">3.</span> <span class="nav-text">在Manifest.xml中声明网络权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#声明接口"><span class="nav-number">4.</span> <span class="nav-text">声明接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接口参数"><span class="nav-number">5.</span> <span class="nav-text">接口参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生成Retrofit实例"><span class="nav-number">6.</span> <span class="nav-text">生成Retrofit实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册请求"><span class="nav-number">7.</span> <span class="nav-text">注册请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步调用"><span class="nav-number">8.</span> <span class="nav-text">异步调用</span></a></li></ol></div>
             
 
           </div>
