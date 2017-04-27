@@ -68,7 +68,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Android,Retrofit,Java," />
+  <meta name="keywords" content="Java,OOP,设计模式," />
 
 
 
@@ -84,16 +84,19 @@
 
 
 
-<meta name="description" content="Retrofit介绍A type-safe HTTP client for Android and JavaRetrofit是Square推出的一款开源的HTTP客户端库，基于REST风格">
+<meta name="description" content="设计模式Christopher Alexander 说过：“每一个模式描述了一个在我们周围不断重复发生的问题，以及该问题的解决方案的核心。这样，你就能一次又一次地使用该方案而不必做重复劳动”。尽管Alexander所指的是城市和建筑模式，但他的思想也同样适用于面向对象设计模式，只是在面向对象的解决方案，我们用对象和接口代替了墙壁和门窗。两类模式的核心都在于提供了相关问题的解决方案。
+一般而言，一个">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Retrofit2.1.0的基本使用(一)">
-<meta property="og:url" content="http://billyyccc.github.io/2017/01/01/Retrofit2_1的基本使用(一)/index.html">
+<meta property="og:title" content="设计模式（1）">
+<meta property="og:url" content="http://billyyccc.github.io/2017/04/27/设计模式（1）/index.html">
 <meta property="og:site_name" content="BillyYccc">
-<meta property="og:description" content="Retrofit介绍A type-safe HTTP client for Android and JavaRetrofit是Square推出的一款开源的HTTP客户端库，基于REST风格">
-<meta property="og:updated_time" content="2017-01-01T18:47:04.135Z">
+<meta property="og:description" content="设计模式Christopher Alexander 说过：“每一个模式描述了一个在我们周围不断重复发生的问题，以及该问题的解决方案的核心。这样，你就能一次又一次地使用该方案而不必做重复劳动”。尽管Alexander所指的是城市和建筑模式，但他的思想也同样适用于面向对象设计模式，只是在面向对象的解决方案，我们用对象和接口代替了墙壁和门窗。两类模式的核心都在于提供了相关问题的解决方案。
+一般而言，一个">
+<meta property="og:updated_time" content="2017-04-27T15:32:24.416Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="Retrofit2.1.0的基本使用(一)">
-<meta name="twitter:description" content="Retrofit介绍A type-safe HTTP client for Android and JavaRetrofit是Square推出的一款开源的HTTP客户端库，基于REST风格">
+<meta name="twitter:title" content="设计模式（1）">
+<meta name="twitter:description" content="设计模式Christopher Alexander 说过：“每一个模式描述了一个在我们周围不断重复发生的问题，以及该问题的解决方案的核心。这样，你就能一次又一次地使用该方案而不必做重复劳动”。尽管Alexander所指的是城市和建筑模式，但他的思想也同样适用于面向对象设计模式，只是在面向对象的解决方案，我们用对象和接口代替了墙壁和门窗。两类模式的核心都在于提供了相关问题的解决方案。
+一般而言，一个">
 
 
 
@@ -121,13 +124,13 @@
 
 
 
-  <link rel="canonical" href="http://billyyccc.github.io/2017/01/01/Retrofit2_1的基本使用(一)/"/>
+  <link rel="canonical" href="http://billyyccc.github.io/2017/04/27/设计模式（1）/"/>
 
 
 
 
 
-  <title> Retrofit2.1.0的基本使用(一) | BillyYccc </title>
+  <title> 设计模式（1） | BillyYccc </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -270,7 +273,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-  <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/01/01/Retrofit2_1的基本使用(一)/">
+  <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/04/27/设计模式（1）/">
 
   <span style="display:none" itemprop="author" itemscope itemtype="http://schema.org/Person">
     <meta itemprop="name" content="Billy Yuan">
@@ -294,7 +297,7 @@
             
             
               
-                Retrofit2.1.0的基本使用(一)
+                设计模式（1）
               
             
           </h1>
@@ -309,8 +312,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-01-01T23:53:20+08:00">
-                2017-01-01
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-04-27T22:55:28+08:00">
+                2017-04-27
               </time>
             
 
@@ -332,8 +335,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Android/" itemprop="url" rel="index">
-                    <span itemprop="name">Android</span>
+                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
+                    <span itemprop="name">DesignPatterns</span>
                   </a>
                 </span>
 
@@ -350,8 +353,8 @@
                 <span class="post-meta-item-icon">
                   <i class="fa fa-comment-o"></i>
                 </span>
-                <a href="/2017/01/01/Retrofit2_1的基本使用(一)/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/01/01/Retrofit2_1的基本使用(一)/" itemprop="commentCount"></span>
+                <a href="/2017/04/27/设计模式（1）/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2017/04/27/设计模式（1）/" itemprop="commentCount"></span>
                 </a>
               </span>
             
@@ -377,15 +380,60 @@
       
 
       
-        <h2 id="Retrofit介绍"><a href="#Retrofit介绍" class="headerlink" title="Retrofit介绍"></a>Retrofit介绍</h2><p>A type-safe HTTP client for Android and Java<br>Retrofit是Square推出的一款开源的HTTP客户端库，基于REST风格</p>
+        <h2 id="设计模式"><a href="#设计模式" class="headerlink" title="设计模式"></a>设计模式</h2><p>Christopher Alexander 说过：“每一个模式描述了一个在我们周围不断重复发生的问题，以及该问题的解决方案的核心。这样，你就能一次又一次地使用该方案而不必做重复劳动”。尽管Alexander所指的是城市和建筑模式，但他的思想也同样适用于面向对象设计模式，只是在面向对象的解决方案，我们用对象和接口代替了墙壁和门窗。两类模式的核心都在于提供了相关问题的解决方案。</p>
+<p>一般而言，一个模式有四个基本要素：</p>
+<ul>
+<li>模式名称(pattern name)</li>
+</ul>
+<p>一个助记名，它用一两个词来描述模式的问题、解决方案和效果。命名一个新的模式增加了我们的设计词汇。设计模式允许我们在较高的抽象层次上进行设计。基于一个模式词汇表，我们自己以及同事之间就可以讨论模式并在编写文档时使用它们。模式名可以帮助我们思考，便于我们与其他人交流设计思想及设计结果。找到恰当的模式名也是我们设计模式编目工作的难点之一。</p>
+<ul>
+<li>问题(problem) </li>
+</ul>
+<p>描述了应该在何时使用模式。它解释了设计问题和问题存在的前因后果，它可能描述了特定的设计问题，如怎样用对象表示算法等。也可能描述了导致不灵活设计的类或对象结构。有时候，问题部分会包括使用模式必须满足的一系列先决条件。</p>
+<ul>
+<li>解决方案(solution)</li>
+</ul>
+<p>描述了设计的组成成分，它们之间的相互关系及各自的职责和协作方式。因为模式就像一个模板，可应用于多种不同场合，所以解决方案并不描述一个特定而具体的设计或实现，而是提供设计问题的抽象描述和怎样用一个具有一般意义的元素组合（类或对象组合）来解决这个问题。</p>
+<ul>
+<li>效果(consequences)</li>
+</ul>
+<p>描述了模式应用的效果及使用模式应权衡的问题。尽管我们描述设计决策时，并不总提到模式效果，但它们对于评价设计选择和理解使用模式的代价及好处具有重要意义。软件效果大多关注对时间和空间的衡量，它们也表述了语言和实现问题。因为复用是面向对象设计的要素之一，所以模式效果包括它对系统的灵活性、扩充性或可移植性的影响，显式地列出这些效果对理解和评价这些模式很有帮助。</p>
 <a id="more"></a>
-<h2 id="在module的build-gradle添加依赖"><a href="#在module的build-gradle添加依赖" class="headerlink" title="在module的build.gradle添加依赖"></a>在module的build.gradle添加依赖</h2><p>app/build.gradle<br><figure class="highlight groovy"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">compile <span class="string">'com.squareup.retrofit2:retrofit:2.1.0'</span></div></pre></td></tr></table></figure></p>
-<h2 id="在Manifest-xml中声明网络权限"><a href="#在Manifest-xml中声明网络权限" class="headerlink" title="在Manifest.xml中声明网络权限"></a>在Manifest.xml中声明网络权限</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="tag">&lt;<span class="name">uses-permission</span> <span class="attr">android:name</span>=<span class="string">"android.permission.INTERNET"</span>/&gt;</span></div></pre></td></tr></table></figure>
-<h2 id="声明接口"><a href="#声明接口" class="headerlink" title="声明接口"></a>声明接口</h2><p>Retrofit可以将HTTP API转换成接口<br>首先声明一个我们需要的服务接口，比如IuserService<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">IuserService</span> </span>&#123;</div><div class="line">  <span class="meta">@GET</span>(<span class="string">"users/&#123;id&#125;"</span>)</div><div class="line">  <span class="function">Call&lt;ResponseBody&gt; <span class="title">showUserInfo</span><span class="params">(@Path(<span class="string">"id"</span>)</span> String userId)</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<h2 id="接口参数"><a href="#接口参数" class="headerlink" title="接口参数"></a>接口参数</h2><p>在这个接口中，通过注解和参数声明需要的HTTP操作以及请求如何处理<br>每一个注解后面提供了HTTP的请求类型以及相对URL。Retrofit提供了GET，POST，PUT，DELETE，HEAD五个操作,Call&lt;&gt;里面包含的是返回的类型，后面接着的是要被调用的方法名及参数。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@GET</span>(<span class="string">"users/&#123;id&#125;"</span>)</div><div class="line"><span class="function">Call&lt;ResponseBody&gt; <span class="title">showUserInfo</span><span class="params">(@Path(<span class="string">"id"</span>)</span> String userId)</span>;</div></pre></td></tr></table></figure></p>
-<h2 id="生成Retrofit实例"><a href="#生成Retrofit实例" class="headerlink" title="生成Retrofit实例"></a>生成Retrofit实例</h2><p>Retrofit会把baseUrl和接口中的url拼接起来,并且能自动帮我们创建需要的类。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">Retrofit retrofit = <span class="keyword">new</span> Retrofit.Builder()</div><div class="line">    .baseUrl(<span class="string">"https://api.github.com/"</span>)</div><div class="line">    .build();</div><div class="line"></div><div class="line">IuserService mIuserService = retrofit.create(IuserService.class);</div></pre></td></tr></table></figure></p>
-<h2 id="注册请求"><a href="#注册请求" class="headerlink" title="注册请求"></a>注册请求</h2><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Call&lt;ResponseBody&gt; call = mIuserService.showUserInfo(userId);</div></pre></td></tr></table></figure>
-<h2 id="异步调用"><a href="#异步调用" class="headerlink" title="异步调用"></a>异步调用</h2><p>使用call.enqueue进行异步调用，覆盖onResponse和onFailure两个方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">call.enqueue(<span class="keyword">new</span> Callback&lt;ResponseBody&gt;() &#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onResponse</span><span class="params">(Call&lt;ResponseBody&gt; call, retrofit2.Response&lt;ResponseBody&gt; response)</span> </span>&#123;</div><div class="line">          <span class="keyword">try</span> &#123;</div><div class="line">              Log.i(<span class="string">"USERINFO"</span>, <span class="string">"response="</span> + response.body().string());</div><div class="line">              &#125; <span class="keyword">catch</span> (IOException e) &#123;</div><div class="line">                e.printStackTrace();</div><div class="line">                &#125;</div><div class="line"></div><div class="line">          &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">onFailure</span><span class="params">(Call&lt;ResponseBody&gt; call, Throwable t)</span> </span>&#123;</div><div class="line">              Log.i(<span class="string">"FAILURE"</span>, <span class="string">"onFailure="</span> + t.getMessage());</div><div class="line">          &#125;</div><div class="line">    &#125;);</div></pre></td></tr></table></figure></p>
+<h2 id="设计模式的分类"><a href="#设计模式的分类" class="headerlink" title="设计模式的分类"></a>设计模式的分类</h2><p>大名鼎鼎的GoF合作出版了《设计模式：可复用面向对象软件的基础》，在这本书中一共记录了23种设计模式。</p>
+<p>书中把设计模式分为了</p>
+<h3 id="创建型模式"><a href="#创建型模式" class="headerlink" title="创建型模式"></a>创建型模式</h3><p>创建型模式抽象了实例化过程。它们帮助一个系统独立于如何创建、组合和表示它的那些对象。一个类创建型模式使用继承改变被实例化的类，而一个对象创建型模式将实例化委托给另一个对象。</p>
+<p>下面都是对象创建型模式</p>
+<ul>
+<li>ABSTRACT FACTORY（抽象工厂）</li>
+<li>BUILDER（生成器）</li>
+<li>FACTORY METHOD（工厂方法）</li>
+<li>PROTOTYPE（原型）</li>
+<li>SINGLETON（单例）</li>
+</ul>
+<h3 id="结构型模式"><a href="#结构型模式" class="headerlink" title="结构型模式"></a>结构型模式</h3><p>结构型模式涉及到如何组合类和对象以获得更大的结构。结构型类模式采用继承机制来组合接口或实现。结构型对象模式不是对接口和实现进行组合，而是描述了如何对一些对象进行组合，从而实现新功能的一些方法。</p>
+<ul>
+<li>ADAPTER（适配器）- 类对象结构型模式</li>
+<li>BRIDGE（桥接）- 对象结构型模式</li>
+<li>COMPOSITE（组合） - 对象结构型模式</li>
+<li>DECORATOR（装饰） - 对象结构型模式</li>
+<li>FACADE（外观） - 对象结构型模式</li>
+<li>FLYWEIGHT（享元）- 对象结构型模式</li>
+<li>PROXY（代理） - 对象结构型模式</li>
+</ul>
+<h3 id="行为型模式"><a href="#行为型模式" class="headerlink" title="行为型模式"></a>行为型模式</h3><p>行为模式涉及到算法和对象间职责的分配。行为模式不仅描述对象或类的模式，还描述它们之间的通信模式。这些模式刻划了在运行时难以跟踪的复杂的控制流。它们将你的注意力从控制流转移到对象间的联系方式上来。行为类模式使用继承机制在类间分派行为。行为对象模式使用对象复合而不是继承。一些行为对象模式描述了一组对等的对象怎样相互协作以完成其中任一个对象都无法单独完成的任务。这里一个重要的问题是对等的对象如何互相了解对方。对等对象可以保持显式的对对方的引用，但那会增加它们的耦合度。在极端情况下，每一个对象都要了解所有其他的对象。</p>
+<ul>
+<li>CHAIN OF RESPONSIBILITY（职责链） - 对象行为型模式</li>
+<li>COMMAND（命令） - 对象行为型模式</li>
+<li>INTERPRETER（解释器） - 类行为型模式</li>
+<li>ITERATOR（迭代器） - 对象行为型模式</li>
+<li>MEDIATOR（中介者） - 对象行为型模式</li>
+<li>MEMENTO（备忘录） - 对象行为型模式</li>
+<li>OBSERVER（观察者） - 对象行为型模式</li>
+<li>STATE（状态） - 对象行为型模式</li>
+<li>STRATEGY（策略） - 对象行为型模式</li>
+<li>TEMPLATE METHOD（模板方法） 类行为型模式</li>
+<li>VISITOR（访问者） 对象行为者型模式</li>
+</ul>
 
       
     </div>
@@ -409,11 +457,11 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Android/" rel="tag"># Android</a>
-          
-            <a href="/tags/Retrofit/" rel="tag"># Retrofit</a>
-          
             <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/OOP/" rel="tag"># OOP</a>
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
           
         </div>
       
@@ -422,8 +470,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2016/12/26/遇到多个构造器参数时要考虑用构建器(Builder)/" rel="next" title="遇到多个构造器参数时要考虑用构建器(Builder)">
-                <i class="fa fa-chevron-left"></i> 遇到多个构造器参数时要考虑用构建器(Builder)
+              <a href="/2017/04/22/面向对象的六大原则（六）/" rel="next" title="面向对象的六大原则（六）">
+                <i class="fa fa-chevron-left"></i> 面向对象的六大原则（六）
               </a>
             
           </div>
@@ -431,10 +479,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/04/16/面向对象的六大原则（一）/" rel="prev" title="面向对象的六大原则（一）">
-                面向对象的六大原则（一） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -449,10 +493,10 @@
 
     <div class="post-spread">
       
-        <div class="ds-share flat" data-thread-key="2017/01/01/Retrofit2_1的基本使用(一)/"
-     data-title="Retrofit2.1.0的基本使用(一)"
+        <div class="ds-share flat" data-thread-key="2017/04/27/设计模式（1）/"
+     data-title="设计模式（1）"
      data-content=""
-     data-url="http://billyyccc.github.io/2017/01/01/Retrofit2_1的基本使用(一)/">
+     data-url="http://billyyccc.github.io/2017/04/27/设计模式（1）/">
   <div class="ds-share-inline">
     <ul  class="ds-share-icons-16">
 
@@ -479,8 +523,8 @@
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2017/01/01/Retrofit2_1的基本使用(一)/"
-           data-title="Retrofit2.1.0的基本使用(一)" data-url="http://billyyccc.github.io/2017/01/01/Retrofit2_1的基本使用(一)/">
+      <div class="ds-thread" data-thread-key="2017/04/27/设计模式（1）/"
+           data-title="设计模式（1）" data-url="http://billyyccc.github.io/2017/04/27/设计模式（1）/">
       </div>
     
   </div>
@@ -580,7 +624,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Retrofit介绍"><span class="nav-number">1.</span> <span class="nav-text">Retrofit介绍</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在module的build-gradle添加依赖"><span class="nav-number">2.</span> <span class="nav-text">在module的build.gradle添加依赖</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#在Manifest-xml中声明网络权限"><span class="nav-number">3.</span> <span class="nav-text">在Manifest.xml中声明网络权限</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#声明接口"><span class="nav-number">4.</span> <span class="nav-text">声明接口</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#接口参数"><span class="nav-number">5.</span> <span class="nav-text">接口参数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#生成Retrofit实例"><span class="nav-number">6.</span> <span class="nav-text">生成Retrofit实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#注册请求"><span class="nav-number">7.</span> <span class="nav-text">注册请求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#异步调用"><span class="nav-number">8.</span> <span class="nav-text">异步调用</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#设计模式"><span class="nav-number">1.</span> <span class="nav-text">设计模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#设计模式的分类"><span class="nav-number">2.</span> <span class="nav-text">设计模式的分类</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#创建型模式"><span class="nav-number">2.1.</span> <span class="nav-text">创建型模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结构型模式"><span class="nav-number">2.2.</span> <span class="nav-text">结构型模式</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#行为型模式"><span class="nav-number">2.3.</span> <span class="nav-text">行为型模式</span></a></li></ol></li></ol></div>
             
 
           </div>
