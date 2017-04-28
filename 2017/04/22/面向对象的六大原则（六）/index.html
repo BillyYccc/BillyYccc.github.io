@@ -90,7 +90,7 @@
 <meta property="og:url" content="http://billyyccc.github.io/2017/04/22/面向对象的六大原则（六）/index.html">
 <meta property="og:site_name" content="BillyYccc">
 <meta property="og:description" content="迪米特原则的定义迪米特法则（Law of Demeter，LoD）也称为最少知识原则（Least Knowledge Principle，LKP），虽然名字不同，但描述的是同一个规则：(一个对象应该对其他对象有最少的了解)。通俗地讲，一个类应该对自己需要耦合或调用的类知道得最少，你（被耦合或调用的类）的内部是如何复杂都和我没关系，那是你的事情，我就知道你提供的这么多public方法，我就调用这么多">
-<meta property="og:updated_time" content="2017-04-25T07:35:56.664Z">
+<meta property="og:updated_time" content="2017-04-28T17:22:11.413Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="面向对象的六大原则（六）">
 <meta name="twitter:description" content="迪米特原则的定义迪米特法则（Law of Demeter，LoD）也称为最少知识原则（Least Knowledge Principle，LKP），虽然名字不同，但描述的是同一个规则：(一个对象应该对其他对象有最少的了解)。通俗地讲，一个类应该对自己需要耦合或调用的类知道得最少，你（被耦合或调用的类）的内部是如何复杂都和我没关系，那是你的事情，我就知道你提供的这么多public方法，我就调用这么多">
@@ -391,7 +391,7 @@
 <p>接下来修改Message类中的sayHello()方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(User user)</span> </span>&#123;</div><div class="line">        user.sendMessage(<span class="string">"Hello..."</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>这样一来socket就对sayHello()方法完全不可见了，这样的设计就变得更健壮了。</p>
 <h2 id="迪米特原则的实践"><a href="#迪米特原则的实践" class="headerlink" title="迪米特原则的实践"></a>迪米特原则的实践</h2><p>迪米特法则的核心观念就是类间解耦，弱耦合，只有弱耦合了以后，类的复用率才可以提高。其要求的结果就是产生了大量的中转或跳转类，导致系统的复杂性提高，同时也为维护带来了难度。在采用迪米特法则时需要反复权衡，既做到让结构清晰，又做到高内聚低耦合。</p>
-
+<h2 id="参考代码"><a href="#参考代码" class="headerlink" title="参考代码"></a><a href="https://github.com/BillyYccc/DesignPatternsPrinciples/tree/master/LoDDemo" target="_blank" rel="external">参考代码</a></h2>
       
     </div>
 
@@ -532,7 +532,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-count">11</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
@@ -585,7 +585,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#迪米特原则的定义"><span class="nav-number">1.</span> <span class="nav-text">迪米特原则的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迪米特原则的示例"><span class="nav-number">2.</span> <span class="nav-text">迪米特原则的示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迪米特原则的实践"><span class="nav-number">3.</span> <span class="nav-text">迪米特原则的实践</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#迪米特原则的定义"><span class="nav-number">1.</span> <span class="nav-text">迪米特原则的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迪米特原则的示例"><span class="nav-number">2.</span> <span class="nav-text">迪米特原则的示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迪米特原则的实践"><span class="nav-number">3.</span> <span class="nav-text">迪米特原则的实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考代码"><span class="nav-number">4.</span> <span class="nav-text">参考代码</span></a></li></ol></div>
             
 
           </div>
