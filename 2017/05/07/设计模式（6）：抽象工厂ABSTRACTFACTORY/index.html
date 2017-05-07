@@ -1,0 +1,900 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="OOP,设计模式,Java," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="抽象工厂模式定义抽象工厂提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。类图如下
+使用场景在以下情况可以使用Abstract Factory模式
+
+一个系统要独立于它的产品的创建、组合和表示时。
+一个系统要由多个产品系列中的一个来配置时。
+当你要强调一系列相关的产品对象的设计以便进行联合使用时。
+当你提供一个产品类库，而只想显示它们的接口而不是实现时。
+
+结构
+Abstract">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式（6）：抽象工厂ABSTRACT FACTORY">
+<meta property="og:url" content="http://billyyccc.github.io/2017/05/07/设计模式（6）：抽象工厂ABSTRACTFACTORY/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="抽象工厂模式定义抽象工厂提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。类图如下
+使用场景在以下情况可以使用Abstract Factory模式
+
+一个系统要独立于它的产品的创建、组合和表示时。
+一个系统要由多个产品系列中的一个来配置时。
+当你要强调一系列相关的产品对象的设计以便进行联合使用时。
+当你提供一个产品类库，而只想显示它们的接口而不是实现时。
+
+结构
+Abstract">
+<meta property="og:image" content="http://billyyccc.github.io/2017/05/07/设计模式（6）：抽象工厂ABSTRACTFACTORY/AbstractFactory1.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/05/07/设计模式（6）：抽象工厂ABSTRACTFACTORY/AbstractFactory2.png">
+<meta property="og:updated_time" content="2017-05-07T13:51:18.375Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式（6）：抽象工厂ABSTRACT FACTORY">
+<meta name="twitter:description" content="抽象工厂模式定义抽象工厂提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。类图如下
+使用场景在以下情况可以使用Abstract Factory模式
+
+一个系统要独立于它的产品的创建、组合和表示时。
+一个系统要由多个产品系列中的一个来配置时。
+当你要强调一系列相关的产品对象的设计以便进行联合使用时。
+当你提供一个产品类库，而只想显示它们的接口而不是实现时。
+
+结构
+Abstract">
+<meta name="twitter:image" content="http://billyyccc.github.io/2017/05/07/设计模式（6）：抽象工厂ABSTRACTFACTORY/AbstractFactory1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2017/05/07/设计模式（6）：抽象工厂ABSTRACTFACTORY/"/>
+
+
+
+
+
+  <title> 设计模式（6）：抽象工厂ABSTRACT FACTORY | BillyYccc </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/05/07/设计模式（6）：抽象工厂ABSTRACTFACTORY/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                设计模式（6）：抽象工厂ABSTRACT FACTORY
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-07T16:10:22+08:00">
+                2017-05-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
+                    <span itemprop="name">DesignPatterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="抽象工厂模式定义"><a href="#抽象工厂模式定义" class="headerlink" title="抽象工厂模式定义"></a>抽象工厂模式定义</h2><p>抽象工厂提供一个创建一系列相关或相互依赖对象的接口，而无需指定它们具体的类。类图如下<br><img src="/2017/05/07/设计模式（6）：抽象工厂ABSTRACTFACTORY/AbstractFactory1.png" alt="ShowImage"></p>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>在以下情况可以使用Abstract Factory模式</p>
+<ul>
+<li>一个系统要独立于它的产品的创建、组合和表示时。</li>
+<li>一个系统要由多个产品系列中的一个来配置时。</li>
+<li>当你要强调一系列相关的产品对象的设计以便进行联合使用时。</li>
+<li>当你提供一个产品类库，而只想显示它们的接口而不是实现时。</li>
+</ul>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><ul>
+<li><p>AbstractFactory<br><br> – 声明一个创建抽象产品对象的操作接口。</p>
+</li>
+<li><p>ConcreteFactory<br><br> – 实现创建具体产品对象的操作。</p>
+</li>
+<li><p>Product<br><br> – 为一类产品对象声明一个接口(或者抽象)。</p>
+</li>
+<li><p>ConcreteProduct<br><br> – 定义一个将被相应的具体工厂创建的产品对象。<br><br> – 实现Product的接口或者继承抽象。</p>
+</li>
+<li><p>Client<br><br> – 仅使用由AbstractFactory和Product类声明的接口。</p>
+</li>
+</ul>
+<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><ul>
+<li>通常在运行时刻创建一个ConcreteFactory类的实例。这一具体的工厂创建具有特定实现的产品对象。为创建不同的产品对象，客户应使用不同的具体工厂。</li>
+<li>AbstractFactory将产品对象的创建延迟到它的ConcreteFactory子类。</li>
+</ul>
+<a id="more"></a>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p>AbstractFactory模式有下面的一些优点和缺点：</p>
+<ul>
+<li><p>它分离了具体的类<br><br>  AbstractFactory模式帮助你控制一个应用创建的对象的类。由于一个工厂将创建产品对象的职责和过程封装起来了，所以它将调用者与实现类分离了。调用者通过它们的抽象接口操纵实例。产品的类名也在具体工厂的实现中被分离；它们不出现在客户代码中。</p>
+</li>
+<li><p>它使得易于交换产品系列<br><br>  一个具体工厂类在一个应用中仅出现一次————即在它初始化的时候。这使得改变一个应用的具体工厂变得很容易。它只需改变具体的工厂即可使用不同的产品配置，这是因为一个抽象工厂创建了一个完整的产品系列，所以整个产品系列会立刻改变。</p>
+</li>
+<li><p>它有利于产品的一致性<br><br> 当一个系列中的产品对象被设计成一起工作时，一个应用一次只能使用同一个系列中的对象，这一点很重要。而AbstractFactory很容易实现这一点。</p>
+</li>
+<li><p>难以支持新种类的产品<br><br>  难以扩展抽象工厂以生产新种类的产品。这是因为AbstractFactory接口确定了可以被创建的产品集合。支持新种类的产品就需要扩展该工厂接口，这将涉及AbstractFactory类及其所有子类的改变。</p>
+</li>
+</ul>
+<h2 id="抽象工厂模式实现-Implement"><a href="#抽象工厂模式实现-Implement" class="headerlink" title="抽象工厂模式实现(Implement)"></a>抽象工厂模式实现(Implement)</h2><h3 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h3><p>现在实际的应用场景是这样的，现在工厂要生产笔记本和台式电脑两种类型的电脑，笔记本Laptop类和台式电脑DesktopComputer类都为抽象类，有自己的品牌，并且包含了CPU，GPU，RAM三个抽象类。CPU、GPU、RAM都各自有不同厂家型号的产品。两家工厂成都富士康和深圳富士康负责生产电脑，成都富士康生产Apple品牌的笔记本和Dell品牌的台式电脑；深圳富士康生产HP品牌的笔记本和Lenovo品牌的台式机。</p>
+<h4 id="结构-1"><a href="#结构-1" class="headerlink" title="结构"></a>结构</h4><p>整体的结构如下<br><img src="/2017/05/07/设计模式（6）：抽象工厂ABSTRACTFACTORY/AbstractFactory2.png" alt="ShowImage"></p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>抽象工厂<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">AbstractComputerFactory</span> </span>&#123;</div><div class="line">    <span class="function">DesktopComputer <span class="title">createDesktopComputer</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function">Laptop <span class="title">createLaptop</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>台式电脑抽象类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">DesktopComputer</span> </span>&#123;</div><div class="line">    <span class="keyword">protected</span> CPU mCpu;</div><div class="line">    <span class="keyword">protected</span> GPU mGpu;</div><div class="line">    <span class="keyword">protected</span> RAM mRam;</div><div class="line">    <span class="keyword">protected</span> String mOs;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getOs</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mOs;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOs</span><span class="params">(String os)</span> </span>&#123;</div><div class="line">        mOs = os;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">DesktopComputer</span><span class="params">(CPU cpu, GPU gpu, RAM ram)</span> </span>&#123;</div><div class="line">        mCpu = cpu;</div><div class="line">        mGpu = gpu;</div><div class="line">        mRam = ram;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> CPU <span class="title">getCpu</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> GPU <span class="title">getGpu</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> RAM <span class="title">getRam</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">//获取总价的方法</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">double</span> <span class="title">getTotalPrice</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getInfo</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"DesktopComputer CPU Brand : "</span> + <span class="keyword">this</span>.getCpu().getCPUBrand()</div><div class="line">                + <span class="string">"\nDesktopComputer CPU Name : "</span> + <span class="keyword">this</span>.getCpu().getCPUName()</div><div class="line">                + <span class="string">"\nDesktopComputer CPU Price : "</span> + <span class="keyword">this</span>.getCpu().getPrice()</div><div class="line">                + <span class="string">"\nDesktopComputer GPU Brand : "</span> + <span class="keyword">this</span>.getGpu().getGPUBrand()</div><div class="line">                + <span class="string">"\nDesktopComputer GPU Name : "</span> + <span class="keyword">this</span>.getGpu().getGPUName()</div><div class="line">                + <span class="string">"\nDesktopComputer GPU RAM : "</span> + <span class="keyword">this</span>.getGpu().getGPURAM()</div><div class="line">                + <span class="string">"\nDesktopComputer GPU Price : "</span> + <span class="keyword">this</span>.getGpu().getPrice()</div><div class="line">                + <span class="string">"\nDesktopComputer RAM Brand : "</span> + <span class="keyword">this</span>.getRam().getRAMBrand()</div><div class="line">                + <span class="string">"\nDesktopComputer RAM Capacity : "</span> + <span class="keyword">this</span>.getRam().getRAMCapacity()</div><div class="line">                + <span class="string">"\nDesktopComputer RAM Price : "</span> + <span class="keyword">this</span>.getRam().getPrice()</div><div class="line">                + <span class="string">"\nDesktopComputer OS : "</span> + <span class="keyword">this</span>.getOs()</div><div class="line">                + <span class="string">"\nDesktopComputer Total Price : "</span> + <span class="keyword">this</span>.getTotalPrice();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>笔记本电脑抽象类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">Laptop</span> </span>&#123;</div><div class="line">    <span class="keyword">protected</span> CPU mCpu;</div><div class="line">    <span class="keyword">protected</span> GPU mGpu;</div><div class="line">    <span class="keyword">protected</span> RAM mRam;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getOs</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mOs;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">setOs</span><span class="params">(String Os)</span> </span>&#123;</div><div class="line">        mOs = Os;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">protected</span> String mOs;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="title">Laptop</span><span class="params">(CPU cpu, GPU gpu, RAM ram)</span> </span>&#123;</div><div class="line">        mCpu = cpu;</div><div class="line">        mGpu = gpu;</div><div class="line">        mRam = ram;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> CPU <span class="title">getCpu</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> GPU <span class="title">getGpu</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> RAM <span class="title">getRam</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">//获取总价的方法</span></div><div class="line">    <span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">double</span> <span class="title">getTotalPrice</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> String <span class="title">getInfo</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="string">"Laptop CPU Brand : "</span> + <span class="keyword">this</span>.getCpu().getCPUBrand()</div><div class="line">                + <span class="string">"\nLaptop CPU Name : "</span> + <span class="keyword">this</span>.getCpu().getCPUName()</div><div class="line">                + <span class="string">"\nLaptop CPU Price : "</span> + <span class="keyword">this</span>.getCpu().getPrice()</div><div class="line">                + <span class="string">"\nLaptop GPU Brand : "</span> + <span class="keyword">this</span>.getGpu().getGPUBrand()</div><div class="line">                + <span class="string">"\nLaptop GPU Name : "</span> + <span class="keyword">this</span>.getGpu().getGPUName()</div><div class="line">                + <span class="string">"\nLaptop GPU RAM : "</span> + <span class="keyword">this</span>.getGpu().getGPURAM()</div><div class="line">                + <span class="string">"\nLaptop GPU Price : "</span> + <span class="keyword">this</span>.getGpu().getPrice()</div><div class="line">                + <span class="string">"\nLaptop RAM Brand : "</span> + <span class="keyword">this</span>.getRam().getRAMBrand()</div><div class="line">                + <span class="string">"\nLaptop RAM Capacity : "</span> + <span class="keyword">this</span>.getRam().getRAMCapacity()</div><div class="line">                + <span class="string">"\nLaptop RAM Price : "</span> + <span class="keyword">this</span>.getRam().getPrice()</div><div class="line">                + <span class="string">"\nLaptop OS : "</span> + <span class="keyword">this</span>.getOs()</div><div class="line">                + <span class="string">"\nLaptop Total Price : "</span> + <span class="keyword">this</span>.getTotalPrice();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>CPU类、GPU类以及RAM类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">CPU</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">getCPUBrand</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">getCPUName</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">GPU</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">getGPUBrand</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">getGPUName</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">getGPURAM</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">RAM</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">getRAMBrand</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> String <span class="title">getRAMCapacity</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">abstract</span> <span class="keyword">double</span> <span class="title">getPrice</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>Apple品牌的笔记本<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">AppleLaptop</span> <span class="keyword">extends</span> <span class="title">Laptop</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">AppleLaptop</span><span class="params">(CPU cpu, GPU gpu, RAM ram)</span> </span>&#123;</div><div class="line">        <span class="keyword">super</span>(cpu, gpu, ram);</div><div class="line">        <span class="keyword">this</span>.setOs(<span class="string">"OS X"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> CPU <span class="title">getCpu</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mCpu;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> GPU <span class="title">getGpu</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mGpu;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> RAM <span class="title">getRam</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mRam;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">double</span> <span class="title">getTotalPrice</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> mCpu.getPrice() + mGpu.getPrice() + mRam.getPrice();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>代码太多，就不一一粘贴过来了，来看具体工厂类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * 成都富士康电脑工厂，负责生产Apple的笔记本电脑和Dell的台式电脑</div><div class="line"> */</div><div class="line"></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChengduFoxconnFactory</span> <span class="keyword">implements</span> <span class="title">AbstractComputerFactory</span> </span>&#123;</div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Laptop <span class="title">createLaptop</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> AppleLaptop(<span class="keyword">new</span> Intel_i7_6500u(), <span class="keyword">new</span> Nvidia_GTX1080(), <span class="keyword">new</span> KingstonMemory());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> DesktopComputer <span class="title">createDesktopComputer</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> DellDesktopComputer(<span class="keyword">new</span> Intel_i7_7700k(), <span class="keyword">new</span> Nvidia_GTX1080(), <span class="keyword">new</span> KingstonMemory());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Client调用代码，一个工厂完成了两种产品的创建<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ChengduFoxconnFactoryTest</span> </span>&#123;</div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">chengduFoxconnFactoryTest1</span><span class="params">()</span> </span>&#123;</div><div class="line">        AbstractComputerFactory chengduFoxconnFactory = <span class="keyword">new</span> ChengduFoxconnFactory();</div><div class="line">        Laptop macbookPro = chengduFoxconnFactory.createLaptop();</div><div class="line">        System.out.println(macbookPro.getInfo());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">chengduFoxconnFactoryTest2</span><span class="params">()</span> </span>&#123;</div><div class="line">        AbstractComputerFactory chengduFoxconnFactory = <span class="keyword">new</span> ChengduFoxconnFactory();</div><div class="line">        DesktopComputer dellPC = chengduFoxconnFactory.createDesktopComputer();</div><div class="line">        System.out.println(dellPC.getInfo());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>仔细看Client部分的代码，抽象工厂的好处都可以体现，它将调用者与实现类分离开了，并且更换产品系列非常容易，只需要将工厂进行替换就可以了，但是如果产品等级结构本身需要更改的时候就十分麻烦，需要修改所有的工厂角色，连抽象工厂也需要修改。在上面例子中，Laptop和DesktopComputer可以算作两个不同的等级结构，而Apple和Dell算作不同的产品族，AppleLaptop和DellLaptop是相同的等级结构，AppleLaptop和AppleDesktopComputer是相同的产品族，DellLaptop和DellDesktopComputer也是相同的产品族。</p>
+<blockquote>
+<p>在抽象工厂模式中,增加产品族十分方便，可以与已有系统直接集成。但是增加新的产品等级结构会非常复杂，需要对原有系统进行大量修改，会违背开闭原则。</p>
+</blockquote>
+<p>举个简单例子，如果现在工厂还要增加手机的生产线，也就是增加一个新的产品等级结构CellPhone，那么扩展起来十分复杂，所有的工厂类都会增加生产新产品的方法。但是工厂如果新引进一个电脑品牌HP，也就是增加一个新的产品族HP，那么扩展很方便，直接增加对应的实体并让对应的具体工厂去生产新的HP电脑就可以了。</p>
+<blockquote>
+<p>属于同一个产品族的产品将在一起使用，这一约束必须在系统的设计中体现出来。同一个产品族的产品可以是没有任何关系的对象，但是它们都有一些共同的约束。</p>
+</blockquote>
+<p>比如上面的例子中Apple产品族中都预装了操作系统OS X，Dell产品族中都预装了操作系统Windows，一个产品族中会有一些共同的约束条件。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>抽象工厂和工厂方法两种模式看起来很相似，实质上是不同的，两者都符合开闭原则，但是侧重点不同。工厂方法模式在增加一个新的具体产品的时候，更加侧重的是一个产品的类型，好比上面的例子，工厂方法的目标是Laptop这个产品，通过子类继承来生产不同类型的Laptop，但是产品等级结构是单一的，生产Laptop的这个工厂不会再去生产台式电脑。而抽象工厂侧重的是多个产品等级，不仅仅是电脑品牌之间的区别，还有可能是台式电脑和笔记本电脑之间的区别，抽象工厂中会面向多个产品的等级结构。</p>
+<h2 id="参考代码"><a href="#参考代码" class="headerlink" title="参考代码"></a><a href="https://github.com/BillyYccc/DesignPatternsExamples/tree/master/AbstractFactoryDemo" target="_blank" rel="external">参考代码</a></h2>
+      
+    </div>
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+       
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/OOP/" rel="tag"># OOP</a>
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/05/06/设计模式（5）：简单工厂模式/" rel="next" title="设计模式（5）：简单工厂模式">
+                <i class="fa fa-chevron-left"></i> 设计模式（5）：简单工厂模式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Billy Yuan" />
+          <p class="site-author-name" itemprop="name">Billy Yuan</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">7</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象工厂模式定义"><span class="nav-number">1.</span> <span class="nav-text">抽象工厂模式定义</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场景"><span class="nav-number">1.1.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结构"><span class="nav-number">1.2.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协作"><span class="nav-number">1.3.</span> <span class="nav-text">协作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效果"><span class="nav-number">1.4.</span> <span class="nav-text">效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#抽象工厂模式实现-Implement"><span class="nav-number">2.</span> <span class="nav-text">抽象工厂模式实现(Implement)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#案例"><span class="nav-number">2.1.</span> <span class="nav-text">案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#结构-1"><span class="nav-number">2.1.1.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#代码实现"><span class="nav-number">2.1.2.</span> <span class="nav-text">代码实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考代码"><span class="nav-number">4.</span> <span class="nav-text">参考代码</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
