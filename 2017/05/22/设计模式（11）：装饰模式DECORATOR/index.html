@@ -71,7 +71,7 @@
 <link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Java,OOP,设计模式," />
+  <meta name="keywords" content="OOP,Java,设计模式," />
 
 
 
@@ -108,7 +108,7 @@
 处理那些可以撤消的职责。
 当不能采用生成子类的方法进行扩充时。一种情况是，可能有大量独立的扩展，">
 <meta property="og:image" content="http://billyyccc.github.io/2017/05/22/设计模式（11）：装饰模式DECORATOR/Decorator1.png">
-<meta property="og:updated_time" content="2017-05-22T14:18:35.701Z">
+<meta property="og:updated_time" content="2017-05-25T16:24:04.392Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="设计模式（11）：装饰模式DECORATOR">
 <meta name="twitter:description" content="装饰模式装饰模式(Decorator Pattern)也叫做包装器(Wrapper)
@@ -458,7 +458,7 @@
 <h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><p>Decorator将请求转发给它的Component对象，并有可能在转发请求前后执行一些附加的动作。</p>
 <a id="more"></a>
 <h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><ul>
-<li><p>比静态继承更灵活<br><br> 与对象的静态继承（多重继承）相比，Decorator模式提供了更加<br>灵活的向对象添加职责的方式。可以用添加和分离的方法，用装饰在运行时刻增加和删除职责。相比之下，继承机制要求为每个添加的职责创建一个新的子类。这会产生许多新的类，并且会增加系统的复杂度。此外，为一个特定的Component类提供多个不同的Decorator类，这就使得你可以对一些职责进行混合和匹配。使用Decorator模式可以很容易地重复添加一个特性，而两次继承类实现非常容易出错。</p>
+<li><p>比静态继承更灵活<br><br> 与对象的静态继承（多重继承）相比，Decorator模式提供了更加灵活的向对象添加职责的方式。可以用添加和分离的方法，用装饰在运行时刻增加和删除职责。相比之下，继承机制要求为每个添加的职责创建一个新的子类。这会产生许多新的类，并且会增加系统的复杂度。此外，为一个特定的Component类提供多个不同的Decorator类，这就使得你可以对一些职责进行混合和匹配。使用Decorator模式可以很容易地重复添加一个特性，而两次继承类实现非常容易出错。</p>
 </li>
 <li><p>避免在层次结构高层的类有太多的特征<br><br> Decorator模式提供了一种“即用即付”的方法来添加职责。它并不试图在一个复杂的可定制的类中支持所有可预见的特征，相反，你可以定义一个简单的类，并且用Decorator类给它逐渐地添加功能。可以从简单的部件组合出复杂的功能。这样，应用程序不必为不需要的特征付出代价。同时也更易于不依赖于Decorator所扩展（甚至是不可预知的扩展）的类而独立地定义新类型的Decorator。扩展一个复杂类的时候，很可能会暴露与添加的职责无关的细节。</p>
 </li>
@@ -528,9 +528,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Java/" rel="tag"># Java</a>
-          
             <a href="/tags/OOP/" rel="tag"># OOP</a>
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
           
             <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
           
@@ -554,6 +554,10 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/05/26/设计模式（12）：外观模式FACADE/" rel="prev" title="设计模式（12）：外观模式FACADE">
+                设计模式（12）：外观模式FACADE <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -627,7 +631,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-count">22</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

@@ -315,6 +315,158 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2016/12/26/遇到多个构造器参数时要考虑用构建器(Builder)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2016/12/26/遇到多个构造器参数时要考虑用构建器(Builder)/" itemprop="url">
+                  遇到多个构造器参数时要考虑用构建器(Builder)
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2016-12-26T22:23:28+08:00">
+                2016-12-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="场景一"><a href="#场景一" class="headerlink" title="场景一"></a>场景一</h2><p>使用静态工厂或者构造器都有共同的局限性：它们都不能很好地扩展大量的可选参数。<br>来看一下GsonBuilder的使用<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line">Gson gson = <span class="keyword">new</span> GsonBuilder()</div><div class="line">.registerTypeAdapter(Id.class, <span class="keyword">new</span> IdTypeAdapter())   </div><div class="line">.enableComplexMapKeySerialization()</div><div class="line">.serializeNulls()   </div><div class="line">.setDateFormat(DateFormat.LONG)  </div><div class="line">.setFieldNamingPolicy(FieldNamingPolicy.UPPER_CAMEL_CASE)</div><div class="line">.setPrettyPrinting()</div><div class="line">.setVersion(<span class="number">1.0</span>)    </div><div class="line">.create();</div></pre></td></tr></table></figure></p>
+<p>我们先构造一个新的GsonBuilder，将需要的参数导入后，通过create()方法创建一个Gson对象gson供我们使用。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2016/12/26/遇到多个构造器参数时要考虑用构建器(Builder)/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+       
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2016/12/24/重构原则/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -517,7 +669,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">21</span>
+                <span class="site-state-item-count">22</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
