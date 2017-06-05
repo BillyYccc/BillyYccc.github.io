@@ -324,6 +324,193 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/06/05/设计模式（18）：命令模式COMMAND/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/06/05/设计模式（18）：命令模式COMMAND/" itemprop="url">
+                  设计模式（18）：命令模式COMMAND
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-05T22:40:15+08:00">
+                2017-06-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
+                    <span itemprop="name">DesignPatterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p>将一个请求封装为一个对象，从而使你可以在接收不同的请求、请求队列或者日志请求时对客户进行参数化，并且支持可撤消的操作。</p>
+<hr>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>当你有如下需求时，可使用Command模式：</p>
+<ul>
+<li>可以抽象出待执行的动作以参数化某对象。<br><br>你可用过程语言中的回调(callback)函数表达这种参数化机制。所谓回调函数是指函数先在某处注册，而它将在稍后某个需要的时候被调用。Command模式是回调机制的一个面向对象的替代品。</li>
+<li>在不同的时刻指定、排列和执行请求。</li>
+<li>支持取消操作。</li>
+<li>Command模式提供了对事务进行建模的方法。</li>
+</ul>
+<hr>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>模板方法结构如下<br><img src="/2017/06/05/设计模式（18）：命令模式COMMAND/Command1.png" alt="ShowImage"></p>
+<ul>
+<li><p>Command<br><br> – 声明执行操作的接口。</p>
+</li>
+<li><p>ConcreteCommand<br><br> – 将一个Receiver对象与一个Action绑定。<br><br> – 调用接收者相应的操作，以实现Execute。</p>
+</li>
+<li><p>Client<br><br> – 创建一个Concrete Command对象并设定它的Receiver。</p>
+</li>
+<li><p>Invoker<br><br> – 要求该命令执行这个请求。</p>
+</li>
+<li><p>Receiver<br><br> – 知道如何实施与执行一个请求相关的操作。任何类都可能作为一个Receiver。</p>
+</li>
+</ul>
+<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><ol>
+<li>Client创建一个ConcreteCommand对象并指定它的Receiverr对象。</li>
+<li>某Invoker对象存储该ConcreteCommand对象。</li>
+<li>该Invoker通过调用Command对象的Execute操作来提交一个请求。若该命令是可撤消的，ConcreteCommand就在执行Excute操作之前存储当前状态以用于取消该命令。</li>
+<li>ConcreteCommand对象对调用它的Receiver的一些操作以执行该请求。</li>
+</ol>
+<p>时序图如下所示<br><img src="/2017/06/05/设计模式（18）：命令模式COMMAND/Command2.png" alt="ShowImage"></p>
+<hr>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><ul>
+<li>Command模式将调用操作的对象与知道如何实现该操作的对象解耦。</li>
+<li>Command是顶层的对象。它们可像其他的对象一样被操纵和扩展。</li>
+<li>你可将多个命令装配成一个复合命令</li>
+<li>扩展性良好，增加新的Command很容易，因为这无需改变已有的类。</li>
+</ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/05/设计模式（18）：命令模式COMMAND/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+       
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/06/04/设计模式（17）：模板方法TEMPLATEMETHOD/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1895,179 +2082,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/05/15/设计模式（8）：适配器模式ADAPTER/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Billy Yuan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BillyYccc">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/05/15/设计模式（8）：适配器模式ADAPTER/" itemprop="url">
-                  设计模式（8）：适配器模式ADAPTER
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-15T15:27:02+08:00">
-                2017-05-15
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
-                    <span itemprop="name">DesignPatterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="适配器模式的定义"><a href="#适配器模式的定义" class="headerlink" title="适配器模式的定义"></a>适配器模式的定义</h2><p>将一个类的接口转换成客户希望的另外一个接口。Adapter模式使得原本由于接口不兼容而不能一起工作的那些类可以一起工作。</p>
-<hr>
-<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>以下情况使用Adapter模式</p>
-<ul>
-<li>你想使用一个已经存在的类，而它的接口不符合你的需求。</li>
-<li>你想创建一个可以复用的类，该类可以与其他不相关的类或不可预见的类（即那些接口可能不一定兼容的类）协同工作。</li>
-<li>(仅适用于对象Adapter)你想使用一些已经存在的子类，但是不可能对每一个都进行子类化以匹配它们的接口。对象适配器可以适配它的父类接口。</li>
-</ul>
-<hr>
-<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>适配器模式分为类适配器和对象适配器两种</p>
-<h4 id="类适配器"><a href="#类适配器" class="headerlink" title="类适配器"></a>类适配器</h4><p>类适配器模式的结构如下<br><img src="/2017/05/15/设计模式（8）：适配器模式ADAPTER/Adapter1.png" alt="ShowImage"></p>
-<h4 id="对象适配器"><a href="#对象适配器" class="headerlink" title="对象适配器"></a>对象适配器</h4><p>对象适配器模式的结构如下<br><img src="/2017/05/15/设计模式（8）：适配器模式ADAPTER/Adapter2.png" alt="ShowImage"></p>
-<ul>
-<li><p>Target<br><br> – 定义Client使用的与特定领域相关的接口。</p>
-</li>
-<li><p>Client<br><br> – 与符合Target接口的对象交互。</p>
-</li>
-<li><p>Adaptee<br><br> – 定义一个已经存在需要适配的接口。</p>
-</li>
-<li><p>Adapter<br><br> – 将Adaptee的接口适配转换成Target目标接口</p>
-</li>
-</ul>
-<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><p>Client在Adapter实例上调用一些操作。接着适配器调用Adaptee的操作实现这个请求。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/05/15/设计模式（8）：适配器模式ADAPTER/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-       
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2117,7 +2131,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">27</span>
+                <span class="site-state-item-count">28</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>

@@ -1,0 +1,888 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="OOP,Java,设计模式," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="命令模式意图将一个请求封装为一个对象，从而使你可以在接收不同的请求、请求队列或者日志请求时对客户进行参数化，并且支持可撤消的操作。
+
+使用场景当你有如下需求时，可使用Command模式：
+
+可以抽象出待执行的动作以参数化某对象。你可用过程语言中的回调(callback)函数表达这种参数化机制。所谓回调函数是指函数先在某处注册，而它将在稍后某个需要的时候被调用。Command模式是回调机制的一个面向">
+<meta property="og:type" content="article">
+<meta property="og:title" content="设计模式（18）：命令模式COMMAND">
+<meta property="og:url" content="http://billyyccc.github.io/2017/06/05/设计模式（18）：命令模式COMMAND/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="命令模式意图将一个请求封装为一个对象，从而使你可以在接收不同的请求、请求队列或者日志请求时对客户进行参数化，并且支持可撤消的操作。
+
+使用场景当你有如下需求时，可使用Command模式：
+
+可以抽象出待执行的动作以参数化某对象。你可用过程语言中的回调(callback)函数表达这种参数化机制。所谓回调函数是指函数先在某处注册，而它将在稍后某个需要的时候被调用。Command模式是回调机制的一个面向">
+<meta property="og:image" content="http://billyyccc.github.io/2017/06/05/设计模式（18）：命令模式COMMAND/Command1.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/06/05/设计模式（18）：命令模式COMMAND/Command2.png">
+<meta property="og:updated_time" content="2017-06-05T16:01:55.282Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="设计模式（18）：命令模式COMMAND">
+<meta name="twitter:description" content="命令模式意图将一个请求封装为一个对象，从而使你可以在接收不同的请求、请求队列或者日志请求时对客户进行参数化，并且支持可撤消的操作。
+
+使用场景当你有如下需求时，可使用Command模式：
+
+可以抽象出待执行的动作以参数化某对象。你可用过程语言中的回调(callback)函数表达这种参数化机制。所谓回调函数是指函数先在某处注册，而它将在稍后某个需要的时候被调用。Command模式是回调机制的一个面向">
+<meta name="twitter:image" content="http://billyyccc.github.io/2017/06/05/设计模式（18）：命令模式COMMAND/Command1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2017/06/05/设计模式（18）：命令模式COMMAND/"/>
+
+
+
+
+
+  <title> 设计模式（18）：命令模式COMMAND | BillyYccc </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99992019-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/06/05/设计模式（18）：命令模式COMMAND/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                设计模式（18）：命令模式COMMAND
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-05T22:40:15+08:00">
+                2017-06-05
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
+                    <span itemprop="name">DesignPatterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="命令模式"><a href="#命令模式" class="headerlink" title="命令模式"></a>命令模式</h2><h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p>将一个请求封装为一个对象，从而使你可以在接收不同的请求、请求队列或者日志请求时对客户进行参数化，并且支持可撤消的操作。</p>
+<hr>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>当你有如下需求时，可使用Command模式：</p>
+<ul>
+<li>可以抽象出待执行的动作以参数化某对象。<br><br>你可用过程语言中的回调(callback)函数表达这种参数化机制。所谓回调函数是指函数先在某处注册，而它将在稍后某个需要的时候被调用。Command模式是回调机制的一个面向对象的替代品。</li>
+<li>在不同的时刻指定、排列和执行请求。</li>
+<li>支持取消操作。</li>
+<li>Command模式提供了对事务进行建模的方法。</li>
+</ul>
+<hr>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>模板方法结构如下<br><img src="/2017/06/05/设计模式（18）：命令模式COMMAND/Command1.png" alt="ShowImage"></p>
+<ul>
+<li><p>Command<br><br> – 声明执行操作的接口。</p>
+</li>
+<li><p>ConcreteCommand<br><br> – 将一个Receiver对象与一个Action绑定。<br><br> – 调用接收者相应的操作，以实现Execute。</p>
+</li>
+<li><p>Client<br><br> – 创建一个Concrete Command对象并设定它的Receiver。</p>
+</li>
+<li><p>Invoker<br><br> – 要求该命令执行这个请求。</p>
+</li>
+<li><p>Receiver<br><br> – 知道如何实施与执行一个请求相关的操作。任何类都可能作为一个Receiver。</p>
+</li>
+</ul>
+<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><ol>
+<li>Client创建一个ConcreteCommand对象并指定它的Receiverr对象。</li>
+<li>某Invoker对象存储该ConcreteCommand对象。</li>
+<li>该Invoker通过调用Command对象的Execute操作来提交一个请求。若该命令是可撤消的，ConcreteCommand就在执行Excute操作之前存储当前状态以用于取消该命令。</li>
+<li>ConcreteCommand对象对调用它的Receiver的一些操作以执行该请求。</li>
+</ol>
+<p>时序图如下所示<br><img src="/2017/06/05/设计模式（18）：命令模式COMMAND/Command2.png" alt="ShowImage"></p>
+<hr>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><ul>
+<li>Command模式将调用操作的对象与知道如何实现该操作的对象解耦。</li>
+<li>Command是顶层的对象。它们可像其他的对象一样被操纵和扩展。</li>
+<li>你可将多个命令装配成一个复合命令</li>
+<li>扩展性良好，增加新的Command很容易，因为这无需改变已有的类。</li>
+</ul>
+<a id="more"></a>
+<h2 id="命令模式实现-Implement"><a href="#命令模式实现-Implement" class="headerlink" title="命令模式实现(Implement)"></a>命令模式实现(Implement)</h2><h3 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h3><p>饮品店新开，有三种供客人选择，分别是奶茶、咖啡和果汁，现在用命令模式将这三种点单行为封装成对象。</p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>点单Order类，对应Command<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Create a Command Interface */</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Order</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>柜台类BeverageCounter，对应Receiver<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Receiver class in pattern</span></div><div class="line"> * Beverage Counter</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeverageCounter</span> </span>&#123;</div><div class="line">    <span class="comment">//real order coffee action</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">orderCoffee</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"点了一杯咖啡......咖啡已经就绪..."</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//real order juice action</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">orderJuice</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"点了一杯果汁......果汁已经就绪..."</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//real order milk tea action</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">orderMilkTea</span><span class="params">()</span> </span>&#123;</div><div class="line">        System.out.println(<span class="string">"点了一杯奶茶......奶茶已经就绪..."</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>BeverageShopBroker类，对应Invoker<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Invoker class in pattern</span></div><div class="line"> * Beverage Shop Broker</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BeverageShopBroker</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> List&lt;Order&gt; ordersList = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"></div><div class="line">    <span class="comment">//下单</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">takeOrder</span><span class="params">(Order order)</span> </span>&#123;</div><div class="line">        ordersList.add(order);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//取消订单</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">cancelOrder</span><span class="params">(Order order)</span> </span>&#123;</div><div class="line">        Stream&lt;Order&gt; stream = ordersList.stream();</div><div class="line">        ordersList.remove(stream.filter(t -&gt; t.equals(order)).findFirst().get());</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">//制作</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">placeOrders</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">for</span> (Order order : ordersList) &#123;</div><div class="line">            order.execute();</div><div class="line">        &#125;</div><div class="line">        ordersList.clear();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>具体命令类，这里只展示BuyCoffee<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Create a ConcreteCommand Class</span></div><div class="line"> * buy coffee</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BuyCoffee</span> <span class="keyword">implements</span> <span class="title">Order</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> BeverageCounter beverageCounter;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="title">BuyCoffee</span><span class="params">(BeverageCounter beverageCounter)</span> </span>&#123;</div><div class="line">        <span class="keyword">this</span>.beverageCounter = beverageCounter;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">()</span> </span>&#123;</div><div class="line">        beverageCounter.orderCoffee();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>Client类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/* Client class in pattern*/</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">CommandDemoTest</span> </span>&#123;</div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">beverageOrderTest</span><span class="params">()</span> </span>&#123;</div><div class="line">        BeverageCounter beverageCounter = <span class="keyword">new</span> BeverageCounter();</div><div class="line"></div><div class="line">        <span class="comment">//创建三种下单命令</span></div><div class="line">        BuyCoffee buyCoffee = <span class="keyword">new</span> BuyCoffee(beverageCounter);</div><div class="line">        BuyJuice buyJuice = <span class="keyword">new</span> BuyJuice(beverageCounter);</div><div class="line">        BuyMilkTea buyMilkTea = <span class="keyword">new</span> BuyMilkTea(beverageCounter);</div><div class="line"></div><div class="line">        BeverageShopBroker beverageShopBroker = <span class="keyword">new</span> BeverageShopBroker();</div><div class="line"></div><div class="line">        <span class="comment">//饮品店来了5个客户，点了1杯果汁，3杯咖啡，一杯奶茶</span></div><div class="line">        beverageShopBroker.takeOrder(buyJuice);</div><div class="line">        beverageShopBroker.takeOrder(buyCoffee);</div><div class="line">        beverageShopBroker.takeOrder(buyCoffee);</div><div class="line">        beverageShopBroker.takeOrder(buyCoffee);</div><div class="line">        beverageShopBroker.takeOrder(buyMilkTea);</div><div class="line"></div><div class="line">        <span class="comment">//其中两个客户突然不想要咖啡了，于是撤销之前的订单</span></div><div class="line">        beverageShopBroker.cancelOrder(buyCoffee);</div><div class="line">        beverageShopBroker.cancelOrder(buyCoffee);</div><div class="line"></div><div class="line">        <span class="comment">//两个客户换成了果汁和奶茶</span></div><div class="line">        beverageShopBroker.takeOrder(buyJuice);</div><div class="line">        beverageShopBroker.takeOrder(buyMilkTea);</div><div class="line"></div><div class="line">        <span class="comment">//根据订单开始制作饮品</span></div><div class="line">        beverageShopBroker.placeOrders();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这里的撤销命令并没有使用命令模式，只是将列表第一条匹配的订单对象撤销，如果想要使用撤销，必须在Command抽象中定义unexecute方法来取消执行，并且ConcreteCommand类中还需要储存额外的状态信息：</p>
+<ul>
+<li>Receiver对象，它真正执行处理该请求的各操作。</li>
+<li>Receiver上执行操作的参数。</li>
+<li>如果处理请求的操作会改变Receiver对象中的某些值，那么这些值也必须先存储起来。Receiver还必须提供一些操作，以使该命令可将Receiver恢复到它先前的状态。</li>
+</ul>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>命令模式的核心在于将请求或者动作(action)转换为事务，用对象来表示行为，使得行为可以重复操作或者取消。</p>
+<h2 id="参考代码"><a href="#参考代码" class="headerlink" title="参考代码"></a><a href="https://github.com/BillyYccc/DesignPatternsExamples/tree/master/CommandDemo" target="_blank" rel="external">参考代码</a></h2>
+      
+    </div>
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+       
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/OOP/" rel="tag"># OOP</a>
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/06/04/设计模式（17）：模板方法TEMPLATEMETHOD/" rel="next" title="设计模式（17）：模板方法TEMPLATEMETHOD">
+                <i class="fa fa-chevron-left"></i> 设计模式（17）：模板方法TEMPLATEMETHOD
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Billy Yuan" />
+          <p class="site-author-name" itemprop="name">Billy Yuan</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">28</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">8</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#命令模式"><span class="nav-number">1.</span> <span class="nav-text">命令模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#意图"><span class="nav-number">1.1.</span> <span class="nav-text">意图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场景"><span class="nav-number">1.2.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结构"><span class="nav-number">1.3.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协作"><span class="nav-number">1.4.</span> <span class="nav-text">协作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效果"><span class="nav-number">1.5.</span> <span class="nav-text">效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#命令模式实现-Implement"><span class="nav-number">2.</span> <span class="nav-text">命令模式实现(Implement)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#案例"><span class="nav-number">2.1.</span> <span class="nav-text">案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#代码实现"><span class="nav-number">2.1.1.</span> <span class="nav-text">代码实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考代码"><span class="nav-number">4.</span> <span class="nav-text">参考代码</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
