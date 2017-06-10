@@ -324,6 +324,182 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/06/10/设计模式（20）：职责链模式CHAINOFRESPONSIBILITY/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/06/10/设计模式（20）：职责链模式CHAINOFRESPONSIBILITY/" itemprop="url">
+                  设计模式（20）：职责链模式CHAINOFRESPONSIBILITY
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-10T13:37:45+08:00">
+                2017-06-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
+                    <span itemprop="name">DesignPatterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="职责链模式"><a href="#职责链模式" class="headerlink" title="职责链模式"></a>职责链模式</h2><h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p>使多个对象都有机会处理请求，从而避免请求的发送者和接收者之间的耦合关系。将这些对象连成一条链，并沿着这条链传递该请求，直到有一个对象处理它为止。</p>
+<hr>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>在以下条件下使用职责链：</p>
+<ul>
+<li>有多个的对象可以处理一个请求，哪个对象处理该请求运行时刻自动确定。</li>
+<li>你想在不明确指定接收者的情况下，向多个对象中的一个提交一个请求。</li>
+<li>可处理一个请求的对象集合应被动态指定。</li>
+</ul>
+<hr>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>职责链模式结构如下<br><img src="/2017/06/10/设计模式（20）：职责链模式CHAINOFRESPONSIBILITY/ChainOfResponsibility1.png" alt="ShowImage"></p>
+<ul>
+<li><p>Handler<br><br> – 定义一个处理请求的接口。<br><br> – (可选) 实现后继链。</p>
+</li>
+<li><p>ConcreteHandler<br><br> – 处理它所负责的请求。<br><br> – 可访问它的后继者。<br><br> – 如果可处理该请求，就处理之；否则将该请求转发给它的后继者。</p>
+</li>
+<li><p>Client<br><br> – 向链上的具体处理者(ConcreteHandler)对象提交请求。</p>
+</li>
+</ul>
+<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><p>当客户提交一个请求时，请求沿链传递直至有一个ConcreteHandler对象负责处理它。</p>
+<hr>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p>职责链有下列优点和缺点：</p>
+<ul>
+<li>降低耦合度<br><br>该模式使得一个对象无需知道是其他哪一个对象处理其请求。对象仅需知道该请求会被“正确”地处理。接收者和发送者都没有对方的明确的信息，且链中的对象不需知道链的结构。结果是，职责链可简化对象的相互连接。它们仅需保持一个指向其后继者的引用，而不需保持它所有的候选接受者的引用。</li>
+<li>增强了给对象指派职责( Responsibility)的灵活性<br><br>当在对象中分派职责时，职责链给你更多的灵活性。你可以通过在运行时刻对该链进行动态的增加或修改来增加或改变处理一个请求的那些职责。你可以将这种机制与静态地指定Handler的继承机制结合起来使用。</li>
+<li>不保证请求被接受<br><br>既然一个请求没有明确的接收者，那么就不能保证它一定会被处理，该请求可能一直到链的末端都得不到处理。一个请求也可能因该链没有被正确配置而得不到处理。</li>
+</ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/10/设计模式（20）：职责链模式CHAINOFRESPONSIBILITY/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+       
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/06/07/设计模式（19）：备忘录模式MEMENTO/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1925,176 +2101,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/05/18/设计模式（10）：组合模式COMPOSITE/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Billy Yuan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BillyYccc">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/05/18/设计模式（10）：组合模式COMPOSITE/" itemprop="url">
-                  设计模式（10）：组合模式COMPOSITE
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-18T15:21:33+08:00">
-                2017-05-18
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
-                    <span itemprop="name">DesignPatterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="组合模式"><a href="#组合模式" class="headerlink" title="组合模式"></a>组合模式</h2><h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p>将对象组合成树形结构以表示“部分-整体”的层次结构。Composite使得用户对单个对象和组合对象的使用具有一致性。</p>
-<hr>
-<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>以下情况使用Composite模式:</p>
-<ul>
-<li>你想表示对象的部分-整体层次结构。</li>
-<li>你希望用户忽略组合对象与单个对象的不同，用户将统一地使用组合结构中的所有对象。</li>
-</ul>
-<hr>
-<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>组合模式结构如下<br><img src="/2017/05/18/设计模式（10）：组合模式COMPOSITE/Composite1.png" alt="ShowImage"></p>
-<ul>
-<li><p>Component<br><br> –为组合中的对象声明接口。<br><br> –在适当的情况下，实现所有类共有接口的缺省行为。<br><br> –声明一个接口用于访问和管理Component的子组件。<br><br> –(可选)在递归结构中定义一个接口，用于访问一个父部件，并在合适的情况下实现它。</p>
-</li>
-<li><p>Leaf<br><br> – 在组合中表示叶节点对象，叶节点没有子节点。<br><br> – 在组合中定义图元对象的行为。</p>
-</li>
-<li><p>Composite<br><br> –定义有子部件的那些部件的行为。<br><br> –存储子部件。<br><br> –在Component接口中实现与子部件有关的操作。</p>
-</li>
-<li><p>Client<br><br> –通过Component接口操纵组合部件的对象。</p>
-</li>
-</ul>
-<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><p>  用户使用Component类接口与组合结构中的对象进行交互。如果接收者是一个叶节点,则直接处理请求。如果接收者是Composite, 它通常将请求发送给它的子部件，在转发请求之前与/或之后可能执行一些辅助操作。</p>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/05/18/设计模式（10）：组合模式COMPOSITE/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-       
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2144,7 +2150,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">29</span>
+                <span class="site-state-item-count">30</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
