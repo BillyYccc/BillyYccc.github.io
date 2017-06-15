@@ -87,16 +87,54 @@
 
 
 
-<meta name="description" content="迪米特原则的定义迪米特法则（Law of Demeter，LoD）也称为最少知识原则（Least Knowledge Principle，LKP），虽然名字不同，但描述的是同一个规则：(一个对象应该对其他对象有最少的了解)。通俗地讲，一个类应该对自己需要耦合或调用的类知道得最少，你（被耦合或调用的类）的内部是如何复杂都和我没关系，那是你的事情，我就知道你提供的这么多public方法，我就调用这么多">
+<meta name="description" content="迭代器模式迭代器模式(Iterator)又可以称为游标(Cursor)。
+意图提供一种方法顺序访问一个聚合对象中各个元素, 而又不需暴露该对象的内部表示。
+
+使用场景迭代器模式可用来：
+
+访问一个聚合对象的内容而无需暴露它的内部表示。
+支持对聚合对象的多种遍历。
+为遍历不同的聚合结构提供一个统一的接口(即, 支持多态迭代)。
+
+
+结构迭代器模式结构如下
+
+Iterator（迭代器） – 迭代器定义">
 <meta property="og:type" content="article">
-<meta property="og:title" content="面向对象的六大原则（六）">
-<meta property="og:url" content="http://billyyccc.github.io/2017/04/22/面向对象的六大原则（六）/index.html">
+<meta property="og:title" content="设计模式（22）：迭代器模式ITERATOR">
+<meta property="og:url" content="http://billyyccc.github.io/2017/06/15/设计模式（22）：迭代器模式ITERATOR/index.html">
 <meta property="og:site_name" content="BillyYccc">
-<meta property="og:description" content="迪米特原则的定义迪米特法则（Law of Demeter，LoD）也称为最少知识原则（Least Knowledge Principle，LKP），虽然名字不同，但描述的是同一个规则：(一个对象应该对其他对象有最少的了解)。通俗地讲，一个类应该对自己需要耦合或调用的类知道得最少，你（被耦合或调用的类）的内部是如何复杂都和我没关系，那是你的事情，我就知道你提供的这么多public方法，我就调用这么多">
-<meta property="og:updated_time" content="2017-04-28T17:22:11.413Z">
+<meta property="og:description" content="迭代器模式迭代器模式(Iterator)又可以称为游标(Cursor)。
+意图提供一种方法顺序访问一个聚合对象中各个元素, 而又不需暴露该对象的内部表示。
+
+使用场景迭代器模式可用来：
+
+访问一个聚合对象的内容而无需暴露它的内部表示。
+支持对聚合对象的多种遍历。
+为遍历不同的聚合结构提供一个统一的接口(即, 支持多态迭代)。
+
+
+结构迭代器模式结构如下
+
+Iterator（迭代器） – 迭代器定义">
+<meta property="og:image" content="http://billyyccc.github.io/2017/06/15/设计模式（22）：迭代器模式ITERATOR/Iterator1.png">
+<meta property="og:updated_time" content="2017-06-15T15:16:12.321Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="面向对象的六大原则（六）">
-<meta name="twitter:description" content="迪米特原则的定义迪米特法则（Law of Demeter，LoD）也称为最少知识原则（Least Knowledge Principle，LKP），虽然名字不同，但描述的是同一个规则：(一个对象应该对其他对象有最少的了解)。通俗地讲，一个类应该对自己需要耦合或调用的类知道得最少，你（被耦合或调用的类）的内部是如何复杂都和我没关系，那是你的事情，我就知道你提供的这么多public方法，我就调用这么多">
+<meta name="twitter:title" content="设计模式（22）：迭代器模式ITERATOR">
+<meta name="twitter:description" content="迭代器模式迭代器模式(Iterator)又可以称为游标(Cursor)。
+意图提供一种方法顺序访问一个聚合对象中各个元素, 而又不需暴露该对象的内部表示。
+
+使用场景迭代器模式可用来：
+
+访问一个聚合对象的内容而无需暴露它的内部表示。
+支持对聚合对象的多种遍历。
+为遍历不同的聚合结构提供一个统一的接口(即, 支持多态迭代)。
+
+
+结构迭代器模式结构如下
+
+Iterator（迭代器） – 迭代器定义">
+<meta name="twitter:image" content="http://billyyccc.github.io/2017/06/15/设计模式（22）：迭代器模式ITERATOR/Iterator1.png">
 
 
 
@@ -124,13 +162,13 @@
 
 
 
-  <link rel="canonical" href="http://billyyccc.github.io/2017/04/22/面向对象的六大原则（六）/"/>
+  <link rel="canonical" href="http://billyyccc.github.io/2017/06/15/设计模式（22）：迭代器模式ITERATOR/"/>
 
 
 
 
 
-  <title> 面向对象的六大原则（六） | BillyYccc </title>
+  <title> 设计模式（22）：迭代器模式ITERATOR | BillyYccc </title>
 </head>
 
 <body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
@@ -326,7 +364,7 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/04/22/面向对象的六大原则（六）/">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/06/15/设计模式（22）：迭代器模式ITERATOR/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Billy Yuan">
@@ -347,7 +385,7 @@
             
             
               
-                面向对象的六大原则（六）
+                设计模式（22）：迭代器模式ITERATOR
               
             
           </h1>
@@ -362,8 +400,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-22T12:24:48+08:00">
-                2017-04-22
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-15T14:59:30+08:00">
+                2017-06-15
               </time>
             
 
@@ -420,21 +458,46 @@
       
 
       
-        <h2 id="迪米特原则的定义"><a href="#迪米特原则的定义" class="headerlink" title="迪米特原则的定义"></a>迪米特原则的定义</h2><p>迪米特法则（Law of Demeter，LoD）也称为最少知识原则（Least Knowledge Principle，LKP），虽然名字不同，但描述的是同一个规则：(一个对象应该对其他对象有最少的了解)。通俗地讲，一个类应该对自己需要耦合或调用的类知道得最少，你（被耦合或调用的类）的内部是如何复杂都和我没关系，那是你的事情，我就知道你提供的这么多public方法，我就调用这么多，其他的我一概不关心。</p>
-<p>总结起来就是以下三点：</p>
+        <h2 id="迭代器模式"><a href="#迭代器模式" class="headerlink" title="迭代器模式"></a>迭代器模式</h2><p>迭代器模式(Iterator)又可以称为游标(Cursor)。</p>
+<h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p>提供一种方法顺序访问一个聚合对象中各个元素, 而又不需暴露该对象的内部表示。</p>
+<hr>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>迭代器模式可用来：</p>
 <ul>
-<li>Each unit should have only limited knowledge about other units: only units “closely” related to the current unit.(每个单元对于其他的单元只能拥有有限的知识：只是与当前单元紧密联系的单元。)</li>
-<li>Each unit should only talk to its friends; don’t talk to strangers.(每个单元只能和它的朋友交谈：不能和陌生单元交谈。)</li>
-<li>Only talk to your immediate friends.(只和自己直接的朋友交谈。)</li>
+<li>访问一个聚合对象的内容而无需暴露它的内部表示。</li>
+<li>支持对聚合对象的多种遍历。</li>
+<li>为遍历不同的聚合结构提供一个统一的接口(即, 支持多态迭代)。</li>
 </ul>
+<hr>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>迭代器模式结构如下<br><img src="/2017/06/15/设计模式（22）：迭代器模式ITERATOR/Iterator1.png" alt="ShowImage"></p>
+<ul>
+<li><p>Iterator（迭代器）<br><br> – 迭代器定义访问和遍历元素的接口。</p>
+</li>
+<li><p>ConcreteIterator（具体迭代器）<br><br> – 具体迭代器实现迭代器接口。<br><br> – 对该聚合遍历时跟踪当前位置。</p>
+</li>
+<li><p>Aggregate（聚合）<br><br> – 聚合定义创建相应迭代器对象的接口。</p>
+</li>
+<li><p>ConcreteAggregate（具体聚合）<br><br> – 具体聚合实现创建相应迭代器的接口，该操作返回ConcreteIterator的一个适当的实例。</p>
+</li>
+</ul>
+<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><p>ConcreteIterator跟踪聚合中的当前对象，并能够计算出待遍历的后继对象。</p>
+<hr>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p>迭代器模式有三个重要的作用：</p>
+<ol>
+<li><p>它支持以不同的方式遍历一个聚合复杂的聚合可用多种方式进行遍历。<br><br>迭代器模式使得改变遍历算法变得很容易: 仅需用一个不同的迭代器的实例代替原先的实例即可。你也可以自己定义迭代器的子类以支持新的遍历。</p>
+</li>
+<li><p>迭代器简化了聚合的接口<br><br>有了迭代器的遍历接口，聚合本身就不再需要类似的遍历接口了。这样就简化了聚合的接口。</p>
+</li>
+<li><p>在同一个聚合上可以有多个遍历<br><br>每个迭代器保持它自己的遍历状态。因此你可以同时进行多个遍历。</p>
+</li>
+</ol>
 <a id="more"></a>
-<h2 id="迪米特原则的示例"><a href="#迪米特原则的示例" class="headerlink" title="迪米特原则的示例"></a>迪米特原则的示例</h2><p>先来看这样的一个应用场景，我们现在的服务器允许用户来连接，当用户连接上并且认证通过后，它们就被包装在User类中。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> String userName;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="keyword">public</span> Socket socket;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">disconnect</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        socket.close();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 其它处理socket的方法</span></div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>我们要发送一条消息给用户，我们创建一个Message类:<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span> </span>&#123;</div><div class="line">    <span class="comment">//给用户发送"Hello..."消息</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(User user)</span> </span>&#123;</div><div class="line">        Socket s = user.socket;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            OutputStream outputStream = s.getOutputStream();</div><div class="line">            PrintWriter out = <span class="keyword">new</span> PrintWriter(outputStream);</div><div class="line">            out.println(<span class="string">"Hello..."</span>);</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            <span class="comment">//处理异常</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>这样的设计有没有问题呢,User类没有很好地把socket对象封装起来，并且将它暴露给了Message类。这样一来，如果我们以后想修改实现(比如使用一个异步的socket库)，我们就得在很多地方做修改。<br>除此之外，Message类中的sayHello()方法也有问题，直接与socket对象进行交互，它能访问一个第三方的对象(socket)并且直接使用，这样的设计当然是不合理的，它违背了迪米特原则中的第二条，与陌生单元直接进行了交流。那么我们现在修改一下<br>首先把User类的内部细节隐藏起来：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">User</span> </span>&#123;</div><div class="line">    <span class="keyword">public</span> String userName;</div><div class="line">    <span class="keyword">public</span> <span class="keyword">int</span> id;</div><div class="line">    <span class="comment">//首先把域变成私有的，对外隐藏socket细节</span></div><div class="line">    <span class="keyword">private</span> Socket socket;</div><div class="line"></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sendMessage</span><span class="params">(String message)</span> </span>&#123;</div><div class="line">        <span class="keyword">try</span> &#123;</div><div class="line">            OutputStream outputStream = socket.getOutputStream();</div><div class="line">            PrintWriter out = <span class="keyword">new</span> PrintWriter(outputStream);</div><div class="line">            out.println(message);</div><div class="line">        &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">            <span class="comment">//处理异常</span></div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="comment">// 其它处理socket的方法...</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">disconnect</span><span class="params">()</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">        socket.close();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>接下来修改Message类中的sayHello()方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">Message</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">sayHello</span><span class="params">(User user)</span> </span>&#123;</div><div class="line">        user.sendMessage(<span class="string">"Hello..."</span>);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>这样一来socket就对sayHello()方法完全不可见了，这样的设计就变得更健壮了。</p>
-<h2 id="迪米特原则的实践"><a href="#迪米特原则的实践" class="headerlink" title="迪米特原则的实践"></a>迪米特原则的实践</h2><p>迪米特法则的核心观念就是类间解耦，弱耦合，只有弱耦合了以后，类的复用率才可以提高。其要求的结果就是产生了大量的中转或跳转类，导致系统的复杂性提高，同时也为维护带来了难度。在采用迪米特法则时需要反复权衡，既做到让结构清晰，又做到高内聚低耦合。</p>
-<h2 id="参考代码"><a href="#参考代码" class="headerlink" title="参考代码"></a><a href="https://github.com/BillyYccc/DesignPatternsPrinciples/tree/master/LoDDemo" target="_blank" rel="external">参考代码</a></h2>
+<h2 id="迭代器模式实现-Implement"><a href="#迭代器模式实现-Implement" class="headerlink" title="迭代器模式实现(Implement)"></a>迭代器模式实现(Implement)</h2><h3 id="案例"><a href="#案例" class="headerlink" title="案例"></a>案例</h3><p>用迭代器模式创建一个管理书名的列表。</p>
+<h4 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h4><p>聚合接口<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Aggregate</span> </span>&#123;</div><div class="line">    <span class="function">Iterator <span class="title">getIterator</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>迭代器接口<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Iterator</span> </span>&#123;</div><div class="line">    <span class="function"><span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line">    <span class="function">Object <span class="title">next</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>ConcreteAggregate类，图书列表，ConcreteIterator是列表的内部类<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">BookList</span> <span class="keyword">implements</span> <span class="title">Aggregate</span> </span>&#123;</div><div class="line">    <span class="keyword">private</span> String books[] = &#123;<span class="string">"Java Core"</span>, <span class="string">"Thinking in Java"</span>, <span class="string">"Spring in Action"</span>, <span class="string">"Spring Boot in Action"</span>&#125;;</div><div class="line"></div><div class="line">    <span class="meta">@Override</span></div><div class="line">    <span class="function"><span class="keyword">public</span> Iterator <span class="title">getIterator</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">new</span> UserNameIterator();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">private</span> <span class="class"><span class="keyword">class</span> <span class="title">UserNameIterator</span> <span class="keyword">implements</span> <span class="title">Iterator</span> </span>&#123;</div><div class="line">        <span class="keyword">int</span> index;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">hasNext</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">return</span> index &lt; books.length;</div><div class="line">        &#125;</div><div class="line"></div><div class="line">        <span class="meta">@Override</span></div><div class="line">        <span class="function"><span class="keyword">public</span> Object <span class="title">next</span><span class="params">()</span> </span>&#123;</div><div class="line">            <span class="keyword">if</span> (<span class="keyword">this</span>.hasNext()) &#123;</div><div class="line">                <span class="keyword">return</span> books[index++];</div><div class="line">            &#125;</div><div class="line">            <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>使用迭代器来遍历元素<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">IteratorDemoTest</span> </span>&#123;</div><div class="line">    <span class="meta">@Test</span></div><div class="line">    <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">bookListTest</span><span class="params">()</span> </span>&#123;</div><div class="line">        BookList bookList = <span class="keyword">new</span> BookList();</div><div class="line">        Iterator iterator = bookList.getIterator();</div><div class="line">        <span class="keyword">while</span> (iterator.hasNext()) &#123;</div><div class="line">            String bookName = (String) iterator.next();</div><div class="line">            System.out.println(<span class="string">"BookName : "</span> + bookName);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Java语言JDK源码中的集合大量用到了迭代器模式。以ArrayList为例，ArrayList实现了List接口,List接口继承Collection接口,Collection接口又继承了Iterable接口，Iterable接口中声明了iterator方法，返回一个Iterator类型；而在ArrayList类中,iterator方法返回一个实现Iterator接口的内部类Itr对象，在Itr中实现了Iterator声明的方法，这里就是一个迭代器模式的实例。</p>
+<h2 id="参考代码"><a href="#参考代码" class="headerlink" title="参考代码"></a><a href="https://github.com/BillyYccc/DesignPatternsExamples/tree/master/IteratorDemo" target="_blank" rel="external">参考代码</a></h2>
       
     </div>
 
@@ -497,8 +560,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/04/21/面向对象的六大原则（五）/" rel="next" title="面向对象的六大原则（五）">
-                <i class="fa fa-chevron-left"></i> 面向对象的六大原则（五）
+              <a href="/2017/06/13/设计模式（21）：观察者模式OBSERVER/" rel="next" title="设计模式（21）：观察者模式OBSERVER">
+                <i class="fa fa-chevron-left"></i> 设计模式（21）：观察者模式OBSERVER
               </a>
             
           </div>
@@ -506,10 +569,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/04/27/设计模式（1）/" rel="prev" title="设计模式（1）">
-                设计模式（1） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -640,7 +699,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#迪米特原则的定义"><span class="nav-number">1.</span> <span class="nav-text">迪米特原则的定义</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迪米特原则的示例"><span class="nav-number">2.</span> <span class="nav-text">迪米特原则的示例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迪米特原则的实践"><span class="nav-number">3.</span> <span class="nav-text">迪米特原则的实践</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考代码"><span class="nav-number">4.</span> <span class="nav-text">参考代码</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代器模式"><span class="nav-number">1.</span> <span class="nav-text">迭代器模式</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#意图"><span class="nav-number">1.1.</span> <span class="nav-text">意图</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#使用场景"><span class="nav-number">1.2.</span> <span class="nav-text">使用场景</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结构"><span class="nav-number">1.3.</span> <span class="nav-text">结构</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#协作"><span class="nav-number">1.4.</span> <span class="nav-text">协作</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#效果"><span class="nav-number">1.5.</span> <span class="nav-text">效果</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#迭代器模式实现-Implement"><span class="nav-number">2.</span> <span class="nav-text">迭代器模式实现(Implement)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#案例"><span class="nav-number">2.1.</span> <span class="nav-text">案例</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#代码实现"><span class="nav-number">2.1.1.</span> <span class="nav-text">代码实现</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考代码"><span class="nav-number">4.</span> <span class="nav-text">参考代码</span></a></li></ol></div>
             
 
           </div>
