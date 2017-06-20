@@ -324,6 +324,194 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/06/20/设计模式（25）：解释器模式INTERPRETER/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/06/20/设计模式（25）：解释器模式INTERPRETER/" itemprop="url">
+                  设计模式（25）：解释器模式INTERPRETER
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-20T22:05:15+08:00">
+                2017-06-20
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
+                    <span itemprop="name">DesignPatterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="解释器模式"><a href="#解释器模式" class="headerlink" title="解释器模式"></a>解释器模式</h2><h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p>给定一个语言，定义它的文法的一种表示，并定义一个解释器，这个解释器使用该表示来解释语言中的句子。</p>
+<hr>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>当有一个语言需要解释执行, 并且你可将该语言中的句子表示为一个抽象语法树时，可使用解释器模式。而当存在以下情况时该模式效果最好：</p>
+<ul>
+<li>该文法简单对于复杂的文法, 文法的类层次变得庞大而无法管理。此时语法分析程序生成器这样的工具是更好的选择。它们无需构建抽象语法树即可解释表达式, 这样可以节省空间而且还可能节省时间。</li>
+<li>效率不是一个关键问题最高效的解释器通常不是通过直接解释语法分析树实现的, 而是首先将它们转换成另一种形式。例如，正则表达式通常被转换成状态机。但即使在这种情况下, 转换器仍可用解释器模式实现, 该模式仍是有用的。</li>
+</ul>
+<hr>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>解释器模式结构如下<br><img src="/2017/06/20/设计模式（25）：解释器模式INTERPRETER/Interpreter1.png" alt="ShowImage"></p>
+<ul>
+<li><p>AbstractExpression(抽象表达式)<br><br> – 声明一个抽象的解释操作，这个接口为抽象语法树中所有的节点所共享。</p>
+</li>
+<li><p>TerminalExpression(终结符表达式)<br><br> – 实现与文法中的终结符相关联的解释操作。<br><br> – 一个句子中的每个终结符需要该类的一个实例。</p>
+</li>
+<li><p>NonterminalExpression(非终结符表达式)<br><br> – 对文法中的每一条规则R ::= R1R2. . . Rn都需要一个NonterminalExpression类。<br><br> – 为从R1到Rn的每个符号都维护一个AbstractExpression类型的实例变量。<br><br> – 为文法中的非终结符实现解释(Interpret)操作。解释(Interpret)一般要递归地调用表示R1到Rn的那些对象的解释操作。</p>
+</li>
+<li><p>Context(上下文)<br><br> – 包含解释器之外的一些全局信息。</p>
+</li>
+<li><p>Client(客户端)<br><br> – 构建(或被给定) 表示该文法定义的语言中一个特定的句子的抽象语法树。该抽象语法树由NonterminalExpression和TerminalExpression的实例装配而成。<br><br> – 调用解释操作。</p>
+</li>
+</ul>
+<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><ul>
+<li>Client构建(或被给定)一个句子, 它是NonterminalExpression和TerminalExpression的实例的一个抽象语法树，然后初始化上下文并调用解释操作。</li>
+<li>每一非终结符表达式节点定义相应子表达式的解释操作。而各终结符表达式的解释操作构成了递归的基础。</li>
+<li>每一节点的解释操作用上下文来存储和访问解释器的状态。</li>
+</ul>
+<hr>
+<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p>解释器模式有下列的优点和不足:</p>
+<ul>
+<li><p>易于改变和扩展文法<br><br> – 因为该模式使用类来表示文法规则, 你可使用继承来改变或扩展该文法。已有的表达式可被增量式地改变,而新的表达式可定义为旧表达式的变体。</p>
+</li>
+<li><p>也易于实现文法<br><br> – 定义抽象语法树中各个节点的类的实现大体类似。这些类易于直接编写，通常它们也可用一个编译器或语法分析程序生成器自动生成。</p>
+</li>
+<li><p>复杂的文法难以维护<br><br> – 解释器模式为文法中的每一条规则至少定义了一个类(使用BNF定义的文法规则需要更多的类)。因此包含许多规则的文法可能难以管理和维护。可应用其他的设计模式来缓解这一问题。但当文法非常复杂时, 其他的技术如语法分析程序或编译器生成器更为合适。</p>
+</li>
+<li><p>增加了新的解释表达式的方式<br><br> – 解释器模式使得实现新表达式“计算”变得容易。例如，你可以在表达式类上定义一个新的操作以支持优美打印或表达式的类型检查。如果你经常创建新的解释表达式的方式, 那么可以考虑使用Visitor模式以避免修改这些代表文法的类。</p>
+</li>
+</ul>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/06/20/设计模式（25）：解释器模式INTERPRETER/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+       
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/06/19/设计模式（24）：访问者模式VISITOR/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1958,194 +2146,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/06/02/设计模式（15）：策略模式STRATEGY/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Billy Yuan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BillyYccc">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/06/02/设计模式（15）：策略模式STRATEGY/" itemprop="url">
-                  设计模式（15）：策略模式STRATEGY
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-02T13:56:00+08:00">
-                2017-06-02
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
-                    <span itemprop="name">DesignPatterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="策略模式"><a href="#策略模式" class="headerlink" title="策略模式"></a>策略模式</h2><p>策略模式(Strategy Pattern)又名政策模式(Policy Pattern)</p>
-<h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p>定义一系列的算法,把它们一个个封装起来, 并且使它们可相互替换。本模式使得算法可独立于使用它的客户而变化。</p>
-<hr>
-<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>当存在以下情况时使用Strategy模式</p>
-<ul>
-<li>许多相关的类仅仅是行为有异。“策略”提供了一种用多个行为中的一个行为来配置一个类的方法。</li>
-<li>需要使用一个算法的不同变体。例如，你可能会定义一些反映不同的空间/时间权衡的算法。当这些变体实现为一个算法的类层次时 ,可以使用策略模式。</li>
-<li>算法使用客户不应该知道的数据。可使用策略模式以避免暴露复杂的、与算法相关的数据结构。</li>
-<li>一个类定义了多种行为, 并且这些行为在这个类的操作中以多个条件语句的形式出现。将相关的条件分支移入它们各自的Strategy类中以代替这些条件语句。</li>
-</ul>
-<hr>
-<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>策略模式结构如下<br><img src="/2017/06/02/设计模式（15）：策略模式STRATEGY/Strategy1.png" alt="ShowImage"></p>
-<ul>
-<li><p>Strategy<br><br> – 定义所有支持的算法的公共接口。Context使用这个接口来调用某ConcreteStrategy定义的算法。</p>
-</li>
-<li><p>ConcreteStrategy<br><br> – 以Strategy接口实现某具体算法。</p>
-</li>
-<li><p>Context<br><br> – 用一个ConcreteStrategy对象来配置。<br><br> – 维护一个对Strategy对象的引用。<br><br> – 可定义一个接口来让Strategy访问它的数据。</p>
-</li>
-</ul>
-<hr>
-<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><ul>
-<li><p>Strategy和Context相互作用以实现选定的算法。当算法被调用时, Context可以将该算法所需要的所有数据都传递给该Strategy。或者，Context可以将自身作为一个参数传递给Strategy操作。这就让Strategy在需要时可以回调Context。</p>
-</li>
-<li><p>Context将它的客户的请求转发给它的Strategy。客户通常创建并传递一个ConcreteStrategy对象给该Context；这样, 客户仅与Context交互。通常有一系列的ConcreteStrategy类可供客户从中选择。</p>
-</li>
-</ul>
-<hr>
-<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><ul>
-<li>Strategy类层次为Context定义了一系列的可供重用的算法或行为。将Context与Strategy层次进行了解耦，不需要通过继承Context增加Context子类来完成策略的实现，这样易于扩展。</li>
-<li>消除了大量条件语句，大量的使用条件语句使得代码看上去十分混乱</li>
-<li>Strategy模式可以提供相同行为的不同实现。</li>
-</ul>
-<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><ul>
-<li>Client要想选择一个合适的Strategy，就必须去了解Strategy的具体区别，此时可能会向Client暴露具体的实现</li>
-<li>增加了Strategy与Context之间的通信开销</li>
-<li>增加了对象的数量</li>
-</ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/06/02/设计模式（15）：策略模式STRATEGY/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-       
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2195,7 +2195,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">34</span>
+                <span class="site-state-item-count">35</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
