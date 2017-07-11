@@ -1,0 +1,959 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java8,Java,JDK," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="流的概念流(Stream)是Java8中新增加的API中的一员。流(Stream)通过声明式方式来处理集合(Collection),并且支持并行化操作。先来看一个例子。
+假如现在有一个Student列表，Student的属性包括姓名name,年龄age,分数mark，现在要筛选出年龄小于20岁并且分数大于80的学生的姓名名单，以前的做法是这样的12345678List&amp;lt;Student&amp;gt;">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Java8新特性（二）：流Stream">
+<meta property="og:url" content="http://billyyccc.github.io/2017/07/10/Java8新特性（二）：流Stream/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="流的概念流(Stream)是Java8中新增加的API中的一员。流(Stream)通过声明式方式来处理集合(Collection),并且支持并行化操作。先来看一个例子。
+假如现在有一个Student列表，Student的属性包括姓名name,年龄age,分数mark，现在要筛选出年龄小于20岁并且分数大于80的学生的姓名名单，以前的做法是这样的12345678List&amp;lt;Student&amp;gt;">
+<meta property="og:updated_time" content="2017-07-11T15:23:59.349Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Java8新特性（二）：流Stream">
+<meta name="twitter:description" content="流的概念流(Stream)是Java8中新增加的API中的一员。流(Stream)通过声明式方式来处理集合(Collection),并且支持并行化操作。先来看一个例子。
+假如现在有一个Student列表，Student的属性包括姓名name,年龄age,分数mark，现在要筛选出年龄小于20岁并且分数大于80的学生的姓名名单，以前的做法是这样的12345678List&amp;lt;Student&amp;gt;">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2017/07/10/Java8新特性（二）：流Stream/"/>
+
+
+
+
+
+  <title> Java8新特性（二）：流Stream | BillyYccc </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99992019-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/07/10/Java8新特性（二）：流Stream/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Java8新特性（二）：流Stream
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-10T12:13:38+08:00">
+                2017-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="流的概念"><a href="#流的概念" class="headerlink" title="流的概念"></a>流的概念</h2><p>流(Stream)是Java8中新增加的API中的一员。流(Stream)通过声明式方式来处理集合(Collection),并且支持并行化操作。先来看一个例子。</p>
+<p>假如现在有一个Student列表，Student的属性包括姓名name,年龄age,分数mark，现在要筛选出年龄小于20岁并且分数大于80的学生的姓名名单，以前的做法是这样的<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">List&lt;Student&gt; studentList = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"><span class="comment">//增加studentList数据</span></div><div class="line">List&lt;String&gt; studentNameList = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"><span class="keyword">for</span> (Student student : studentList) &#123;</div><div class="line">    <span class="keyword">if</span> (student.getAge() &lt; <span class="number">20</span> &amp;&amp; student.getMark() &gt; <span class="number">80</span>) &#123;</div><div class="line">        studentNameList.add(student.getName());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>使用了流以后，代码变成这样了<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">studentNameList = studentList.stream()</div><div class="line">                .filter(student -&gt; student.getAge() &lt; <span class="number">20</span>)</div><div class="line">                .filter(student -&gt; student.getMark() &gt; <span class="number">80</span>)</div><div class="line">                .map(Student::getName)</div><div class="line">                .collect(Collectors.toList());</div></pre></td></tr></table></figure></p>
+<p>通过Stream API来操作集合，这种方式有以下几个好处</p>
+<ul>
+<li>声明性<br>比起自己实现的方式更简洁易读</li>
+<li>复合性<br>具有更佳的灵活性，可以将多个处理链式调用起来</li>
+<li>并行化处理<br>支持并行化操作，性能更好</li>
+</ul>
+<hr>
+<h2 id="流的特性"><a href="#流的特性" class="headerlink" title="流的特性"></a>流的特性</h2><p>在使用流(Stream)之前，先需要了解流的一些特性。</p>
+<h4 id="懒惰特性-laziness"><a href="#懒惰特性-laziness" class="headerlink" title="懒惰特性(laziness)"></a>懒惰特性(laziness)</h4><p>Stream的操作并不会立即执行，只有在真正需要结果的时候才会执行。</p>
+<h4 id="一次消费"><a href="#一次消费" class="headerlink" title="一次消费"></a>一次消费</h4><p>Stream只能被消费一次，比如使用多次foreach进行多次遍历是不行的，只能遍历一次，如果要再遍历只能重新生成流。</p>
+<h4 id="流可以是无限的"><a href="#流可以是无限的" class="headerlink" title="流可以是无限的"></a>流可以是无限的</h4><p>集合是有固定大小的，而流(Stream)可以是无限的。limit和findAny这种短路操作可以对无限流完成很快的计算。</p>
+<h4 id="使用内部迭代-internal-iteration"><a href="#使用内部迭代-internal-iteration" class="headerlink" title="使用内部迭代(internal iteration)"></a>使用内部迭代(internal iteration)</h4><p>在以前的版本中迭代往往都是外部迭代，需要用户通过比如(for,foreach)这样的循环操作去手动迭代，而Stream API则使用内部迭代，替用户完成了迭代的过程，这样也不用去保存一堆中间变量。</p>
+<h4 id="中间操作-intermediate-operations-与终端操作-terminal-operations"><a href="#中间操作-intermediate-operations-与终端操作-terminal-operations" class="headerlink" title="中间操作(intermediate operations)与终端操作(terminal operations)"></a>中间操作(intermediate operations)与终端操作(terminal operations)</h4><p>中间操作通常返回类型是Stream，中间操作会返回一个新的Stream，终端操作会返回用户需要的类型。</p>
+<table>
+<thead>
+<tr>
+<th><strong>操作类型</strong></th>
+<th><strong>操作方法</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>中间操作(intermediate operations)</td>
+<td>filter,map,flatMap,distinct,sorted,peek,limit,skip,<br>concat,generate,empty…</td>
+</tr>
+<tr>
+<td>终端操作(terminal operations)</td>
+<td>forEach,toArray,reduce,collect,min,max,count,<br>anyMatch,allMatch,noneMatch,findFirst,findAny…</td>
+</tr>
+</tbody>
+</table>
+<hr>
+<a id="more"></a>
+<h2 id="常用的流操作"><a href="#常用的流操作" class="headerlink" title="常用的流操作"></a>常用的流操作</h2><p>本节介绍一些常见的流操作，其中limit,findFirst,findAny,anyMatch,allMatch,noneMatch均是短路操作(Short-circuiting)，短路操作是指一旦满足条件语句将不再执行下去，不一定操作整个流就可以结束。</p>
+<h3 id="中间操作"><a href="#中间操作" class="headerlink" title="中间操作"></a>中间操作</h3><ul>
+<li><h4 id="filter"><a href="#filter" class="headerlink" title="filter"></a>filter</h4><p>filter方法在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function">Stream&lt;T&gt; <span class="title">filter</span><span class="params">(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate)</span></span>;</div></pre></td></tr></table></figure>
+<p>该操作会接受一个谓词(Predicate)作为参数并且返回满足谓词的元素的流<br>举例：筛选出满足学生年龄小于20的流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">studentList.stream().filter(student -&gt; student.getAge() &lt; <span class="number">20</span>);</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="map"><a href="#map" class="headerlink" title="map"></a>map</h4><p>map方法在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;R&gt; <span class="function">Stream&lt;R&gt; <span class="title">map</span><span class="params">(Function&lt;? <span class="keyword">super</span> T, ? extends R&gt; mapper)</span></span>;</div></pre></td></tr></table></figure>
+<p>该操作会接受一个Function作为参数并且返回新的类型的元素所组成的流<br>举例：筛选出所有学生的年龄的流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">studentList.stream().map(Student::getAge);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>使用mapToInt,mapToLong,mapToDouble可以避免装箱的开销。</p>
+<ul>
+<li><h4 id="flatMap"><a href="#flatMap" class="headerlink" title="flatMap"></a>flatMap</h4><p>flatMap方法在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">&lt;R&gt; <span class="function">Stream&lt;R&gt; <span class="title">flatMap</span><span class="params">(Function&lt;? <span class="keyword">super</span> T, ? extends Stream&lt;? extends R&gt;&gt; mapper)</span></span>;</div></pre></td></tr></table></figure>
+<p>该操作会将一个由多个列表组成的流转换成一个单独的流而不是多个流(扁平化)<br>举例：将两个学生列表合并组成一条学生的流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Stream.of(studentList1, studentList2).flatMap(Collection::stream);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>使用flatMapToInt,flatMapToLong,flatMapToDouble可以转换成IntStream,LongStream,DoubleStream,避免装箱的开销。</p>
+<ul>
+<li><h4 id="distinct"><a href="#distinct" class="headerlink" title="distinct"></a>distinct</h4><p>disinct方法在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function">Stream&lt;T&gt; <span class="title">distinct</span><span class="params">()</span></span>;</div></pre></td></tr></table></figure>
+<p>该操作会返回一个元素各个之间不相同(根据hashCode和equals方法)的流。<br>举例：筛选出所有学生的年龄并且去掉重复</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">studentList.stream()</div><div class="line">                .map(Student::getAge)</div><div class="line">                .distinct();</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="sorted"><a href="#sorted" class="headerlink" title="sorted"></a>sorted</h4><p>sorted方法在Stream接口中的声明，有一个重载方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function">Stream&lt;T&gt; <span class="title">sorted</span><span class="params">()</span></span>;</div><div class="line"><span class="function">Stream&lt;T&gt; <span class="title">sorted</span><span class="params">(Comparator&lt;? <span class="keyword">super</span> T&gt; comparator)</span></span>;</div></pre></td></tr></table></figure>
+<p>该操作可以使用默认的Comparator也可以使用自定义的Comparator。<br>举例：筛选出所有学生的年龄并且按从大到小的顺序排列</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">studentList.stream()</div><div class="line">                .map(Student::getAge)</div><div class="line">                .sorted(Comparator.reverseOrder());</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="limit"><a href="#limit" class="headerlink" title="limit"></a>limit</h4><p>limit方法在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function">Stream&lt;T&gt; <span class="title">limit</span><span class="params">(<span class="keyword">long</span> maxSize)</span></span>;</div></pre></td></tr></table></figure>
+<p>该操作会接受一个size长度n，然后返回前n个元素所组成的流。<br>举例：筛选出年龄最小的10个学生</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">studentList.stream()</div><div class="line">                .sorted(Comparator.comparing(Student::getAge))</div><div class="line">                .limit(<span class="number">10</span>);</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="skip"><a href="#skip" class="headerlink" title="skip"></a>skip</h4><p>skip方法在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function">Stream&lt;T&gt; <span class="title">skip</span><span class="params">(<span class="keyword">long</span> n)</span></span>;</div></pre></td></tr></table></figure>
+<p>该操作会接受一个size长度n，然后返回去掉前n个元素所组成的流<br>举例：去掉前10个年龄最小的学生</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">studentList.stream()</div><div class="line">                .sorted(Comparator.comparing(Student::getAge))</div><div class="line">                .skip(<span class="number">10</span>);</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="empty"><a href="#empty" class="headerlink" title="empty"></a>empty</h4><p>empty方法在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span>&lt;T&gt; Stream&lt;T&gt; <span class="title">empty</span><span class="params">()</span> </span>&#123;</div><div class="line">        <span class="keyword">return</span> StreamSupport.stream(Spliterators.&lt;T&gt;emptySpliterator(), <span class="keyword">false</span>);</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>该操作会返回一个空元素组成的流<br>举例：返回一个空流</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Stream.empty();</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="终端操作"><a href="#终端操作" class="headerlink" title="终端操作"></a>终端操作</h3><ul>
+<li><h4 id="forEach"><a href="#forEach" class="headerlink" title="forEach"></a>forEach</h4><p>forEach方法在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">forEach</span><span class="params">(Consumer&lt;? <span class="keyword">super</span> T&gt; action)</span></span>;</div></pre></td></tr></table></figure>
+<p>该操作会对每个元素进行Consumer操作<br>举例：对学生流的每个学生姓名进行打印操作</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">studentList.stream().forEach(student -&gt; System.out.println(student.getName()));</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="toArray"><a href="#toArray" class="headerlink" title="toArray"></a>toArray</h4><p>toArray方法在Stream接口中的声明，有一个重载的方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Object[] toArray();</div><div class="line">&lt;A&gt; A[] toArray(IntFunction&lt;A[]&gt; generator);</div></pre></td></tr></table></figure>
+<p>该操作会将流转换成数组<br>举例：将学生流中的学生转换为学生数组</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Student[] students = studentList.stream().toArray(Student[]::<span class="keyword">new</span>);</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="min-max-count"><a href="#min-max-count" class="headerlink" title="min,max,count"></a>min,max,count</h4><p>min,max,count在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function">Optional&lt;T&gt; <span class="title">min</span><span class="params">(Comparator&lt;? <span class="keyword">super</span> T&gt; comparator)</span></span>;</div><div class="line"><span class="function">Optional&lt;T&gt; <span class="title">max</span><span class="params">(Comparator&lt;? <span class="keyword">super</span> T&gt; comparator)</span></span>;</div><div class="line"><span class="function"><span class="keyword">long</span> <span class="title">count</span><span class="params">()</span></span>;</div></pre></td></tr></table></figure>
+<p>这三个操作一目了然，分别是求最小值，最大值，数量。min和max比较的基准是传入的参数Comparator<br>举例：求学生年龄最小值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Optional&lt;Integer&gt; minAge = studentList.stream()</div><div class="line">                .map(Student::getAge)</div><div class="line">                .min(Comparator.naturalOrder());</div></pre></td></tr></table></figure>
+<p>举例：求学生年龄最大值</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> maxAge = studentList.stream()</div><div class="line">                .map(Student::getAge)</div><div class="line">                .max(Comparator.naturalOrder())</div><div class="line">                .get();</div></pre></td></tr></table></figure>
+<p>举例：求学生总数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">long</span> studentCount = studentList.stream().count();</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="reduce"><a href="#reduce" class="headerlink" title="reduce"></a>reduce</h4><p>reduce方法在Stream接口中的声明，并且一共有三个方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line"><span class="function">T <span class="title">reduce</span><span class="params">(T identity, BinaryOperator&lt;T&gt; accumulator)</span></span>;</div><div class="line"><span class="function">Optional&lt;T&gt; <span class="title">reduce</span><span class="params">(BinaryOperator&lt;T&gt; accumulator)</span></span>;</div><div class="line"> &lt;U&gt; <span class="function">U <span class="title">reduce</span><span class="params">(U identity,</span></span></div><div class="line">                 BiFunction&lt;U, ? <span class="keyword">super</span> T, U&gt; accumulator,</div><div class="line">                 BinaryOperator&lt;U&gt; combiner);</div></pre></td></tr></table></figure>
+<p>reduce方法传入一个初始值，依照定义的运算规则(BinaryOperator…)将流中的元素进行组合，一直到最后一个元素，这有点类似递归的思想。Stream中的min,max,average,sum等都是特殊的reduce操作。<br>举例：将学生的平均分打印出来</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">double</span> sum = studentList.stream()</div><div class="line">                .map(Student::getMark)</div><div class="line">                .reduce(<span class="number">0.0</span>, Double::sum);</div><div class="line">        System.out.println(sum / studentList.size());</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="anyMatch-allMatch-noneMatch"><a href="#anyMatch-allMatch-noneMatch" class="headerlink" title="anyMatch,allMatch,noneMatch"></a>anyMatch,allMatch,noneMatch</h4><p>anyMatch,allMatch,noneMatch在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">anyMatch</span><span class="params">(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate)</span></span>;</div><div class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">allMatch</span><span class="params">(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate)</span></span>;</div><div class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">noneMatch</span><span class="params">(Predicate&lt;? <span class="keyword">super</span> T&gt; predicate)</span></span>;</div></pre></td></tr></table></figure>
+<p>anyMatch传参一个谓词，判断流中是否有任何满足谓词条件的元素，并返回一个布尔值；<br>allMatch传参一个谓词，判断流中是否所有元素都满足谓词条件，并返回一个布尔值；<br>noneMatch传参一个谓词，判断流中是否所有元素都不满足谓词条件，并返回一个布尔值；<br>举例：找出是否有年龄大于25的学生</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">boolean</span> isAnyStudentOlderThan25 = studentList.stream()</div><div class="line">                .anyMatch(student -&gt; student.getAge() &gt; <span class="number">25</span>);</div></pre></td></tr></table></figure>
+<p>举例：是否所有学生分数都大于60</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">boolean</span> isAllStudentPassed = studentList.stream()</div><div class="line">                .allMatch(student -&gt; student.getMark() &gt;= <span class="number">60</span>);</div></pre></td></tr></table></figure>
+<p>举例：是否所有学生都没有缺考(分数=0)</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">boolean</span> doAllStudentsTakeExams = studentList.stream()</div><div class="line">                .noneMatch(student -&gt; student.getMark() == <span class="number">0</span>);</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="findFirst-findAny"><a href="#findFirst-findAny" class="headerlink" title="findFirst,findAny"></a>findFirst,findAny</h4><p>findFirst,findAny在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="function">Optional&lt;T&gt; <span class="title">findFirst</span><span class="params">()</span></span>;</div><div class="line"><span class="function">Optional&lt;T&gt; <span class="title">findAny</span><span class="params">()</span></span>;</div></pre></td></tr></table></figure>
+<p>findFirst是找出流中的第一个元素。<br>findAny是找出流中任意一个元素，在非并行条件下，    findAny往往是找到第一个元素，但不能保证一定是这样，在并行条件下计算，findAny就不一定是第一个元素，它可能是流中任意一个元素。<br>举例：找出学生流中第一个学生</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Optional&lt;Student&gt; firstStudent = studentList.stream()</div><div class="line">                .findFirst();</div></pre></td></tr></table></figure>
+<p>举例：找出学生流中任意一个学生</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Optional&lt;Student&gt; anyStudent = studentList.stream()</div><div class="line">                .findAny();</div></pre></td></tr></table></figure>
+</li>
+<li><h4 id="collect"><a href="#collect" class="headerlink" title="collect"></a>collect</h4><p>collect在Stream接口中的声明</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">&lt;R, A&gt; <span class="function">R <span class="title">collect</span><span class="params">(Collector&lt;? <span class="keyword">super</span> T, A, R&gt; collector)</span></span>;</div><div class="line">&lt;R&gt; <span class="function">R <span class="title">collect</span><span class="params">(Supplier&lt;R&gt; supplier,</span></span></div><div class="line">                  BiConsumer&lt;R, ? <span class="keyword">super</span> T&gt; accumulator,</div><div class="line">                  BiConsumer&lt;R, R&gt; combiner);</div></pre></td></tr></table></figure>
+<p>collect将流的数据集进行收集，返回用户所需要的类型。<br>举例：使用Collector的toList方法生成学生流的姓名列表</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">List&lt;String&gt; studentNameList = studentList.stream()</div><div class="line">                .map(Student::getName)</div><div class="line">                .collect(Collectors.toList());</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<hr>
+<h2 id="并行化处理"><a href="#并行化处理" class="headerlink" title="并行化处理"></a>并行化处理</h2><p>Java8支持对Collection进行并行化操作，调用Collection的parallelStream方法，可以将Collection转换为并行流，或者对流调用parallel方法，也可以将流转换为并行流。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">studentList.stream().parallel();</div><div class="line">studentList.parallelStream();</div></pre></td></tr></table></figure></p>
+
+      
+    </div>
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+       
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java8/" rel="tag"># Java8</a>
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/JDK/" rel="tag"># JDK</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/05/Java8新特性（一）：函数式接口与Lambda表达式/" rel="next" title="Java8新特性（一）：函数式接口与Lambda表达式">
+                <i class="fa fa-chevron-left"></i> Java8新特性（一）：函数式接口与Lambda表达式
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Billy Yuan" />
+          <p class="site-author-name" itemprop="name">Billy Yuan</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">37</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">10</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#流的概念"><span class="nav-number">1.</span> <span class="nav-text">流的概念</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#流的特性"><span class="nav-number">2.</span> <span class="nav-text">流的特性</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#懒惰特性-laziness"><span class="nav-number">2.0.1.</span> <span class="nav-text">懒惰特性(laziness)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#一次消费"><span class="nav-number">2.0.2.</span> <span class="nav-text">一次消费</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#流可以是无限的"><span class="nav-number">2.0.3.</span> <span class="nav-text">流可以是无限的</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用内部迭代-internal-iteration"><span class="nav-number">2.0.4.</span> <span class="nav-text">使用内部迭代(internal iteration)</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#中间操作-intermediate-operations-与终端操作-terminal-operations"><span class="nav-number">2.0.5.</span> <span class="nav-text">中间操作(intermediate operations)与终端操作(terminal operations)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#常用的流操作"><span class="nav-number">3.</span> <span class="nav-text">常用的流操作</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#中间操作"><span class="nav-number">3.1.</span> <span class="nav-text">中间操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#filter"><span class="nav-number">3.1.1.</span> <span class="nav-text">filter</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#map"><span class="nav-number">3.1.2.</span> <span class="nav-text">map</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#flatMap"><span class="nav-number">3.1.3.</span> <span class="nav-text">flatMap</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#distinct"><span class="nav-number">3.1.4.</span> <span class="nav-text">distinct</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sorted"><span class="nav-number">3.1.5.</span> <span class="nav-text">sorted</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#limit"><span class="nav-number">3.1.6.</span> <span class="nav-text">limit</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#skip"><span class="nav-number">3.1.7.</span> <span class="nav-text">skip</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#empty"><span class="nav-number">3.1.8.</span> <span class="nav-text">empty</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#终端操作"><span class="nav-number">3.2.</span> <span class="nav-text">终端操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#forEach"><span class="nav-number">3.2.1.</span> <span class="nav-text">forEach</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#toArray"><span class="nav-number">3.2.2.</span> <span class="nav-text">toArray</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#min-max-count"><span class="nav-number">3.2.3.</span> <span class="nav-text">min,max,count</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#reduce"><span class="nav-number">3.2.4.</span> <span class="nav-text">reduce</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#anyMatch-allMatch-noneMatch"><span class="nav-number">3.2.5.</span> <span class="nav-text">anyMatch,allMatch,noneMatch</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#findFirst-findAny"><span class="nav-number">3.2.6.</span> <span class="nav-text">findFirst,findAny</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#collect"><span class="nav-number">3.2.7.</span> <span class="nav-text">collect</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#并行化处理"><span class="nav-number">4.</span> <span class="nav-text">并行化处理</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

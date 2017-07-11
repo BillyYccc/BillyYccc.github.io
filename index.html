@@ -324,6 +324,191 @@
   
 
   <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/07/10/Java8新特性（二）：流Stream/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
+                <a class="post-title-link" href="/2017/07/10/Java8新特性（二）：流Stream/" itemprop="url">
+                  Java8新特性（二）：流Stream
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-10T12:13:38+08:00">
+                2017-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="流的概念"><a href="#流的概念" class="headerlink" title="流的概念"></a>流的概念</h2><p>流(Stream)是Java8中新增加的API中的一员。流(Stream)通过声明式方式来处理集合(Collection),并且支持并行化操作。先来看一个例子。</p>
+<p>假如现在有一个Student列表，Student的属性包括姓名name,年龄age,分数mark，现在要筛选出年龄小于20岁并且分数大于80的学生的姓名名单，以前的做法是这样的<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">List&lt;Student&gt; studentList = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"><span class="comment">//增加studentList数据</span></div><div class="line">List&lt;String&gt; studentNameList = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"><span class="keyword">for</span> (Student student : studentList) &#123;</div><div class="line">    <span class="keyword">if</span> (student.getAge() &lt; <span class="number">20</span> &amp;&amp; student.getMark() &gt; <span class="number">80</span>) &#123;</div><div class="line">        studentNameList.add(student.getName());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>使用了流以后，代码变成这样了<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">studentNameList = studentList.stream()</div><div class="line">                .filter(student -&gt; student.getAge() &lt; <span class="number">20</span>)</div><div class="line">                .filter(student -&gt; student.getMark() &gt; <span class="number">80</span>)</div><div class="line">                .map(Student::getName)</div><div class="line">                .collect(Collectors.toList());</div></pre></td></tr></table></figure></p>
+<p>通过Stream API来操作集合，这种方式有以下几个好处</p>
+<ul>
+<li>声明性<br>比起自己实现的方式更简洁易读</li>
+<li>复合性<br>具有更佳的灵活性，可以将多个处理链式调用起来</li>
+<li>并行化处理<br>支持并行化操作，性能更好</li>
+</ul>
+<hr>
+<h2 id="流的特性"><a href="#流的特性" class="headerlink" title="流的特性"></a>流的特性</h2><p>在使用流(Stream)之前，先需要了解流的一些特性。</p>
+<h4 id="懒惰特性-laziness"><a href="#懒惰特性-laziness" class="headerlink" title="懒惰特性(laziness)"></a>懒惰特性(laziness)</h4><p>Stream的操作并不会立即执行，只有在真正需要结果的时候才会执行。</p>
+<h4 id="一次消费"><a href="#一次消费" class="headerlink" title="一次消费"></a>一次消费</h4><p>Stream只能被消费一次，比如使用多次foreach进行多次遍历是不行的，只能遍历一次，如果要再遍历只能重新生成流。</p>
+<h4 id="流可以是无限的"><a href="#流可以是无限的" class="headerlink" title="流可以是无限的"></a>流可以是无限的</h4><p>集合是有固定大小的，而流(Stream)可以是无限的。limit和findAny这种短路操作可以对无限流完成很快的计算。</p>
+<h4 id="使用内部迭代-internal-iteration"><a href="#使用内部迭代-internal-iteration" class="headerlink" title="使用内部迭代(internal iteration)"></a>使用内部迭代(internal iteration)</h4><p>在以前的版本中迭代往往都是外部迭代，需要用户通过比如(for,foreach)这样的循环操作去手动迭代，而Stream API则使用内部迭代，替用户完成了迭代的过程，这样也不用去保存一堆中间变量。</p>
+<h4 id="中间操作-intermediate-operations-与终端操作-terminal-operations"><a href="#中间操作-intermediate-operations-与终端操作-terminal-operations" class="headerlink" title="中间操作(intermediate operations)与终端操作(terminal operations)"></a>中间操作(intermediate operations)与终端操作(terminal operations)</h4><p>中间操作通常返回类型是Stream，中间操作会返回一个新的Stream，终端操作会返回用户需要的类型。</p>
+<table>
+<thead>
+<tr>
+<th><strong>操作类型</strong></th>
+<th><strong>操作方法</strong></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>中间操作(intermediate operations)</td>
+<td>filter,map,flatMap,distinct,sorted,peek,limit,skip,<br>concat,generate,empty…</td>
+</tr>
+<tr>
+<td>终端操作(terminal operations)</td>
+<td>forEach,toArray,reduce,collect,min,max,count,<br>anyMatch,allMatch,noneMatch,findFirst,findAny…</td>
+</tr>
+</tbody>
+</table>
+<hr>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/07/10/Java8新特性（二）：流Stream/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    <div>
+       
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
     <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/07/05/Java8新特性（一）：函数式接口与Lambda表达式/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1945,180 +2130,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
-    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/06/04/设计模式（17）：模板方法TEMPLATEMETHOD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Billy Yuan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BillyYccc">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-            
-            
-              
-                
-                <a class="post-title-link" href="/2017/06/04/设计模式（17）：模板方法TEMPLATEMETHOD/" itemprop="url">
-                  设计模式（17）：模板方法TEMPLATEMETHOD
-                </a>
-              
-            
-          </h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-06-04T15:22:37+08:00">
-                2017-06-04
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
-                    <span itemprop="name">DesignPatterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="模板方法模式"><a href="#模板方法模式" class="headerlink" title="模板方法模式"></a>模板方法模式</h2><h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p>定义一个操作中的算法的骨架，而将一些步骤延迟到子类中。TemplateMethod使得子类可以不改变一个算法的结构即可重定义该算法的某些特定步骤。</p>
-<hr>
-<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>模板方法应用于下列情况：</p>
-<ul>
-<li>一次性实现一个算法的不变的部分，并将可变的行为留给子类来实现。</li>
-<li>各子类中公共的行为应被提取出来并集中到一个公共父类中以避免代码重复。首先识别现有代码中的不同之处，并且将不同之处分离为新的操作。最后，用一个调用这些新的操作的模板方法来替换这些不同的代码。</li>
-<li>控制子类扩展。</li>
-</ul>
-<hr>
-<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>模板方法结构如下<br><img src="/2017/06/04/设计模式（17）：模板方法TEMPLATEMETHOD/TemplateMethod1.png" alt="ShowImage"></p>
-<ul>
-<li><p>AbstractClass<br><br> – 定义抽象的基本操作(Primitive Operation)，具体的子类将重写它们来实现一个指定算法的步骤。<br><br> – 实现一个模板方法，定义一个算法的骨架。该模板方法不仅调用接口中的基本操作，也调用定义在AbstractClass或其他对象中的操作。</p>
-</li>
-<li><p>ConcreteClass<br><br> – 实现基本操作来完成算法中与指定子类相关的步骤。</p>
-</li>
-</ul>
-<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><p>ConcreteClass靠AbstractClass来实现算法中不变的步骤。</p>
-<hr>
-<h3 id="效果"><a href="#效果" class="headerlink" title="效果"></a>效果</h3><p>模板方法模式是一种代码复用的基本技术。它们在类库中尤为重要，它们提取了类库中的公共行为。</p>
-<ul>
-<li>模板方法模式使得扩展性更好</li>
-<li>模板方法指定了逻辑，如果为模板方法添加final修饰符，那么子类也不能去修改逻辑。</li>
-<li>钩子方法(Hook Method)在抽象中提供一个方法的空实现，子类可以根据自身需要来决定是否进行实现扩展。</li>
-</ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/06/04/设计模式（17）：模板方法TEMPLATEMETHOD/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    <div>
-       
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <div>
-      
-    </div>
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-
-
-    
   </section>
 
   
@@ -2168,7 +2179,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives">
-                <span class="site-state-item-count">36</span>
+                <span class="site-state-item-count">37</span>
                 <span class="site-state-item-name">日志</span>
               </a>
             </div>
