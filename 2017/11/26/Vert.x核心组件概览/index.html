@@ -1,0 +1,871 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Java,Vert.x," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Vert.x CoreVert.x core contains fairly low-level functionality, including support for HTTP, TCP, file system access, and various other features. You can use this directly in your own applications, and">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Vert.x核心组件概览">
+<meta property="og:url" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="Vert.x CoreVert.x core contains fairly low-level functionality, including support for HTTP, TCP, file system access, and various other features. You can use this directly in your own applications, and">
+<meta property="og:image" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/VertxThread.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/VertxStructure.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/AsyncResult.png">
+<meta property="og:updated_time" content="2017-11-26T13:17:09.121Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Vert.x核心组件概览">
+<meta name="twitter:description" content="Vert.x CoreVert.x core contains fairly low-level functionality, including support for HTTP, TCP, file system access, and various other features. You can use this directly in your own applications, and">
+<meta name="twitter:image" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/VertxThread.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    sidebar: {"position":"left","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 'undefined',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/"/>
+
+
+
+
+
+  <title> Vert.x核心组件概览 | BillyYccc </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99992019-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            搜索
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  
+  <div class="algolia-popup popup search-popup">
+    <div class="algolia-search">
+      <div class="algolia-search-input-icon">
+        <i class="fa fa-search"></i>
+      </div>
+      <div class="algolia-search-input" id="algolia-search-input"></div>
+    </div>
+
+    <div class="algolia-results">
+      <div id="algolia-stats"></div>
+      <div id="algolia-hits"></div>
+      <div id="algolia-pagination" class="algolia-pagination"></div>
+    </div>
+
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+  </div>
+
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                Vert.x核心组件概览
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-26T15:21:44+08:00">
+                2017-11-26
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vert-x/" itemprop="url" rel="index">
+                    <span itemprop="name">Vert.x</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Vert-x-Core"><a href="#Vert-x-Core" class="headerlink" title="Vert.x Core"></a>Vert.x Core</h2><p>Vert.x core contains fairly low-level functionality, including support for HTTP, TCP, file system access, and various other features. You can use this directly in your own applications, and it’s used by many of the other components of Vert.x.</p>
+<p>Vert.x中，有以下的核心概念需要了解</p>
+<h4 id="Vertx"><a href="#Vertx" class="headerlink" title="Vertx"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/Vertx.java" target="_blank" rel="external">Vertx</a></h4><p>Vertx<strong>实例</strong>(instance)可以通过静态工厂方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Vertx vertx = Vertx.vertx();</div></pre></td></tr></table></figure></p>
+<p>创建，一个Vertx实例可以用于部署HTTP、TCP Server,client等等操作，可以将Vertx instance看做一个Vert.x Core API 的入口。</p>
+<h4 id="Eventloop"><a href="#Eventloop" class="headerlink" title="Eventloop"></a>Eventloop</h4><p>Vert.x使用了Reactor模型，通过Event driven的方式，将Events分发到handlers中进行处理，任何event都不会阻塞Eventloop线程，这样Eventloop线程可以一直保持高速分发Events的速度。假设在同一时间有很多HTTP请求到达服务器，Eventloop会将每一个http request分发到handler中处理，比如有10K个Requests,假设服务器想在1s内处理这些requests，那么平均算下来Eventloop必须能在0.1ms内分发完每个event，一旦Eventloop被阻塞，整个服务器吞吐量都会受到极大影响。所以<strong>Eventloop绝对不应该被阻塞住</strong>，所有交给Eventloop去处理的event都应该是non-blocking(I/O)的方式或者CPU执行时间较短的，这样才能确保每个event得到及时的分发。</p>
+<p>而Vert.x不仅仅实现了Reactor模型，还实现了Multi-Reactor模型，也就是说，每个Vertx <strong>instance</strong>都会有多个Eventloop，默认的设置是Eventloop数量对应CPU核心数量乘以2，在<a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/VertxOptions.java" target="_blank" rel="external">VertxOptions</a>类中可以看到</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * The default number of event loop threads to be used  = 2 * number of cores on the machine</div><div class="line"> */</div><div class="line"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">final</span> <span class="keyword">int</span> DEFAULT_EVENT_LOOP_POOL_SIZE = <span class="number">2</span> * CpuCoreSensor.availableProcessors();</div></pre></td></tr></table></figure>
+<p>可以通过<code>setEventLoopPoolSize()</code>方法改变Vertx实例拥有Eventloop的数量。</p>
+<a id="more"></a>
+<h4 id="Context"><a href="#Context" class="headerlink" title="Context"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/Vertx.java" target="_blank" rel="external">Context</a></h4><p>Context的字面意思是上下文或者环境，在Vert.x中，Context对应的是一次Handler执行过程的执行context。在Context接口中的文档已经说的十分清楚：</p>
+<blockquote>
+<p>当Vert.x将一个事件event分发到handler中或者调用了一个Verticle的启动停止操作方法时，该次执行execution就被关联到了一个Context。</p>
+</blockquote>
+<p>那么Context是用来干什么的呢，Context就是用来管理控制着handlers或者handlers创建的任务执行时的scope和order的。当使用Vert.x API把event分发到handler时，例如设置一个HttpServer的request handler时，会将该handler的callback和一个context绑定起来，这个Context就会被用来调度callbacks。如果执行任务当前所在的线程是Vert.x线程的话，那么该任务将复用已经和线程所绑定的context；如果当前线程不是Vert.x线程，那么就创建一个新的context。</p>
+<p>Vert.x线程可以参考VertxThread类，继承了Netty中的FastThreadLocalThread。简略类图如下<br><img src="/2017/11/26/Vert.x核心组件概览/VertxThread.png" alt="ShowImage"><br>可以看到VertxThread类中是包含了context信息的。</p>
+<p>Vert.x中一共有三种类型的contexts</p>
+<ul>
+<li>Eventloop Context</li>
+<li>Worker Context</li>
+<li>Multi-Thread worker Context</li>
+</ul>
+<p>一般来说，大部分操作都是关联Eventloop context的。<br>Eventloop Context 会和一个Eventloop线程绑定在一起，保证该Context下的executions一直在相同的Eventloop线程中。<br>需要注意的是，一个context只会在一个线程中执行，而一个线程可能会被多个contexts所使用。</p>
+<h4 id="Verticle"><a href="#Verticle" class="headerlink" title="Verticle"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/Verticle.java" target="_blank" rel="external">Verticle</a></h4><p>Verticle是Vert.x中提供的类似Actor Model的一种模型，在使用verticle部署自己的应用时，每个Vertx instance都会有多个Verticle instances，verticle之间通过eventBus来进行通信。</p>
+<p>当部署一个新的Verticle时，会为这个Verticle创建一个新的Context, 每个Verticle会一直关联一个context，任何在这个Verticle上面注册的handler都会通过verticle的context关联。</p>
+<p>而与Vert.x Context中三种Context对应，Verticle也有三种类型</p>
+<ul>
+<li><p>Standard Verticle</p>
+</li>
+<li><p>Worker Verticle</p>
+</li>
+<li><p>Multi-Thread worker Verticle</p>
+</li>
+</ul>
+<h4 id="AbstractVerticle"><a href="#AbstractVerticle" class="headerlink" title="AbstractVerticle"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/AbstractVerticle.java" target="_blank" rel="external">AbstractVerticle</a></h4><p>AbstractVerticle是Vert.x实现了Verticle接口提供给用户使用的一个抽象类，将自己的类继承自AbstractVerticle，在<code>start()</code>方法或者<code>stop()</code>方法中自定义一些操作，然后通过vertx实例来部署verticle。</p>
+<p>一般的来说一个Vert.x应用应该是这样的<br><img src="/2017/11/26/Vert.x核心组件概览/VertxStructure.png" alt="ShowImage"></p>
+<p>一个Vert.x实例对应多个Eventloop 线程，每个Eventloop线程包含多个Context，每个Context对应一个Verticle instance。</p>
+<h4 id="AsyncResult"><a href="#AsyncResult" class="headerlink" title="AsyncResult"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/AsyncResult.java" target="_blank" rel="external">AsyncResult</a></h4><p>顾名思义, AsyncResult包装了进行异步操作的结果。<br><img src="/2017/11/26/Vert.x核心组件概览/AsyncResult.png" alt="ShowImage"></p>
+<p><code>result()</code>方法可以用于获取操作的结果。</p>
+<h4 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/Handler.java" target="_blank" rel="external">Handler</a></h4><p>Handler仅仅是一个函数接口，只有一个抽象方法<code>handle()</code>，通常会与AsyncResult一起使用，handler中包裹一个异步调用的结果，类似<code>void doSomething(Handler&lt;AsyncResult&lt;T&gt;&gt; handler)</code>的形式。</p>
+<h4 id="Future"><a href="#Future" class="headerlink" title="Future"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/Future.java" target="_blank" rel="external">Future</a></h4><p>Future在Vert.x中用于表示一个操作的结果，如果使用handler包裹AsyncResult处理callback的方式，那么可能会产生callback hell，所以Vert.x自己提供了一个Future，用于对异步结果的处理。Future之间还可以用compose、otherwise等操作进行组合，在一定程度避免了回调地狱的出现。</p>
+<h2 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h2><p>These are all awesome materials to learn, thanks for the authors!</p>
+<ol>
+<li><p><a href="http://vertx.io/docs/vertx-core/java/" target="_blank" rel="external">http://vertx.io/docs/vertx-core/java/</a></p>
+</li>
+<li><p><a href="https://github.com/vietj/vertx-materials/" target="_blank" rel="external">https://github.com/vietj/vertx-materials/</a></p>
+</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+       
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Vert-x/" rel="tag"># Vert.x</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/10/Java8新特性（二）：流Stream/" rel="next" title="Java8新特性（二）：流Stream">
+                <i class="fa fa-chevron-left"></i> Java8新特性（二）：流Stream
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Billy Yuan" />
+          <p class="site-author-name" itemprop="name">Billy Yuan</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+          
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">38</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              <a href="/categories/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">11</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Vert-x-Core"><span class="nav-number">1.</span> <span class="nav-text">Vert.x Core</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Vertx"><span class="nav-number">1.0.1.</span> <span class="nav-text">Vertx</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Eventloop"><span class="nav-number">1.0.2.</span> <span class="nav-text">Eventloop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Context"><span class="nav-number">1.0.3.</span> <span class="nav-text">Context</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Verticle"><span class="nav-number">1.0.4.</span> <span class="nav-text">Verticle</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AbstractVerticle"><span class="nav-number">1.0.5.</span> <span class="nav-text">AbstractVerticle</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#AsyncResult"><span class="nav-number">1.0.6.</span> <span class="nav-text">AsyncResult</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Handler"><span class="nav-number">1.0.7.</span> <span class="nav-text">Handler</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Future"><span class="nav-number">1.0.8.</span> <span class="nav-text">Future</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考资料"><span class="nav-number">2.</span> <span class="nav-text">参考资料</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Muse
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+  
+
+
+
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/algolia-instant-search/instantsearch.min.css">
+
+  
+  
+  <script src="/lib/algolia-instant-search/instantsearch.min.js"></script>
+  
+
+  <script src="/js/src/algolia-search.js?v=5.1.0"></script>
+
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
