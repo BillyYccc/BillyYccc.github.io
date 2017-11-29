@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Convergence:300,300italic,400,400italic,700,700italic|Tauri:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,Vert.x," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Context在Vert.x核心组件概览一文中已经谈到了Context的基本概念，本文将对Vert.x的Context进行深入分析。
+先来看下Context的结构
+
+最顶层的是Context接口，下面是ContextInternal接口，这个接口是提供给Vert.x内部使用的API，ContextImpl是一个抽象类，包含了Context的基本属性以及方法，再往下层就是Context的实现类，其实">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Vert.x Core(1)-Context">
+<meta property="og:url" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="Context在Vert.x核心组件概览一文中已经谈到了Context的基本概念，本文将对Vert.x的Context进行深入分析。
+先来看下Context的结构
+
+最顶层的是Context接口，下面是ContextInternal接口，这个接口是提供给Vert.x内部使用的API，ContextImpl是一个抽象类，包含了Context的基本属性以及方法，再往下层就是Context的实现类，其实">
+<meta property="og:image" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/ContextStructure.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/EventLoopContext.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/ContextImpl.png">
+<meta property="og:updated_time" content="2017-11-29T14:02:59.113Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解Vert.x Core(1)-Context">
+<meta name="twitter:description" content="Context在Vert.x核心组件概览一文中已经谈到了Context的基本概念，本文将对Vert.x的Context进行深入分析。
+先来看下Context的结构
+
+最顶层的是Context接口，下面是ContextInternal接口，这个接口是提供给Vert.x内部使用的API，ContextImpl是一个抽象类，包含了Context的基本属性以及方法，再往下层就是Context的实现类，其实">
+<meta name="twitter:image" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/ContextStructure.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/"/>
+
+
+
+
+
+  <title>深入理解Vert.x Core(1)-Context | BillyYccc</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99992019-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解Vert.x Core(1)-Context</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-11-27T14:59:26+08:00">
+                2017-11-27
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vert-x/" itemprop="url" rel="index">
+                    <span itemprop="name">Vert.x</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h2><p>在<a href="http://billyyccc.com/2017/11/26/Vert.x核心组件概览#Context" target="_blank" rel="external">Vert.x核心组件概览</a>一文中已经谈到了Context的基本概念，本文将对Vert.x的Context进行深入分析。</p>
+<p>先来看下Context的结构</p>
+<p><img src="/2017/11/27/深入理解Vert.x Core(1)-Context/ContextStructure.png" alt="ShowImage"></p>
+<p>最顶层的是<code>Context</code>接口，下面是<code>ContextInternal</code>接口，这个接口是提供给Vert.x内部使用的API，<code>ContextImpl</code>是一个抽象类，包含了Context的基本属性以及方法，再往下层就是Context的实现类，其实看到源码可以知道Vert.x中一共有四种Context，但是这个BenchmarkContext的目的不是给用户使用的，它主要被用来对Vert.x一些关键部分进行性能测试，比如Json的编解码、HTTP头部编码、HTTP Handler处理HttpRequest和HttpResponse的速度等等…可以参考<a href="https://github.com/eclipse/vert.x/blob/master/benchmarks.md" target="_blank" rel="external">这里</a>。就是说，真正在Vert.x中应用的Context就三种。三种Context使用的场景在这里就不在介绍，可以参考对应Verticle的<a href="http://billyyccc.com/2017/11/26/Vert.x核心组件概览#Verticle" target="_blank" rel="external">用途</a>。</p>
+<a id="more"></a>
+<h3 id="EventLoopContext"><a href="#EventLoopContext" class="headerlink" title="EventLoopContext"></a>EventLoopContext</h3><p>我们先对EventLoopContext进行分析。</p>
+<p><img src="/2017/11/27/深入理解Vert.x Core(1)-Context/EventLoopContext.png" alt="ShowImage"></p>
+<h4 id="isEventLoopContext-isMultiThreadedWorkerContext"><a href="#isEventLoopContext-isMultiThreadedWorkerContext" class="headerlink" title="isEventLoopContext(),isMultiThreadedWorkerContext()"></a>isEventLoopContext(),isMultiThreadedWorkerContext()</h4><p>EventLoopContext本身只有几个方法，<code>isEventLoopContext()</code>方法和<code>isMultiThreadedWorkerContext()</code>方法就不用多说了，继承<code>ContextImpl</code>中的抽象方法，表明自己身份用的。</p>
+<h4 id="checkCorrectThread"><a href="#checkCorrectThread" class="headerlink" title="checkCorrectThread()"></a>checkCorrectThread()</h4><p>先看下<code>checkCorrectThread</code>方法，这个是实现了<code>ContextImpl</code>类中抽象方法的方法，会去判断当前线程是不是Vertx线程，如果是Vertx线程还会判断context的线程和当前线程是不是相同线程，看代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">checkCorrectThread</span><span class="params">()</span> </span>&#123;</div><div class="line">  Thread current = Thread.currentThread();</div><div class="line">  <span class="keyword">if</span> (!(current <span class="keyword">instanceof</span> VertxThread)) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Expected to be on Vert.x thread, but actually on: "</span> + current);</div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (contextThread != <span class="keyword">null</span> &amp;&amp; current != contextThread) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException(<span class="string">"Event delivered on unexpected thread "</span> + current + <span class="string">" expected: "</span> + contextThread);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h4 id="executeAsync"><a href="#executeAsync" class="headerlink" title="executeAsync()"></a>executeAsync()</h4><p>接着看<code>executeAsync()</code>方法，在抽象类<code>ContextImpl</code>中也声明了<code>executeAsync()</code>抽象方法<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">abstract</span> <span class="keyword">void</span> <span class="title">executeAsync</span><span class="params">(Handler&lt;Void&gt; task)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>找到实际调用这个方法的地方<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="comment">// Run the task asynchronously on this same context</span></div><div class="line">  <span class="meta">@Override</span></div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">runOnContext</span><span class="params">(Handler&lt;Void&gt; task)</span> </span>&#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      executeAsync(task);</div><div class="line">    &#125; <span class="keyword">catch</span> (RejectedExecutionException ignore) &#123;</div><div class="line">      <span class="comment">// Pool is already shut down</span></div><div class="line">    &#125;</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<p><code>ContextImpl</code>这个类中多次用到了模板方法的设计模式，例如上面的<code>executeAsync()</code>和<code>checkCorrectThread()</code>都用到了，将抽象方法写在指定逻辑中，然后交给子类去实现这些抽象方法。</p>
+<p><code>runOnContext()</code>方法是定义在<code>Context</code>接口中的，用来<strong>指明</strong>在<strong>当前context</strong>中异步地执行指定的操作，这个方法在很多地方都用到了，举例你在Context关联的线程之外想去执行一个action，但是这个action并不是在你当前所在的Vertx线程控制的范围内执行(例如你new Thread去执行)，现在你想要的是这个action会改变一些原来Vertx线程内的状态，如果想让这些改变的状态在这个context thread之中可见，就必须使用<code>runOnContext()</code>方法去执行。</p>
+<p><code>executeAsync()</code>方法中的逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">executeAsync</span><span class="params">(Handler&lt;Void&gt; task)</span> </span>&#123;</div><div class="line">    <span class="comment">// No metrics, we are on the event loop.</span></div><div class="line">    nettyEventLoop().execute(wrapTask(<span class="keyword">null</span>, task, <span class="keyword">true</span>, <span class="keyword">null</span>));</div><div class="line">  &#125;</div></pre></td></tr></table></figure>
+<h5 id="ContextImpl-nettyEventLoop"><a href="#ContextImpl-nettyEventLoop" class="headerlink" title="ContextImpl#nettyEventLoop()"></a>ContextImpl#nettyEventLoop()</h5><p><code>nettyEventLoop()</code>方法在<code>ContextImpl</code>类中，返回持有的EventLoop实例，而这个EventLoop instance除非自己指定，否则是使用在<code>ContextImpl</code>的Constructor中传入的<code>VertxInternal</code>对象获取的，通过这个vertx对象的<code>getEventLoopGroup()</code>方法拿到EventLoopGroup，接着从Netty的<code>EventLoopGroup</code>中通过<code>next()</code>方法选出一个<code>EventLoop</code>作为返回值，注意这里的<code>EventLoopGroup</code>和<code>EventLoop</code>是Netty中的概念。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">static</span> EventLoop <span class="title">getEventLoop</span><span class="params">(VertxInternal vertx)</span> </span>&#123;</div><div class="line">  EventLoopGroup group = vertx.getEventLoopGroup();</div><div class="line">  <span class="keyword">if</span> (group != <span class="keyword">null</span>) &#123;</div><div class="line">    <span class="keyword">return</span> group.next();</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<blockquote>
+<p>这段是《Netty in Action》中提到的Channel,EventLoop,Thread以及EventLoopGroup之间的关系：</p>
+<ul>
+<li><p>一个EventLoopGroup包含一个或者多个EventLoop</p>
+</li>
+<li><p>一个EventLoop在它的生命周期内之和一个Thread关联</p>
+</li>
+<li><p>所有由EventLoop处理的I/O事件都将在它专有的Thread上被处理</p>
+</li>
+<li><p>一个Channel在它的生命周期内只会注册到一个EventLoop</p>
+</li>
+<li><p>一个EventLoop可能会指派到一个或多个Channel</p>
+<p>在这种设计中，一个给定Channel的I/O操作都是由相同的Thread执行的，实际上消除了对于同步的需要。</p>
+</li>
+</ul>
+</blockquote>
+<p>这样就从netty的<code>EventLoopGroup</code>中拿到了<code>EventLoop</code>，接下来就是用<code>wrapTask()</code>方法将Vert.x中的handler封装成Runnable接口提交给Netty的EventLoop了。</p>
+<blockquote>
+<p>注：提交的EventLoop不仅仅是NioEventLoop, Vert.x在3.5.0版本加入了对Linux上Epoll和OS X上Kqueue的Native Transport支持，Netty中的异步传输可以不再只是使用NIO了。关于Netty中EventLoop为什么使用<code>execute()</code>方法接收Runnable接口，可以去找一找相关的EventLoop和JUC中Executor的资料。</p>
+</blockquote>
+<p>我们对<code>wrapTask()</code>方法进行简化，省去一些Metrics管理，时间记录，检查操作的逻辑以及错误处理，得到的源码是这样的<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> Runnable <span class="title">wrapTask</span><span class="params">(ContextTask cTask, Handler&lt;Void&gt; hTask, <span class="keyword">boolean</span> checkThread, PoolMetrics metrics)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> () -&gt; &#123;</div><div class="line">      Thread th = Thread.currentThread();</div><div class="line">      VertxThread current = (VertxThread) th;</div><div class="line">      contextThread = current;</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        setContext(current, ContextImpl.<span class="keyword">this</span>);</div><div class="line">        <span class="keyword">if</span> (cTask != <span class="keyword">null</span>) &#123;</div><div class="line">          cTask.run();</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">          hTask.handle(<span class="keyword">null</span>);</div><div class="line">        &#125;</div><div class="line">      &#125; <span class="keyword">catch</span> (Throwable t) &#123;</div><div class="line">        <span class="comment">// handle t</span></div><div class="line">      &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        <span class="comment">// clean up</span></div><div class="line">      &#125;</div><div class="line">    &#125;;</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
+<p>可以看到简化后的<code>wrapTask()</code>方法并没有太复杂的操作，仅仅将<code>executeAsync(Handler&lt;Void&gt; task)</code>方法传入的参数task封装成一个一个<code>Runnable</code>，做一些基本的检查线程的操作，交给<code>hTask.handle(null)</code>处理就行了。需要注意的只有一点，就是这个<code>Runnable</code>执行前会将它<strong>执行</strong>时的线程(必须是Vertx线程)与你调用<code>runOnContext()</code>方法的<strong>context</strong>关联。到现在可以确认的是，我们已经知道从Vert.x EventLoopContext上拿到的Handler已经能够在Netty的EventLoop上面跑了。</p>
+<h4 id="Constructor"><a href="#Constructor" class="headerlink" title="Constructor"></a>Constructor</h4><p><code>EventLoopContext</code>的构造器调用的是父类的构造器，现在我们将目光转向ContextImpl类。</p>
+<h3 id="ContextImpl"><a href="#ContextImpl" class="headerlink" title="ContextImpl"></a>ContextImpl</h3><p>ContextImpl这个抽象类，内容非常的多。<br><img src="/2017/11/27/深入理解Vert.x Core(1)-Context/ContextImpl.png" alt="ShowImage"></p>
+<h4 id="Properties"><a href="#Properties" class="headerlink" title="Properties"></a>Properties</h4><p>按照顺序逐个分析，Logger不必说，先看六个常量，分别对应三组Key-Value，String常量表示Key，Boolean常量表示Value。<code>THREAD_CHECKS_PROP_NAME</code>对应<code>THREAD_CHECKS</code>，负责进行线程检查的开关；<code>DISABLE_TIMINGS_PROP_NAME</code>对应<code>DISABLE_TIMINGS</code>，负责进行时间计量的开关；<code>DISABLE_TCCL_PROP_NAME</code>对应<code>DISABLE_TCCL</code>，负责TCCL线程上下文类加载器的检测的开关。</p>
+<h4 id="VertxInternal"><a href="#VertxInternal" class="headerlink" title="VertxInternal"></a>VertxInternal</h4><p><code>owner</code>变量很直观，就是对当前的Vertx引用，之前讲过一个Vert.x实例会有多个Eventloops，而每个EventLoop同一时间只会关联一个Context，反过来想一个Context也就对应一个Vert.x实例。这里类型是VertxInternal，主要面向内部使用。</p>
+<h4 id="deploymentID-config"><a href="#deploymentID-config" class="headerlink" title="deploymentID, config"></a>deploymentID, config</h4><p>然后是<code>deploymentID</code>和<code>config</code>两个变量，这两个变量不复杂，找到相关联的地方就知道是给Verticle使用的属性，其中<code>deploymentID</code>通过<code>generateDeploymentID()</code>这个方法生成，<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> String <span class="title">generateDeploymentID</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> UUID.randomUUID().toString();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>在部署Verticle时候作为返回结果，而<code>config</code>就是部署Verticle时<code>DeploymentOptions</code>这个对象所包含的config属性的拷贝。前面也讲过了每个Verticle实例都会关联到唯一的一个Context，如果你看一眼<code>AbstractVerticle</code>里面的<code>deploymentID()</code>与<code>config()</code>方法，你会发现它们都调用的是所关联的context的对应方法。</p>
+<h4 id="closeHooks"><a href="#closeHooks" class="headerlink" title="closeHooks"></a>closeHooks</h4><p>closeHooks提供了提醒自动清理的功能，在Verticle或者Vertx实例关闭的时候，上面跑的组件如果有closeHooks就可以实现自动清理。这个功能主要通过观察者模式实现，有兴趣可以结合源码并参考这篇文章看看。<br><a href="https://github.com/vietj/vertx-materials/blob/master/src/main/asciidoc/Close_hooks.adoc" target="_blank" rel="external">https://github.com/vietj/vertx-materials/blob/master/src/main/asciidoc/Close_hooks.adoc</a></p>
+<h4 id="tccl"><a href="#tccl" class="headerlink" title="tccl"></a>tccl</h4><p>//TODO</p>
+<h4 id="eventLoop"><a href="#eventLoop" class="headerlink" title="eventLoop"></a>eventLoop</h4><p>Context对应的Netty的EventLoop实例，之前在讲<code>EventLoopContext</code>时候已经提过了。</p>
+<h4 id="contextThread"><a href="#contextThread" class="headerlink" title="contextThread"></a>contextThread</h4><p>当前Context所关联的VertxThread实例，在<code>ContextImpl</code>类主要被用来做一些检查操作。</p>
+<h4 id="contextData"><a href="#contextData" class="headerlink" title="contextData"></a>contextData</h4><p>这个官方文档说的非常明白，contextData就是让你可以在同一个Context的handlers之间共享任意类型的数据，通过<code>put()</code>,<code>get()</code>,<code>remove()</code>方法进行操作，数据结构就是<code>ConcurrentHashMap</code>。</p>
+<p>获取contextData对象的代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> ConcurrentMap&lt;Object, Object&gt; <span class="title">contextData</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (contextData == <span class="keyword">null</span>) &#123;</div><div class="line">    contextData = <span class="keyword">new</span> ConcurrentHashMap&lt;&gt;();</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> contextData;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="exceptionHandler"><a href="#exceptionHandler" class="headerlink" title="exceptionHandler"></a>exceptionHandler</h4><p>//TODO</p>
+<h4 id="deployment"><a href="#deployment" class="headerlink" title="deployment"></a>deployment</h4><p>//TODO</p>
+<h4 id="processArgs-方法"><a href="#processArgs-方法" class="headerlink" title="processArgs()方法"></a>processArgs()方法</h4><p>//TODO</p>
+<h4 id="setContext-静态方法"><a href="#setContext-静态方法" class="headerlink" title="setContext()静态方法"></a>setContext()静态方法</h4><p>将调用时所在的当前线程与指定Context关联起来。</p>
+<h4 id="多余的一些字段和方法"><a href="#多余的一些字段和方法" class="headerlink" title="多余的一些字段和方法"></a>多余的一些字段和方法</h4><p><code>isOnWorkerThread</code><br><code>isOnEventLoopThread</code><br><code>isOnVertxThread()</code><br><code>isWorkerContext()</code><br><code>isEventLoopContext()</code><br><code>isMultiThreadedWorkerContext()</code><br>这些方法都能从字面上理解，源码也不复杂，这里就省略了</p>
+<h3 id="WorkerContext"><a href="#WorkerContext" class="headerlink" title="WorkerContext"></a>WorkerContext</h3><h3 id="MultiThreadedWorkerContext"><a href="#MultiThreadedWorkerContext" class="headerlink" title="MultiThreadedWorkerContext"></a>MultiThreadedWorkerContext</h3><h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
+<li>一个线程可能会被多个Context所使用，但是一个Context只可能同时在一个线程执行，不可能出现一个Context同时关联多个线程的情况。</li>
+<li>调用Vert.x的API时候，如果当前线程是Vert.x线程，那么此时就会复用这个Vert.x线程已经关联好的Context，如果不是就会创建一个新的Context。</li>
+<li>一个Verticle 部署以后会关联一个新的Context，并且只对应这个Context，Context类型会由<code>DeploymentOptions</code>决定, 就是之前讲的三种类型。所有在Verticle里面执行的handler都会用Verticle关联的唯一的Context。另外，如果在Standard Verticle里面调用<code>executeBlocking()</code>方法执行阻塞代码，尽管你的任务被丢给worker pool里面的一个线程去执行，但你的Context这个时候还是<code>EventLoopContext</code>类型。</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+
+       
+    </div>
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Vert-x/" rel="tag"># Vert.x</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/26/Vert.x核心组件概览/" rel="next" title="Vert.x核心组件概览">
+                <i class="fa fa-chevron-left"></i> Vert.x核心组件概览
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Billy Yuan" />
+            
+              <p class="site-author-name" itemprop="name">Billy Yuan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/BillyYccc" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:billy112487983@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/billyyccc" target="_blank" title="Twitter">
+                    
+                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Context"><span class="nav-number">1.</span> <span class="nav-text">Context</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#EventLoopContext"><span class="nav-number">1.1.</span> <span class="nav-text">EventLoopContext</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#isEventLoopContext-isMultiThreadedWorkerContext"><span class="nav-number">1.1.1.</span> <span class="nav-text">isEventLoopContext(),isMultiThreadedWorkerContext()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#checkCorrectThread"><span class="nav-number">1.1.2.</span> <span class="nav-text">checkCorrectThread()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#executeAsync"><span class="nav-number">1.1.3.</span> <span class="nav-text">executeAsync()</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#ContextImpl-nettyEventLoop"><span class="nav-number">1.1.3.1.</span> <span class="nav-text">ContextImpl#nettyEventLoop()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Constructor"><span class="nav-number">1.1.4.</span> <span class="nav-text">Constructor</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ContextImpl"><span class="nav-number">1.2.</span> <span class="nav-text">ContextImpl</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Properties"><span class="nav-number">1.2.1.</span> <span class="nav-text">Properties</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VertxInternal"><span class="nav-number">1.2.2.</span> <span class="nav-text">VertxInternal</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#deploymentID-config"><span class="nav-number">1.2.3.</span> <span class="nav-text">deploymentID, config</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#closeHooks"><span class="nav-number">1.2.4.</span> <span class="nav-text">closeHooks</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#tccl"><span class="nav-number">1.2.5.</span> <span class="nav-text">tccl</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#eventLoop"><span class="nav-number">1.2.6.</span> <span class="nav-text">eventLoop</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#contextThread"><span class="nav-number">1.2.7.</span> <span class="nav-text">contextThread</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#contextData"><span class="nav-number">1.2.8.</span> <span class="nav-text">contextData</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#exceptionHandler"><span class="nav-number">1.2.9.</span> <span class="nav-text">exceptionHandler</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#deployment"><span class="nav-number">1.2.10.</span> <span class="nav-text">deployment</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#processArgs-方法"><span class="nav-number">1.2.11.</span> <span class="nav-text">processArgs()方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#setContext-静态方法"><span class="nav-number">1.2.12.</span> <span class="nav-text">setContext()静态方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#多余的一些字段和方法"><span class="nav-number">1.2.13.</span> <span class="nav-text">多余的一些字段和方法</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WorkerContext"><span class="nav-number">1.3.</span> <span class="nav-text">WorkerContext</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MultiThreadedWorkerContext"><span class="nav-number">1.4.</span> <span class="nav-text">MultiThreadedWorkerContext</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">2.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/BillyYccc/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "middleRight";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

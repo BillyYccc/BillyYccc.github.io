@@ -126,7 +126,7 @@
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/VertxThread.png">
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/VertxStructure.png">
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/AsyncResult.png">
-<meta property="og:updated_time" content="2017-11-27T02:50:50.928Z">
+<meta property="og:updated_time" content="2017-11-27T07:54:26.887Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vert.x核心组件概览">
 <meta name="twitter:description" content="Vert.x CoreVert.x core contains fairly low-level functionality, including support for HTTP, TCP, file system access, and various other features. You can use this directly in your own applications, and">
@@ -435,13 +435,13 @@
 <p>一般来说，大部分操作都是关联Eventloop context的。<br>Eventloop Context 会和一个Eventloop线程绑定在一起，保证该Context下的executions一直在相同的Eventloop线程中。<br>需要注意的是，一个context只会在一个线程中执行，而一个线程可能会被多个contexts所使用。</p>
 <h4 id="Verticle"><a href="#Verticle" class="headerlink" title="Verticle"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/Verticle.java" target="_blank" rel="external">Verticle</a></h4><p>Verticle是Vert.x中提供的类似Actor Model的一种模型，在使用verticle部署自己的应用时，每个Vertx instance都会有多个Verticle instances，verticle之间通过eventBus来进行通信。</p>
 <p>当部署一个新的Verticle时，会为这个Verticle创建一个新的Context, 每个Verticle会一直关联一个context，任何在这个Verticle上面注册的handler都会通过verticle的context关联。</p>
-<p>而与Vert.x Context中三种Context对应，Verticle也有三种类型</p>
+<p>而与Vert.x Context中三种Context对应，Verticle也有三种类型，简单说下每种Verticle特点。</p>
 <ul>
-<li><p>Standard Verticle</p>
+<li><p>Standard Verticle<br>这是最常用的Verticle类型, 这种Verticle会被指派到创建和启动时的Eventloop线程上，Vert.x会保证你在这个Verticle实例上调用任何的handler操作将在同样的eventloop线程上面执行。</p>
 </li>
-<li><p>Worker Verticle</p>
+<li><p>Worker Verticle<br>Worker Verticle目标是为了执行阻塞的代码，不会在Eventloop上执行，而是从Vert.x worker线程池中拿出一个线程来执行。这样的话即使进行的是阻塞操作，它也不会让eventloop阻塞挂掉。Worker verticle在同一个时间片内只会被Vert.x执行在一个线程内，它不会被并发执行，但是不同时间段有可能被不同线程执行。</p>
 </li>
-<li><p>Multi-Thread worker Verticle</p>
+<li><p>Multi-Thread worker Verticle<br>Multi-Thread worker Verticle跟Worker Verticle很像，不同的是，它会被多个线程执行。一旦使用了这种Verticle就一定得注意它在多个线程之间共享的状态所带来的问题。</p>
 </li>
 </ul>
 <h4 id="AbstractVerticle"><a href="#AbstractVerticle" class="headerlink" title="AbstractVerticle"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/AbstractVerticle.java" target="_blank" rel="external">AbstractVerticle</a></h4><p>AbstractVerticle是Vert.x实现了Verticle接口提供给用户使用的一个抽象类，将自己的类继承自AbstractVerticle，在<code>start()</code>方法或者<code>stop()</code>方法中自定义一些操作，然后通过vertx实例来部署verticle。</p>
@@ -534,6 +534,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2017/11/27/深入理解Vert.x Core(1)-Context/" rel="prev" title="深入理解Vert.x Core(1)-Context">
+                深入理解Vert.x Core(1)-Context <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -618,7 +622,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">38</span>
+                  <span class="site-state-item-count">39</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
