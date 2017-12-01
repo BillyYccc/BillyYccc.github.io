@@ -126,7 +126,7 @@
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/VertxThread.png">
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/VertxStructure.png">
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/26/Vert.x核心组件概览/AsyncResult.png">
-<meta property="og:updated_time" content="2017-11-30T07:39:15.659Z">
+<meta property="og:updated_time" content="2017-11-30T14:11:17.418Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Vert.x核心组件概览">
 <meta name="twitter:description" content="Vert.x CoreVert.x core contains fairly low-level functionality, including support for HTTP, TCP, file system access, and various other features. You can use this directly in your own applications, and">
@@ -449,7 +449,7 @@
 <p>See <a href="http://vertx.io/docs/vertx-core/java/#event_bus" target="_blank" rel="external">http://vertx.io/docs/vertx-core/java/#event_bus</a></p>
 <h4 id="AbstractVerticle"><a href="#AbstractVerticle" class="headerlink" title="AbstractVerticle"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/AbstractVerticle.java" target="_blank" rel="external">AbstractVerticle</a></h4><p>AbstractVerticle是Vert.x实现了Verticle接口提供给用户使用的一个抽象类，将自己的类继承自AbstractVerticle，在<code>start()</code>方法或者<code>stop()</code>方法中自定义一些操作，然后通过vertx实例来部署verticle。</p>
 <p>一般的来说一个Vert.x应用应该是这样的<br><img src="/2017/11/26/Vert.x核心组件概览/VertxStructure.png" alt="ShowImage"></p>
-<p>一个Vert.x实例对应多个Eventloop 线程，每个Eventloop线程包含多个Context，每个Context对应一个Verticle instance。注意这里不要把Vertx Instance与Verticle Instance混为一谈了，通常情况下对于你的应用Vertx Instance只会有一个，当然也可以部署多个Vertx Instance，比如想去隔离出多个EventBus。而进行水平扩展时一般是通过增加你的Verticle Instance来实现，部署多个Verticle Instance时，verticle instance会运行在不同EventLoop里面，利用CPU多核心完成水平扩展，运行时Vert.x会通过EventBus自动做负载均衡，这个特性非常的爽。</p>
+<p>一个Vert.x实例对应多个Eventloop 线程，每个Eventloop线程包含多个Context，每个Context对应一个Verticle instance。注意这里不要把Vertx Instance与Verticle Instance混为一谈了，通常情况下对于你的应用Vertx Instance只会有一个，当然也可以部署多个Vertx Instance，比如想去隔离出多个EventBus。而进行水平扩展时一般是通过增加你的Verticle Instance来实现，部署多个Verticle Instance时，verticle instance会运行在不同EventLoop里面，利用CPU多核心完成水平扩展，运行时Vert.x能通过EventBus自动做负载均衡，这个特性非常的nice。<br>另外，部署多个instances时，这些verticle instance的线程是不同的(当然，因为他们跑在不同的EventLoop上)，Context也不同(这也理所应当，因为context只会跟一个verticle相关联),但是他们的deploymentID是一样的,调用<code>vertx.deploymentIDs()</code>方法只会看到一个ID。</p>
 <h4 id="AsyncResult"><a href="#AsyncResult" class="headerlink" title="AsyncResult"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/AsyncResult.java" target="_blank" rel="external">AsyncResult</a></h4><p>顾名思义, AsyncResult包装了进行异步操作的结果。<br><img src="/2017/11/26/Vert.x核心组件概览/AsyncResult.png" alt="ShowImage"></p>
 <p><code>result()</code>方法可以用于获取操作的结果。</p>
 <h4 id="Handler"><a href="#Handler" class="headerlink" title="Handler"></a><a href="https://github.com/eclipse/vert.x/blob/master/src/main/java/io/vertx/core/Handler.java" target="_blank" rel="external">Handler</a></h4><p>Handler仅仅是一个函数接口，只有一个抽象方法<code>handle()</code>，通常会与AsyncResult一起使用，handler中包裹一个异步调用的结果，类似<code>void doSomething(Handler&lt;AsyncResult&lt;T&gt;&gt; handler)</code>的形式。</p>
