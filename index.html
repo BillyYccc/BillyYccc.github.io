@@ -407,7 +407,7 @@
 
       
         
-          <h2 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h2><p>在<a href="http://billyyccc.com/2017/11/26/Vert.x核心组件概览#Context">Vert.x核心组件概览</a>一文中已经谈到了Context的基本概念，本文将对Vert.x的Context进行深入分析。</p>
+          <h2 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h2><p>在<a href="http://billyyccc.com/2017/11/26/Vert.x核心组件概览#Context">Vert.x核心组件概览</a>一文中已经谈到了Context的基本概念，在更加深入地了解VertxImpl，Verticle的内部原理等等之前，有必要了解Context的一些内部机制。本文将对Vert.x的Context进行深入分析。</p>
 <p>先来看下Context的结构</p>
 <p><img src="/2017/11/27/深入理解Vert.x Core(1)-Context/ContextStructure.png" alt="ShowImage"></p>
 <p>最顶层的是<code>Context</code>接口，下面是<code>ContextInternal</code>接口，这个接口是提供给Vert.x内部使用的API，<code>ContextImpl</code>是一个抽象类，包含了Context的基本属性以及方法，再往下层就是Context的实现类，其实看到源码可以知道Vert.x中一共有四种Context，但是这个BenchmarkContext的目的不是给用户使用的，它主要被用来对Vert.x一些关键部分进行性能测试，比如Json的编解码、HTTP头部编码、HTTP Handler处理HttpRequest和HttpResponse的速度等等…可以参考<a href="https://github.com/eclipse/vert.x/blob/master/benchmarks.md">这里</a>。就是说，真正在Vert.x中应用的Context就三种。三种Context使用的场景在这里就不在介绍，可以参考对应Verticle的<a href="http://billyyccc.com/2017/11/26/Vert.x核心组件概览#Verticle">用途</a>。</p>
