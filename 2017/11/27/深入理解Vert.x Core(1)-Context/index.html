@@ -134,7 +134,7 @@
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/ContextImpl.png">
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/TaskQueue.png">
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/TaskQueueExecution.png">
-<meta property="og:updated_time" content="2017-12-03T07:36:38.049Z">
+<meta property="og:updated_time" content="2017-12-05T03:29:51.481Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入理解Vert.x Core(1)-Context">
 <meta name="twitter:description" content="Context在Vert.x核心组件概览一文中已经谈到了Context的基本概念，在更加深入地了解VertxImpl，Verticle的内部原理等等之前，有必要了解Context的一些内部机制。本文将对Vert.x的Context进行深入分析。
@@ -425,7 +425,7 @@
         <h2 id="Context"><a href="#Context" class="headerlink" title="Context"></a>Context</h2><p>在<a href="http://billyyccc.com/2017/11/26/Vert.x核心组件概览#Context" target="_blank" rel="external">Vert.x核心组件概览</a>一文中已经谈到了Context的基本概念，在更加深入地了解VertxImpl，Verticle的内部原理等等之前，有必要了解Context的一些内部机制。本文将对Vert.x的Context进行深入分析。</p>
 <p>先来看下Context的结构</p>
 <p><img src="/2017/11/27/深入理解Vert.x Core(1)-Context/ContextStructure.png" alt="ShowImage"></p>
-<p>最顶层的是<code>Context</code>接口，下面是<code>ContextInternal</code>接口，这个接口是提供给Vert.x内部使用的API，<code>ContextImpl</code>是一个抽象类，包含了Context的基本属性以及方法，再往下层就是Context的实现类，其实看到源码可以知道Vert.x中一共有四种Context，但是这个BenchmarkContext的目的不是给用户使用的，它主要被用来对Vert.x一些关键部分进行性能测试，比如Json的编解码、HTTP头部编码、HTTP Handler处理HttpRequest和HttpResponse的速度等等…可以参考<a href="https://github.com/eclipse/vert.x/blob/master/benchmarks.md" target="_blank" rel="external">这里</a>。就是说，真正在Vert.x中应用的Context就三种。三种Context使用的场景在这里就不在介绍，可以参考对应Verticle的<a href="http://billyyccc.com/2017/11/26/Vert.x核心组件概览#Verticle" target="_blank" rel="external">用途</a>。</p>
+<p>最顶层的是<code>Context</code>接口，下面是<code>ContextInternal</code>接口，这个接口是提供给Vert.x内部使用的API，<code>ContextImpl</code>是一个抽象类，包含了Context的基本属性以及方法，再往下层就是Context的实现类，其实看到源码可以知道Vert.x中一共有四种Context，但是这个BenchmarkContext的目的不是给用户使用的，它主要被用来对Vert.x一些关键部分进行性能测试，比如Json的编解码、HTTP头部编码、HTTP Handler处理HttpRequest和HttpResponse的速度等等…可以参考<a href="https://github.com/eclipse/vert.x/blob/master/benchmarks.md" target="_blank" rel="external">这里</a>。就是说，真正在Vert.x中应用的Context就三种。三种Context使用的场景在这里就不再介绍，可以参考对应Verticle的<a href="http://billyyccc.com/2017/11/26/Vert.x核心组件概览#Verticle" target="_blank" rel="external">用途</a>。</p>
 <a id="more"></a>
 <h3 id="EventLoopContext"><a href="#EventLoopContext" class="headerlink" title="EventLoopContext"></a>EventLoopContext</h3><p>我们先对EventLoopContext进行分析。</p>
 <p><img src="/2017/11/27/深入理解Vert.x Core(1)-Context/EventLoopContext.png" alt="ShowImage"></p>
@@ -597,6 +597,10 @@
 
           <div class="post-nav-prev post-nav-item">
             
+              <a href="/2017/12/04/深入理解Vert.x Core(2)-Future/" rel="prev" title="深入理解Vert.x Core(2)-Future">
+                深入理解Vert.x Core(2)-Future <i class="fa fa-chevron-right"></i>
+              </a>
+            
           </div>
         </div>
       
@@ -681,7 +685,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">39</span>
+                  <span class="site-state-item-count">40</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
