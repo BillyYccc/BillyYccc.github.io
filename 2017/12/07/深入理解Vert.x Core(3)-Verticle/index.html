@@ -1,0 +1,1016 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Convergence:300,300italic,400,400italic,700,700italic|Tauri:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,Vert.x," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="进入Verticle的世界尽管官方文档说不会强迫你去使用Verticle这种模型，但是Verticle可以轻松给你带来scalability, 如果想进行水平扩展，增加部署的verticle instances就可以了。除此之外，使用Standard Verticle或者Worker Verticle能保证线程安全，而不需要你自己去处理一些多线程的问题，所以为什么不使用Verticle呢？
+在进入">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Vert.x Core(3)-Verticle">
+<meta property="og:url" content="http://billyyccc.github.io/2017/12/07/深入理解Vert.x Core(3)-Verticle/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="进入Verticle的世界尽管官方文档说不会强迫你去使用Verticle这种模型，但是Verticle可以轻松给你带来scalability, 如果想进行水平扩展，增加部署的verticle instances就可以了。除此之外，使用Standard Verticle或者Worker Verticle能保证线程安全，而不需要你自己去处理一些多线程的问题，所以为什么不使用Verticle呢？
+在进入">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/07/深入理解Vert.x Core(3)-Verticle/Deployment.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/07/深入理解Vert.x Core(3)-Verticle/RelationBetweenContextAndDeployment.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/07/深入理解Vert.x Core(3)-Verticle/VerticleFactory.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/07/深入理解Vert.x Core(3)-Verticle/doDeployVerticle.png">
+<meta property="og:updated_time" content="2017-12-14T05:28:26.022Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解Vert.x Core(3)-Verticle">
+<meta name="twitter:description" content="进入Verticle的世界尽管官方文档说不会强迫你去使用Verticle这种模型，但是Verticle可以轻松给你带来scalability, 如果想进行水平扩展，增加部署的verticle instances就可以了。除此之外，使用Standard Verticle或者Worker Verticle能保证线程安全，而不需要你自己去处理一些多线程的问题，所以为什么不使用Verticle呢？
+在进入">
+<meta name="twitter:image" content="http://billyyccc.github.io/2017/12/07/深入理解Vert.x Core(3)-Verticle/Deployment.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2017/12/07/深入理解Vert.x Core(3)-Verticle/"/>
+
+
+
+
+
+  <title>深入理解Vert.x Core(3)-Verticle | BillyYccc</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99992019-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/12/07/深入理解Vert.x Core(3)-Verticle/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解Vert.x Core(3)-Verticle</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-07T10:54:59+08:00">
+                2017-12-07
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vert-x/" itemprop="url" rel="index">
+                    <span itemprop="name">Vert.x</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="进入Verticle的世界"><a href="#进入Verticle的世界" class="headerlink" title="进入Verticle的世界"></a>进入Verticle的世界</h2><p>尽管官方文档说不会强迫你去使用<code>Verticle</code>这种模型，但是<code>Verticle</code>可以轻松给你带来scalability, 如果想进行水平扩展，增加部署的verticle instances就可以了。除此之外，使用<code>Standard Verticle</code>或者<code>Worker Verticle</code>能保证线程安全，而不需要你自己去处理一些多线程的问题，所以为什么不使用<code>Verticle</code>呢？</p>
+<p>在进入<code>Verticle</code>之前，我们必须通过<code>Vertx</code>这一关，在<a href="http://billyyccc.com/2017/11/26/Vert.x核心组件概览" target="_blank" rel="external">概览</a>中已经说过了，<code>Vertx</code>实例是Vert.x API的入口。那么我们接下来看看如何从<code>Vertx</code>中进入<code>Verticle</code>。</p>
+<a id="more"></a>
+<h3 id="部署一个Verticle"><a href="#部署一个Verticle" class="headerlink" title="部署一个Verticle"></a>部署一个Verticle</h3><p>在<code>Vertx</code>接口中有很多方法可以部署<code>Verticle</code>，我们分下组</p>
+<p>A组：使用一个<code>Verticle</code>对象部署<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">①<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(Verticle verticle)</span></span>;</div><div class="line">②<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(Verticle verticle, Handler&lt;AsyncResult&lt;String&gt;&gt; completionHandler)</span></span>;</div><div class="line">③<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(Verticle verticle, DeploymentOptions options)</span></span>;</div><div class="line">④<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(Verticle verticle, DeploymentOptions options, Handler&lt;AsyncResult&lt;String&gt;&gt; completionHandler)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>B组：使用类名部署<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">①<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(Class&lt;? extends Verticle&gt; verticleClass, DeploymentOptions options)</span></span>;</div><div class="line">②<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(Class&lt;? extends Verticle&gt; verticleClass, DeploymentOptions options, Handler&lt;AsyncResult&lt;String&gt;&gt; completionHandler)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>C组：使用<code>Supplier</code>函数接口部署<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">①<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(Supplier&lt;Verticle&gt; verticleSupplier, DeploymentOptions options)</span></span>;</div><div class="line">②<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(Supplier&lt;Verticle&gt; verticleSupplier, DeploymentOptions options, Handler&lt;AsyncResult&lt;String&gt;&gt; completionHandler)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>D组：使用<code>String</code>部署<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">①<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(String name)</span></span>;</div><div class="line">②<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(String name, Handler&lt;AsyncResult&lt;String&gt;&gt; completionHandler)</span></span>;</div><div class="line">③<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(String name, DeploymentOptions options)</span></span>;</div><div class="line">④<span class="function"><span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(String name, DeploymentOptions options, Handler&lt;AsyncResult&lt;String&gt;&gt; completionHandler)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>我们知道<code>Vertx</code>实例就是通过静态工厂方法生成的<code>VertxImpl</code>类的实例，可以参考<a href="http://billyyccc.com/2017/12/07/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Vert.x%20Core(4)-Vertx" target="_blank" rel="external">这篇</a></p>
+<p>去<code>VertxImpl</code>类中看对应的实现代码，A组B组和C组都是通过<code>deploymentManager.deployVerticle(verticleSupplier, options, completionHandler);</code>部署<code>Verticle</code>的，而D组是通过<code>deploymentManager.deployVerticle(name, options, completionHandler);</code>。这里可以知道Vertx实例将部署<code>Verticle</code>的任务交给了<code>deploymentManager</code>去做。</p>
+<p>A组通过<code>Verticle</code>对象部署的时候，instance 数量只能为1，可以看到如果instance不为1就会抛出异常，但是这个<code>Verticle</code>对象是我们自己来完成构造的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (options.getInstances() != <span class="number">1</span>) &#123;</div><div class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Can't specify &gt; 1 instances for already created verticle"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>B组通过类名来部署，其实调用的就是C组的方法，只不过<code>Verticle</code>对象是通过反射机制使用默认构造器生成的<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">deployVerticle</span><span class="params">(Class&lt;? extends Verticle&gt; verticleClass, DeploymentOptions options, Handler&lt;AsyncResult&lt;String&gt;&gt; completionHandler)</span> </span>&#123;</div><div class="line">  deployVerticle(() -&gt; &#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      <span class="keyword">return</span> verticleClass.newInstance();</div><div class="line">    &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> RuntimeException(e);</div><div class="line">    &#125;</div><div class="line">  &#125;, options, completionHandler);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>A,B,C三组都能拿到<code>Verticle</code>的对象去部署，而D组则是通过字符串去部署的,而字符串这种方式也方便了Polyglot多语言Verticle的部署。</p>
+<h3 id="DeploymentManager部署管理器"><a href="#DeploymentManager部署管理器" class="headerlink" title="DeploymentManager部署管理器"></a>DeploymentManager部署管理器</h3><h4 id="使用对象部署Verticle"><a href="#使用对象部署Verticle" class="headerlink" title="使用对象部署Verticle"></a>使用对象部署Verticle</h4><p>如果要使用<code>Verticle Isolation Groups</code>，必须使用D组这种方式去部署，因为自从Vert.x 3.0以后，使用了flat classpath，默认情况下Verticle与vertx的classloader是相同的，如果你自己初始化<code>Verticle</code>，则classloader无法隔离，所以在ABC三组中的<code>DeploymentOptions</code>使用isolated功能会抛出异常。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (options.getExtraClasspath() != <span class="keyword">null</span>) &#123;</div><div class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Can't specify extraClasspath for already created verticle"</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">if</span> (options.getIsolationGroup() != <span class="keyword">null</span>) &#123;</div><div class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Can't specify isolationGroup for already created verticle"</span>);</div><div class="line">&#125;</div><div class="line"><span class="keyword">if</span> (options.getIsolatedClasses() != <span class="keyword">null</span>) &#123;</div><div class="line">  <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Can't specify isolatedClasses for already created verticle"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>接着通过<code>ClassLoader cl = getClassLoader(options, currentContext);</code>获取到当前要部署的<code>Verticle</code>的Classloader。下面是<code>getClassloader()</code>这个方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> ClassLoader <span class="title">getClassLoader</span><span class="params">(DeploymentOptions options, ContextImpl parentContext)</span> </span>&#123;</div><div class="line">  String isolationGroup = options.getIsolationGroup();</div><div class="line">  ClassLoader cl;</div><div class="line">  <span class="keyword">if</span> (isolationGroup == <span class="keyword">null</span>) &#123;</div><div class="line">    cl = getCurrentClassLoader();</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">   <span class="comment">// 使用isolationGroup的时候(使用verticle实例部署不行)</span></div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> cl;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果<code>isolationGroup</code>为null的时候，那么就调用<code>getCurrentClassLoader()</code>方法获取。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> ClassLoader <span class="title">getCurrentClassLoader</span><span class="params">()</span> </span>&#123;</div><div class="line">  ClassLoader cl = Thread.currentThread().getContextClassLoader();</div><div class="line">  <span class="keyword">if</span> (cl == <span class="keyword">null</span>) &#123;</div><div class="line">    cl = getClass().getClassLoader();</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> cl;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个私有方法首先获取当前线程的上下文类加载器，如果不存在的话，那么就获取DeploymentManager类的类加载器，而<code>DeploymentManager</code>这个类是在<code>VertxImpl</code>类中进行初始化的，那么前面的<code>cl</code>就会被设置为Vertx instance的类加载器。</p>
+<p>而<code>isolationGroup!=null</code> 的情况在使用Verticle实例去部署的时候是不行的，因为在之前就会抛出异常了，要想使用必须使用字符串来部署Verticle。</p>
+<p>确定了这个<code>Verticle</code> 的类加载器之后，就开始对实例做一些前期工作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">int</span> nbInstances = options.getInstances();</div><div class="line"> Set&lt;Verticle&gt; verticles = Collections.newSetFromMap(<span class="keyword">new</span> IdentityHashMap&lt;&gt;());</div><div class="line"> <span class="keyword">for</span> (<span class="keyword">int</span> i = <span class="number">0</span>; i &lt; nbInstances; i++) &#123;</div><div class="line">   Verticle verticle;</div><div class="line">   <span class="keyword">try</span> &#123;</div><div class="line">     verticle = verticleSupplier.get();</div><div class="line">   &#125; <span class="keyword">catch</span> (Exception e) &#123;</div><div class="line">     completionHandler.handle(Future.failedFuture(e));</div><div class="line">     <span class="keyword">return</span>;</div><div class="line">   &#125;</div><div class="line">   <span class="keyword">if</span> (verticle == <span class="keyword">null</span>) &#123;</div><div class="line">     completionHandler.handle(Future.failedFuture(<span class="string">"Supplied verticle is null"</span>));</div><div class="line">     <span class="keyword">return</span>;</div><div class="line">   &#125;</div><div class="line">   verticles.add(verticle);</div><div class="line"> &#125;</div><div class="line"> <span class="keyword">if</span> (verticles.size() != nbInstances) &#123;</div><div class="line">   completionHandler.handle(Future.failedFuture(<span class="string">"Same verticle supplied more than once"</span>));</div><div class="line">   <span class="keyword">return</span>;</div><div class="line"> &#125;</div></pre></td></tr></table></figure>
+<p>先通过<code>options</code> 拿到verticle的instance数量存在<code>nbInstances</code> 中。</p>
+<p>然后通过<code>Collections.newSetFromMap(new IdentityHashMap&lt;&gt;());</code> 创建一个<code>Set&lt;Verticle&gt;</code>，这个Set的元素会使用<code>==</code>操作符比较<code>Verticle</code>而不是<code>equals()</code>比较，<code>verticleSupplier.get();</code>通过<code>supplier.get()</code>获取的verticle进行<code>==</code>比较时返回都是false的。这样的话就将要部署的<code>Verticle</code>的所有instance都存在<code>verticles</code>这个<code>Set</code>中了，并且中间进行了检查操作。</p>
+<p>接着将<code>verticles</code>转换成<code>verticlesArray</code>数组，并且将这个<code>verticle</code>类名保存为<code>verticleClass</code>，最后将部署工作委托给<code>doDeploy()</code>方法。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Verticle[] verticlesArray = verticles.toArray(<span class="keyword">new</span> Verticle[verticles.size()]);</div><div class="line">String verticleClass = verticlesArray[<span class="number">0</span>].getClass().getName();</div><div class="line">doDeploy(<span class="string">"java:"</span> + verticleClass, generateDeploymentID(), options, currentContext, currentContext, completionHandler, cl, verticlesArray);</div></pre></td></tr></table></figure>
+<p>看下<code>doDeploy()</code>方法的参数</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="comment">/**</span></div><div class="line"> * doDeploy()方法注释，执行了实际上的verticle部署的逻辑</div><div class="line"> * </div><div class="line"> * <span class="doctag">@param</span> identifier verticle的标识符</div><div class="line"> * <span class="doctag">@param</span> deploymentID 这次部署的ID</div><div class="line"> * <span class="doctag">@param</span> options 部署的选项DeploymentOptions</div><div class="line"> * <span class="doctag">@param</span> parentContext 当前这次部署的父Context</div><div class="line"> * <span class="doctag">@param</span> callingContext 当前执行这次部署所在的Context</div><div class="line"> * <span class="doctag">@param</span> completionHandler 完成后的Handler</div><div class="line"> * <span class="doctag">@param</span> tccl 给verticle指定的线程上下文类加载器</div><div class="line"> * <span class="doctag">@param</span> verticles 即将部署的verticle数组</div><div class="line"> */</div><div class="line"> <span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">doDeploy</span><span class="params">(String identifier, String deploymentID, DeploymentOptions options,</span></span></div><div class="line">                      ContextImpl parentContext,</div><div class="line">                      ContextImpl callingContext,</div><div class="line">                      Handler&lt;AsyncResult&lt;String&gt;&gt; completionHandler,</div><div class="line">                      ClassLoader tccl, Verticle... verticles) &#123;&#125;</div></pre></td></tr></table></figure>
+<p>回到刚才调用<code>doDeploy()</code>方法的地方，参数是一一对应的，但是会给每个verticle的类名前面加上<code>java:</code>组成标识符，<code>deploymentID</code>是通过随机的UUID生成的。</p>
+<p>接着进入<code>doDeploy()</code> 方法，了解具体的执行逻辑是怎样的。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">JsonObject conf = options.getConfig() == <span class="keyword">null</span> ? <span class="keyword">new</span> JsonObject() : options.getConfig().copy(); <span class="comment">// Copy it</span></div><div class="line">String poolName = options.getWorkerPoolName();</div></pre></td></tr></table></figure></p>
+<p>上面这两行代码拿到verticle的config与poolName。<code>poolName</code>影响了Verticle的<code>WorkerPool</code>的选择。</p>
+<p>接下来两行代码建立了verticle的父子关系，<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">Deployment parent = parentContext.getDeployment();</div><div class="line">DeploymentImpl deployment = <span class="keyword">new</span> DeploymentImpl(parent, deploymentID, identifier, options);</div></pre></td></tr></table></figure></p>
+<h5 id="Deployment接口"><a href="#Deployment接口" class="headerlink" title="Deployment接口"></a>Deployment接口</h5><p>我们之前在<a href="http://billyyccc.com/2017/11/27/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Vert.x%20Core(1)-Context/" target="_blank" rel="external">这篇</a>简单讲过verticle与context的关系，<code>ContextImpl</code>会持有一个<code>Deployment</code> 引用，现在我们来仔细分析下<code>Deployment</code> 的原理。</p>
+<p>首先看<code>Deployment</code>的结构</p>
+<p><img src="/2017/12/07/深入理解Vert.x Core(3)-Verticle/Deployment.png" alt="ShowImage"></p>
+<p><code>Deployment</code>是定义的接口，而<code>DeploymentImpl</code>是在<code>DeploymentManager</code>类中的一个实现接口的内部类。<code>DeploymentImpl</code>中的fields没有什么特别的，需要注意的是，<code>VerticleHolder</code>是<code>DeploymentManager</code>中的一个静态内部类，被用来保存<code>ContextImpl</code>对象与<code>Verticle</code>对象之间的对应关系。</p>
+<p>现在我们可以这么理解，因为一个Verticle instance对应一个唯一的Context，而<code>Deployment</code>类负责维护该Verticle的父子关系以及该Verticle的相关信息，<code>Context</code>实例又包含这个Verticle对应的<code>Deployment</code>对象，所以Context与Verticle还有Deployment之间的关系可以用下面这张图表示。</p>
+<p><img src="/2017/12/07/深入理解Vert.x Core(3)-Verticle/RelationBetweenContextAndDeployment.png" alt="ShowImage"></p>
+<h5 id="doDeploy-方法"><a href="#doDeploy-方法" class="headerlink" title="doDeploy()方法"></a>doDeploy()方法</h5><p>再次回到<code>doDeploy()</code>方法，<code>Deployment</code>对象<code>parent</code>就是通过<code>parentContext</code> 获取的，同时为即将部署的verticle也创建一个<code>DeploymentImpl</code>对象<code>deployment</code> 。接下来创建两个原子变量<code>deployCount</code> 和<code>failureReported</code> ，前者表示已经部署的verticle instance的数量，后者表示部署过程中是否有failure。</p>
+<p>接下来进入循环，将传入<code>doDeploy()</code> 方法的verticles数组中所有verticle都进行部署操作。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">WorkerExecutorImpl workerExec = poolName != <span class="keyword">null</span> ? vertx.createSharedWorkerExecutor(poolName, options.getWorkerPoolSize()) : <span class="keyword">null</span>;</div><div class="line">      WorkerPool pool = workerExec != <span class="keyword">null</span> ? workerExec.getPool() : <span class="keyword">null</span>;</div></pre></td></tr></table></figure>
+<p>上面代码为这个Verticle准备WorkerPool，如果在<code>DeploymentOptions</code> 中指定了poolName，那么会复用<code>VertxImpl</code> 中已经存在的同名pool(不存在就创建)，如果不进行指定，那么pool这个时候为null。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">ContextImpl context = options.isWorker() ? vertx.createWorkerContext(options.isMultiThreaded(), deploymentID, pool, conf, tccl) :</div><div class="line">        vertx.createEventLoopContext(deploymentID, pool, conf, tccl);</div></pre></td></tr></table></figure>
+<p>然后为这个Verticle创建Context，会根据<code>DeploymentOptions</code>中的选项选择对应的Context类型，可以跳进<code>VertxImpl</code> 类查看对应的创建方法，创建方法基本是根据参数进行new对应的Context操作，只有<code>internalBlockingPool</code> 是<code>Vertx</code> 实例创建的，而在<code>workerPool</code> 传入null时(刚才不指定poolName情况下)，就使用<code>Vertx</code> 创建的<code>workerPool</code> 。</p>
+<p>下面将新创建的<code>Context</code> 对象与<code>deployment</code> 对象关联起来。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">context.setDeployment(deployment);</div><div class="line">deployment.addVerticle(<span class="keyword">new</span> VerticleHolder(verticle, context));</div></pre></td></tr></table></figure>
+<p>前面的准备工作都做好以后，后面就是verticle启动的操作了。</p>
+<p>调用Verticle中<code>init()</code> 方法，将Vertx实例以及context对象和verticle绑定在一起，接下来执行<code>verticle.start(startFuture);</code> ,对verticle进行启动，并设置startFuture的handler。简化handler的逻辑</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">startFuture.setHandler(ar -&gt; &#123;</div><div class="line">  <span class="keyword">if</span> (ar.succeeded()) &#123;</div><div class="line">    <span class="keyword">if</span> (parent != <span class="keyword">null</span>) &#123;</div><div class="line">      parent.addChild(deployment);</div><div class="line">      deployment.child = <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="comment">// metrics</span></div><div class="line">    deployments.put(deploymentID, deployment);</div><div class="line">    <span class="keyword">if</span> (deployCount.incrementAndGet() == verticles.length) &#123;</div><div class="line">      reportSuccess(deploymentID, callingContext, completionHandler);</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">else</span> <span class="keyword">if</span> (failureReported.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</div><div class="line">      rollbackDeployment(callingContext, completionHandler, deployment, context, ar.cause());</div><div class="line">    &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>如果startFuture是成功的，执行if中成功的逻辑。如果这次deployment是有parent的(不为null)，那么会为该parent注册这个<code>deployment</code> 为child，并且将<code>deployment</code> 的<code>child</code> 设为true。同时将deploymentID与deployment组成的KV对添加到<code>deployments</code> 这个Map中保存(可以提供deploymentIDs的信息)。最后判断deployCount，是否所有数组中的verticle都部署完了，如果都部署成功了，那么就向<code>completionHandler</code> 报告成功。如果还有没部署完的verticle，就回到循环继续执行。</p>
+<p><strong>容错处理(rollbackDeployment)</strong></p>
+<p>在执行<code>doDeploy()</code> 方法过程中，做了一些容错处理。将代码简化，只保留处理错误的部分。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">context.runOnContext(v -&gt; &#123;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="comment">// some details</span></div><div class="line">    startFuture.setHandler(ar -&gt; &#123;</div><div class="line">      <span class="keyword">if</span> (ar.succeeded()) &#123;</div><div class="line">        <span class="comment">// do something when succeeded</span></div><div class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (failureReported.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>)) &#123;</div><div class="line">        rollbackDeployment(callingContext, completionHandler, deployment, context, ar.cause());</div><div class="line">      &#125;</div><div class="line">    &#125;);</div><div class="line">  &#125; <span class="keyword">catch</span> (Throwable t) &#123;</div><div class="line">    <span class="keyword">if</span> (failureReported.compareAndSet(<span class="keyword">false</span>, <span class="keyword">true</span>))</div><div class="line">      rollbackDeployment(callingContext, completionHandler, deployment, context, t);</div><div class="line">  &#125;</div><div class="line">&#125;);</div></pre></td></tr></table></figure>
+<p>可以看到如果在<code>start()</code>方法过程中失败或者整个过程捕获到异常都会进行回滚操作。回滚操作通过<code>rollbackDeployment()</code>方法进行。<code>rollbackDeployment()</code>方法调用传入参数<code>deployment</code>的<code>doUndeployChildren()</code> 方法。</p>
+<p><code>doUndeployChildren()</code>方法会检查调用该方法的<code>deployment</code> 中有无child deployment，如果有那么就对每个child再调用<code>doUndeploy()</code> 方法，如果没有就将<code>completionHandler</code>置为成功的<code>Future</code>。</p>
+<p><code>doUndeploy()</code> 方法会继续检查调用方法的<code>deployment</code> 是否有child deployment, 如果有就调用<code>doUndeployChildren()</code> ，这样就又进入child deployment的卸载(undeploy)并继续往下层遍历，因此可以将verticle的层次结构当成树型结构。</p>
+<h4 id="使用字符串部署Verticle"><a href="#使用字符串部署Verticle" class="headerlink" title="使用字符串部署Verticle"></a>使用字符串部署Verticle</h4><p>使用字符串去部署<code>Verticle</code>时，调用<code>DeploymentManager</code> 公有方法<code>deployVerticle()</code>代码如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ContextImpl callingContext = vertx.getOrCreateContext();</div><div class="line">ClassLoader cl = getClassLoader(options, callingContext);</div><div class="line">doDeployVerticle(identifier, generateDeploymentID(), options, callingContext, callingContext, cl, completionHandler);</div></pre></td></tr></table></figure>
+<h5 id="isolated类加载器"><a href="#isolated类加载器" class="headerlink" title="isolated类加载器"></a>isolated类加载器</h5><p>如果使用字符串部署，那么<code>isolatedGroup</code> 是允许的，当<code>isolationGroup == null</code> 时classloader跟之前是一样的，沿用当前Vertx实例对应的类加载器。<code>isolationGroup!=null</code> 时，首先会先从<code>classloaders</code> 这个弱引用Map取Key为<code>isolationGroup</code> 这个字符串的Classloader,如果取到了就直接返回，没取到就要进行一些操作。</p>
+<p>首先用<code>getCurrentClassLoader()</code> 方法获取classloader，并且将<code>DeploymentOptions</code> 中所有classpath[String类型]转换成URL，添加到一个列表<code>urls</code>中， 然后通过URL类加载器的<code>getURLs()</code> 方法得到<code>current</code> 类加载器(Vertx实例的类加载器)的URL(打印输出就是本地依赖的URL)，并且将这些URL也添加到<code>urls</code> 列表中。接下来用这个<code>urls</code> 列表、<code>current</code> 类加载器和<code>DeploymentOptions</code> 中的<code>isolatedClasses</code> 列表作为参数new一个新的<code>IsolatingClassLoader</code>。</p>
+<p>可以看一看这个自定义的<code>IsolatingClassLoader</code> 的<code>loadClass()</code> 方法，先调用<code>findLoadedClass(name)</code> 找到系统加载的这个类，如果已经加载过直接返回这个类，没加载(为null)的话由我们现在来执行加载。然后用<code>isIsolatedClass(name)</code>来判断是否为我们设置的隔离类，看<code>isIsolatedClass()</code> 方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isIsolatedClass</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (isolatedClasses != <span class="keyword">null</span>) &#123;</div><div class="line">    <span class="keyword">for</span> (String isolated : isolatedClasses) &#123;</div><div class="line">      <span class="keyword">if</span> (isolated.endsWith(<span class="string">".*"</span>)) &#123;</div><div class="line">        String isolatedPackage = isolated.substring(<span class="number">0</span>, isolated.length() - <span class="number">1</span>);</div><div class="line">        String paramPackage = name.substring(<span class="number">0</span>, name.lastIndexOf(<span class="string">'.'</span>) + <span class="number">1</span>);</div><div class="line">        <span class="keyword">if</span> (paramPackage.startsWith(isolatedPackage)) &#123;</div><div class="line">          <span class="comment">// Matching package</span></div><div class="line">          <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">        &#125;</div><div class="line">      &#125; <span class="keyword">else</span> <span class="keyword">if</span> (isolated.equals(name)) &#123;</div><div class="line">        <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>由于我们在这个类加载器的构造器已经传入了<code>isolatedClasses</code> 的String组成的List，因此我们只要将列表中的String与要加载的类名进行一一比较就可以了，列表有的使用了通配符，我们需要将尾缀去掉再比较，如果是类名直接进行字符串<code>equals()</code> 方法比较就可以了，这样我们就能判断要加载的类是否属于<code>isolatedClasses</code> 。如果不是，那么加载任务就让URLCLassLoader去决定(通常是双亲委派加载)，如果属于隔离类，接着会判断是不是Vert.x相关的类或者系统类，如果是这些类就交给Parent类加载器去加载，包括以下这些类：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">isVertxOrSystemClass</span><span class="params">(String name)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span></div><div class="line">      name.startsWith(<span class="string">"java."</span>) ||</div><div class="line">      name.startsWith(<span class="string">"javax."</span>) ||</div><div class="line">      name.startsWith(<span class="string">"sun.*"</span>) ||</div><div class="line">      name.startsWith(<span class="string">"com.sun."</span>) ||</div><div class="line">      name.startsWith(<span class="string">"io.vertx.core"</span>) ||</div><div class="line">      name.startsWith(<span class="string">"io.netty."</span>) ||</div><div class="line">      name.startsWith(<span class="string">"com.fasterxml.jackson"</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>如果是我们自定义的类，那么就由我们的<code>isolatingClassLoader</code>类加载器去加载这个类。</p>
+<p>回到<code>DeploymentManager</code> ，classloader的准备工作完成后，就将一些必要的参数传给重载方法<code>doDeployVerticle()</code> 。 这个重载方法只有三行代码，就是解析Verticle工厂，拿到<code>VerticleFactory</code> 的列表的迭代器后交给下面的重载方法继续处理。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">List&lt;VerticleFactory&gt; verticleFactories = resolveFactories(identifier);</div><div class="line">Iterator&lt;VerticleFactory&gt; iter = verticleFactories.iterator();</div><div class="line">doDeployVerticle(iter, <span class="keyword">null</span>, identifier, deploymentID, options, parentContext, callingContext, cl, completionHandler);</div></pre></td></tr></table></figure>
+<h5 id="VerticleFactory"><a href="#VerticleFactory" class="headerlink" title="VerticleFactory"></a>VerticleFactory</h5><ul>
+<li>VerticleFactory SPI接口</li>
+</ul>
+<p>先看SPI接口结构，测试相关的Factory省略掉，Vert.x Core中只有一个<code>JavaVerticleFactory</code>实现类。</p>
+<p><img src="/2017/12/07/深入理解Vert.x Core(3)-Verticle/VerticleFactory.png" alt="ShowImage"></p>
+<p><code>requiresResolve()</code>方法表示是否需要对标识符(identifier)解析(调用<code>resolve()</code>方法)，<code>resolve()</code>方法就是解析实际的操作。<code>prefix()</code>方法表示工厂的前缀，<code>blockingCreate()</code>指明<code>createVerticle()</code>方法是否是阻塞操作的(放入EventLoop or Worker Thread)。</p>
+<blockquote>
+<p>注：在Vert.x中，提供了一些已经实现的VerticleFactory，比如<a href="https://github.com/vert-x3/vertx-service-factory" target="_blank" rel="external"><code>Vert.x Service Factory</code></a>，或者<a href="https://github.com/vert-x3/vertx-lang-js/blob/master/src/main/java/io/vertx/lang/js/JSVerticleFactory.java" target="_blank" rel="external">JSVerticleFactory</a>等等。它们都是实现了<code>VerticleFactory</code>的SPI接口并进行了一些修改。</p>
+</blockquote>
+<ul>
+<li>加载VerticleFactories</li>
+</ul>
+<p>在<code>DeploymentManager</code>类的构造器中，除了传递<code>Vertx</code>实例引用就是加载VerticleFactories了。看一下<code>loadVerticleFactories()</code>方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">void</span> <span class="title">loadVerticleFactories</span><span class="params">()</span> </span>&#123;</div><div class="line">  Collection&lt;VerticleFactory&gt; factories = ServiceHelper.loadFactories(VerticleFactory.class);</div><div class="line">  factories.forEach(<span class="keyword">this</span>::registerVerticleFactory);</div><div class="line">  VerticleFactory defaultFactory = <span class="keyword">new</span> JavaVerticleFactory();</div><div class="line">  defaultFactory.init(vertx);</div><div class="line">  defaultFactories.add(defaultFactory);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>首先用<code>ServiceHelper</code>去加载所有<code>VerticleFactory</code>的实现类，默认情况下是没有的(除非使用了Vert.x Service Factory等等)，接着为每个加载到的<code>VerticleFactory</code>执行一次注册操作。然后<code>DeploymentManager</code>会提供默认的<code>VerticleFactory</code>，而这个就是<code>JavaVerticleFactory</code>，之后将这个Factory添加到列表<code>defaultFactories</code>中。</p>
+<ul>
+<li>注册VerticleFactory</li>
+</ul>
+<p>这个流程不是很复杂，先获取当前要注册的<code>VerticleFactory</code>的<code>prefix</code>，<code>prefix</code>的用处在<a href="http://vertx.io/docs/vertx-core/java/#_rules_for_mapping_a_verticle_name_to_a_verticle_factory" target="_blank" rel="external">官方文档</a>已经说的很明白了，就是被用来查询对应的<code>VerticleFactory</code>。然后将由<code>prefix</code>与要注册的<code>VerticleFactory</code>组成的一对KV添加到<code>verticleFactories</code>这个Map中，最后执行<code>init()</code>方法。</p>
+<ul>
+<li>注销VerticleFactory</li>
+</ul>
+<p>注销流程跟注册流程类似，将需要注销的<code>VerticleFactory</code>从Map<code>verticleFactories</code>移除。</p>
+<ul>
+<li>解析VerticleFactory</li>
+</ul>
+<p><code>resolveFactories()</code>方法的注释已经把步骤给写出来了，也像<a href="http://vertx.io/docs/vertx-core/java/#_rules_for_mapping_a_verticle_name_to_a_verticle_factory" target="_blank" rel="external">文档</a>写的那样。<br>1.根据参数标识符找到前缀，比如你的identifier是<code>java:MyVerticle.java</code>，那么就会用冒号前面的<code>java</code>作为查询关键词。<br>2.如果不存在冒号，就去找标识符后缀，就是点号后面的字符串（类似文件扩展名），如果identifier是<code>YourVerticle.java</code>，那么就会用点后面的<code>java</code>作为查询关键词。<br>3.都不存在就用默认的factory(java)。</p>
+<p>找到关键词以后，就去<code>DeploymentManager</code>中的Map<code>verticleFactories</code>用关键词作为key查询对应的<code>List&lt;VerticleFactory&gt;</code>，最后list作为解析方法的返回。</p>
+<h5 id="doDeployVerticle"><a href="#doDeployVerticle" class="headerlink" title="doDeployVerticle()"></a>doDeployVerticle()</h5><p>现在看剩余的最后一个重载<code>doDeployVerticle()</code>方法。<br>注意到传入方法的第一个参数是根据<strong>当前这个要部署的Verticle标识符</strong>解析出的Verticle工厂列表的迭代器。</p>
+<p>直接上流程图，这样看更加直观。</p>
+<p><img src="/2017/12/07/深入理解Vert.x Core(3)-Verticle/doDeployVerticle.png" alt="ShowImage"></p>
+<p>首先可以知道中间过程如果出错，最后回调只会报告最后一次错误，因为会不断尝试取下一个工厂调用<code>doDeployVerticle</code>方法，到最后一个方法时(迭代器中无更多的工厂元素)，就会向handler报告上一次错误。</p>
+<p><code>doDeployVerticle</code>这个方法主要做了什么事情呢？可以看到最后具体的部署过程还是交给前面讲的<code>doDeploy()</code>方法去做的。在<code>doDeployVerticle()</code>方法中，主要完成的任务是：<strong>基于传递给它的标识符，根据相关联的Verticle工厂去创建Verticle对象</strong>，然后将这些创建好的Verticle对象交给<code>doDeploy()</code>方法去基于对象部署。</p>
+<h3 id="卸载Verticle"><a href="#卸载Verticle" class="headerlink" title="卸载Verticle"></a>卸载Verticle</h3><p>Vertx根据<code>deploymentId</code>去undeploy Verticle时，也是交给<code>deploymentManager</code>完成的。首先部署管理器会根据<code>deploymentId</code>找到id对应的<code>deployment</code>对象，而这个<code>deployment</code>对象会执行自己的<code>doUndeploy()</code>方法，将它所在的context绑定的所有verticle(包括child verticle)也一同undeploy，<code>doUndeploy()</code>之前已经简单的介绍过了，可以将verticle的父子关系当做树的层次关系，然后对每个节点进行深度遍历(类似DFS的思想)。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
+<li><p><code>Vertx</code>对象的<code>deployVerticle()</code>方法其实是委托给它自己对象中的<code>deploymentManager</code>对象去完成的。<code>Vertx</code>中的<code>registerVerticleFactory</code>方法其实就是给<code>deploymentManager</code>对象注册工厂。</p>
+</li>
+<li><p>部署<code>Verticle</code>总的来说有两种方式，基于对象部署或者基于字符串部署，基于对象部署是用在java中的，由调用者去提供Verticle对象；基于字符串部署用处比较广，不仅可以按组隔离部署Verticle，还可以进行多语言支持或者基于service的方式，这种会用Verticle工厂去创建需要的verticle对象，然后再交给前者去用对象部署。</p>
+</li>
+<li><p>verticle的信息自己并不保存，每个verticle instance都相关联一个context，context会保证verticle的线程安全性，verticle的信息在context中；context中还有一个<code>deployment</code>对象，用来维护verticle部署相关的信息(父子verticle关联,部署实例数量等等)。</p>
+</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+
+       
+    </div>
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Vert-x/" rel="tag"># Vert.x</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/04/深入理解Vert.x Core(2)-Future/" rel="next" title="深入理解Vert.x Core(2)-Future">
+                <i class="fa fa-chevron-left"></i> 深入理解Vert.x Core(2)-Future
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/07/深入理解Vert.x Core(4)-Vertx/" rel="prev" title="深入理解Vert.x Core(4)-Vertx">
+                深入理解Vert.x Core(4)-Vertx <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Billy Yuan" />
+            
+              <p class="site-author-name" itemprop="name">Billy Yuan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/BillyYccc" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:billy112487983@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/billyyccc" target="_blank" title="Twitter">
+                    
+                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#进入Verticle的世界"><span class="nav-number">1.</span> <span class="nav-text">进入Verticle的世界</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#部署一个Verticle"><span class="nav-number">1.1.</span> <span class="nav-text">部署一个Verticle</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#DeploymentManager部署管理器"><span class="nav-number">1.2.</span> <span class="nav-text">DeploymentManager部署管理器</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#使用对象部署Verticle"><span class="nav-number">1.2.1.</span> <span class="nav-text">使用对象部署Verticle</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#Deployment接口"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">Deployment接口</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#doDeploy-方法"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">doDeploy()方法</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用字符串部署Verticle"><span class="nav-number">1.2.2.</span> <span class="nav-text">使用字符串部署Verticle</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#isolated类加载器"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">isolated类加载器</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#VerticleFactory"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">VerticleFactory</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#doDeployVerticle"><span class="nav-number">1.2.2.3.</span> <span class="nav-text">doDeployVerticle()</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#卸载Verticle"><span class="nav-number">1.3.</span> <span class="nav-text">卸载Verticle</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">2.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/BillyYccc/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "middleRight";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

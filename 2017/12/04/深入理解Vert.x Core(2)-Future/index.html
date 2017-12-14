@@ -133,7 +133,7 @@ Callback
 Vert.x提">
 <meta property="og:image" content="http://billyyccc.github.io/2017/12/04/深入理解Vert.x Core(2)-Future/FutureStructure.png">
 <meta property="og:image" content="http://billyyccc.github.io/2017/12/04/深入理解Vert.x Core(2)-Future/Future.png">
-<meta property="og:updated_time" content="2017-12-06T11:09:14.620Z">
+<meta property="og:updated_time" content="2017-12-14T01:34:17.758Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入理解Vert.x Core(2)-Future">
 <meta name="twitter:description" content="异步调用Vert.x中几乎所有的API都是异步的，并且它们不会阻塞当前所在的线程。异步使得你可以安排做一项任务(调用函数)，并且在任务结束后得到通知，在任务处理的阶段(函数处理过程)不必等待它完成，你可以在这个过程中做点别的事情。但是在实现异步API时，必须有一种机制能通知调用者关于这个任务执行的信息。
@@ -508,7 +508,7 @@ Vert.x提">
 <p><code>completed</code>被设为true，<code>cause</code>这时被设为null，由于<code>handler</code>不为空(我们通过setHandler()方法设置了打印结果)，返回的就是我们设置的handler。</p>
 <p>回去之前<code>join()</code>里面回调的地方，接着往下走，由于<code>handler</code>不为空，那么现在就执行它，结果就是控制台打印出我们future结果的list了。</p>
 <p>由于<code>all()</code>与<code>any()</code>相对<code>join()</code>来说逻辑更简单一些，这里就省略了，但是基本思路是差不多的，了解它们的目的后对照<code>join()</code>源码不难理解。</p>
-<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Rxjava和Couroutine是Vert.x解决异步操作的高级特性，但是Future与Callback是Vert.x内部使用的机制，尽管将来有可能被JDK的CompletableFuture替代，仍然有必要进行更详细的了解。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>Rxjava和Coroutine是Vert.x解决异步操作的高级特性，但是Future与Callback是Vert.x内部使用的机制，尽管将来有可能被JDK的CompletableFuture替代，仍然有必要进行更详细的了解。</p>
 
       
     </div>
@@ -584,6 +584,10 @@ Vert.x提">
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/12/07/深入理解Vert.x Core(3)-Verticle/" rel="prev" title="深入理解Vert.x Core(3)-Verticle">
+                深入理解Vert.x Core(3)-Verticle <i class="fa fa-chevron-right"></i>
+              </a>
             
           </div>
         </div>
@@ -669,7 +673,7 @@ Vert.x提">
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">40</span>
+                  <span class="site-state-item-count">42</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
