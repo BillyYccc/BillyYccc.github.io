@@ -315,7 +315,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/12/07/深入理解Vert.x Core(4)-Vertx/">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Billy Yuan">
@@ -334,7 +334,7 @@
         
           <h1 class="post-title" itemprop="name headline">
                 
-                <a class="post-title-link" href="/2017/12/07/深入理解Vert.x Core(4)-Vertx/" itemprop="url">深入理解Vert.x Core(4)-Vertx</a></h1>
+                <a class="post-title-link" href="/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/" itemprop="url">深入理解Vert.x Core(4)-Vertx(I)</a></h1>
         
 
         <div class="post-meta">
@@ -346,8 +346,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-07T16:47:45+08:00">
-                2017-12-07
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-15T13:35:29+08:00">
+                2017-12-15
               </time>
             
 
@@ -407,8 +407,7 @@
 
       
         
-          
-            <h2 id="创建Vertx实例"><a href="#创建Vertx实例" class="headerlink" title="创建Vertx实例"></a>创建Vertx实例</h2><p>官方文档上面写着这样一句话</p>
+          <h2 id="创建Vertx实例"><a href="#创建Vertx实例" class="headerlink" title="创建Vertx实例"></a>创建Vertx实例</h2><p>官方文档上面写着这样一句话</p>
 <blockquote>
 <p>If you’re embedding Vert.x then you simply create an instance as follows:<br><code>Vertx vertx = Vertx.vertx();</code></p>
 </blockquote>
@@ -416,8 +415,13 @@
 <p>那么在<code>Vertx vertx = Vertx.vertx();</code> 执行时到底发生了什么呢？</p>
 <p>查看<code>Vertx</code> 接口的静态工厂方法，跟<code>Future.future()</code>有些类似<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> Vertx <span class="title">vertx</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> factory.vertx();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
 <p>找到<code>factory</code>的初始化地方<br><code>VertxFactory factory = ServiceHelper.loadFactory(VertxFactory.class);</code><br>和<code>Future</code>一样，也是通过SPI接口暴露服务，找到真正的工厂实现类<code>VertxFactoryImpl</code>，返回的是<code>VertxImpl</code>实例。</p>
-<h2 id="VertxImpl初始化"><a href="#VertxImpl初始化" class="headerlink" title="VertxImpl初始化"></a>VertxImpl初始化</h2><h1 id="Unfinished-WIP"><a href="#Unfinished-WIP" class="headerlink" title="@_@(Unfinished) WIP@_@"></a>@_@(Unfinished) WIP@_@</h1>
-          
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
         
       
     </div>
@@ -2061,7 +2065,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

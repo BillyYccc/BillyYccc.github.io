@@ -134,7 +134,7 @@
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/ContextImpl.png">
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/TaskQueue.png">
 <meta property="og:image" content="http://billyyccc.github.io/2017/11/27/深入理解Vert.x Core(1)-Context/TaskQueueExecution.png">
-<meta property="og:updated_time" content="2017-12-05T03:29:51.481Z">
+<meta property="og:updated_time" content="2017-12-18T12:38:35.810Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="深入理解Vert.x Core(1)-Context">
 <meta name="twitter:description" content="Context在Vert.x核心组件概览一文中已经谈到了Context的基本概念，在更加深入地了解VertxImpl，Verticle的内部原理等等之前，有必要了解Context的一些内部机制。本文将对Vert.x的Context进行深入分析。
@@ -460,7 +460,7 @@
 <p>注：提交的EventLoop不仅仅是NioEventLoop, Vert.x在3.5.0版本加入了对Linux上Epoll和OS X上Kqueue的Native Transport支持，Netty中的异步传输可以不再只是使用NIO了。关于Netty中EventLoop为什么使用<code>execute()</code>方法接收Runnable接口，可以去找一找相关的EventLoop和JUC中Executor的资料。</p>
 </blockquote>
 <p>我们对<code>wrapTask()</code>方法进行简化，省去一些Metrics管理，时间记录，检查操作的逻辑以及错误处理，得到的源码是这样的<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> Runnable <span class="title">wrapTask</span><span class="params">(ContextTask cTask, Handler&lt;Void&gt; hTask, <span class="keyword">boolean</span> checkThread, PoolMetrics metrics)</span> </span>&#123;</div><div class="line">    <span class="keyword">return</span> () -&gt; &#123;</div><div class="line">      Thread th = Thread.currentThread();</div><div class="line">      VertxThread current = (VertxThread) th;</div><div class="line">      contextThread = current;</div><div class="line">      <span class="keyword">try</span> &#123;</div><div class="line">        setContext(current, ContextImpl.<span class="keyword">this</span>);</div><div class="line">        <span class="keyword">if</span> (cTask != <span class="keyword">null</span>) &#123;</div><div class="line">          cTask.run();</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">          hTask.handle(<span class="keyword">null</span>);</div><div class="line">        &#125;</div><div class="line">      &#125; <span class="keyword">catch</span> (Throwable t) &#123;</div><div class="line">        <span class="comment">// handle t</span></div><div class="line">      &#125; <span class="keyword">finally</span> &#123;</div><div class="line">        <span class="comment">// clean up</span></div><div class="line">      &#125;</div><div class="line">    &#125;;</div><div class="line">  &#125;</div></pre></td></tr></table></figure></p>
-<p>可以看到简化后的<code>wrapTask()</code>方法并没有太复杂的操作，仅仅将<code>executeAsync(Handler&lt;Void&gt; task)</code>方法传入的参数task封装成一个一个<code>Runnable</code>，做一些基本的检查线程的操作，交给<code>hTask.handle(null)</code>处理就行了。需要注意的只有一点，就是这个<code>Runnable</code>执行前会将它<strong>执行</strong>时的线程(必须是Vertx线程)与你调用<code>runOnContext()</code>方法的<strong>context</strong>关联。到现在可以确认的是，我们已经知道从Vert.x EventLoopContext上拿到的Handler已经能够在Netty的EventLoop上面跑了。</p>
+<p>可以看到简化后的<code>wrapTask()</code>方法并没有太复杂的操作，仅仅将<code>executeAsync(Handler&lt;Void&gt; task)</code>方法传入的参数task封装成一个<code>Runnable</code>，做一些基本的检查线程的操作，交给<code>hTask.handle(null)</code>处理就行了。需要注意的只有一点，就是这个<code>Runnable</code>执行前会将它<strong>执行</strong>时的线程(必须是Vertx线程)与你调用<code>runOnContext()</code>方法的<strong>context</strong>关联。到现在可以确认的是，我们已经知道从Vert.x EventLoopContext上拿到的Task已经能够在Netty的EventLoop上面跑了。</p>
 <h4 id="Constructor"><a href="#Constructor" class="headerlink" title="Constructor"></a>Constructor</h4><p><code>EventLoopContext</code>的构造器调用的是父类的构造器，现在我们将目光转向ContextImpl类。</p>
 <h3 id="ContextImpl"><a href="#ContextImpl" class="headerlink" title="ContextImpl"></a>ContextImpl</h3><p>ContextImpl这个抽象类，内容非常的多。<br><img src="/2017/11/27/深入理解Vert.x Core(1)-Context/ContextImpl.png" alt="ShowImage"></p>
 <h4 id="Properties"><a href="#Properties" class="headerlink" title="Properties"></a>Properties</h4><p>按照顺序逐个分析，Logger不必说，先看六个常量，分别对应三组Key-Value，String常量表示Key，Boolean常量表示Value。<code>THREAD_CHECKS_PROP_NAME</code>对应<code>THREAD_CHECKS</code>，负责进行线程检查的开关；<code>DISABLE_TIMINGS_PROP_NAME</code>对应<code>DISABLE_TIMINGS</code>，负责进行时间计量的开关；<code>DISABLE_TCCL_PROP_NAME</code>对应<code>DISABLE_TCCL</code>，负责TCCL线程上下文类加载器的检测的开关。</p>
@@ -707,7 +707,7 @@
               
               <div class="site-state-item site-state-tags">
                 <a href="/tags/index.html">
-                  <span class="site-state-item-count">11</span>
+                  <span class="site-state-item-count">12</span>
                   <span class="site-state-item-name">标签</span>
                 </a>
               </div>

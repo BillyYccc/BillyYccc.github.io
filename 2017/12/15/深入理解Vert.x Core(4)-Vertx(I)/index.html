@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Convergence:300,300italic,400,400italic,700,700italic|Tauri:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,Vert.x,Netty," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="创建Vertx实例官方文档上面写着这样一句话
+
+If you’re embedding Vert.x then you simply create an instance as follows:Vertx vertx = Vertx.vertx();
+
+我们在使用Vert.x的时候一般将应用封装成多个Verticle，指定好MainVerticle并使用官方提供的Launcher，通过fat-ja">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Vert.x Core(4)-Vertx(I)">
+<meta property="og:url" content="http://billyyccc.github.io/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="创建Vertx实例官方文档上面写着这样一句话
+
+If you’re embedding Vert.x then you simply create an instance as follows:Vertx vertx = Vertx.vertx();
+
+我们在使用Vert.x的时候一般将应用封装成多个Verticle，指定好MainVerticle并使用官方提供的Launcher，通过fat-ja">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/VertxThread.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/VertxThreadFactory.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/WorkerPool.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/WorkerExecutor.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/RelationsOfExecutorsAndPools.png">
+<meta property="og:updated_time" content="2017-12-19T07:21:48.782Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解Vert.x Core(4)-Vertx(I)">
+<meta name="twitter:description" content="创建Vertx实例官方文档上面写着这样一句话
+
+If you’re embedding Vert.x then you simply create an instance as follows:Vertx vertx = Vertx.vertx();
+
+我们在使用Vert.x的时候一般将应用封装成多个Verticle，指定好MainVerticle并使用官方提供的Launcher，通过fat-ja">
+<meta name="twitter:image" content="http://billyyccc.github.io/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/VertxThread.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/"/>
+
+
+
+
+
+  <title>深入理解Vert.x Core(4)-Vertx(I) | BillyYccc</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99992019-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解Vert.x Core(4)-Vertx(I)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-15T13:35:29+08:00">
+                2017-12-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vert-x/" itemprop="url" rel="index">
+                    <span itemprop="name">Vert.x</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="创建Vertx实例"><a href="#创建Vertx实例" class="headerlink" title="创建Vertx实例"></a>创建Vertx实例</h2><p>官方文档上面写着这样一句话</p>
+<blockquote>
+<p>If you’re embedding Vert.x then you simply create an instance as follows:<br><code>Vertx vertx = Vertx.vertx();</code></p>
+</blockquote>
+<p>我们在使用Vert.x的时候一般将应用封装成多个Verticle，指定好MainVerticle并使用官方提供的Launcher，通过fat-jar打包，然后直接使用<code>java -jar -xxx app-fat-jar-1.0.jar</code> 执行，但是嵌入Vert.x使用的时候，比如你写个<code>Main</code> 方法去调用Vert.x的API，这种就属于嵌入使用，这时候就需要手动创建Vert.x instance。</p>
+<p>那么在<code>Vertx vertx = Vertx.vertx();</code> 执行时到底发生了什么呢？</p>
+<p>查看<code>Vertx</code> 接口的静态工厂方法，跟<code>Future.future()</code>有些类似<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">static</span> Vertx <span class="title">vertx</span><span class="params">()</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> factory.vertx();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>找到<code>factory</code>的初始化地方<br><code>VertxFactory factory = ServiceHelper.loadFactory(VertxFactory.class);</code><br>和<code>Future</code>一样，也是通过SPI接口暴露服务，找到真正的工厂实现类<code>VertxFactoryImpl</code>，返回的是<code>VertxImpl</code>实例。</p>
+<a id="more"></a>
+<h2 id="VertxImpl"><a href="#VertxImpl" class="headerlink" title="VertxImpl"></a>VertxImpl</h2><p><code>VertxImpl</code>可以说是Vert.x的大脑，Vert.x的组件都跟这个类有着联系。</p>
+<h3 id="Context相关"><a href="#Context相关" class="headerlink" title="Context相关"></a>Context相关</h3><p>我们在<a href="http://billyyccc.com/2017/11/27/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Vert.x%20Core(1)-Context/" target="_blank" rel="external">这篇文章</a> 中已经讲过了Context以及一些场景，在<code>VertxImpl</code> 类中，封装了一些创建或者获取<code>Context</code>的接口。</p>
+<h4 id="Vertx-currentContext"><a href="#Vertx-currentContext" class="headerlink" title="Vertx.currentContext()"></a>Vertx.currentContext()</h4><p><code>Vertx</code>接口中提供了静态方法<code>currentContext()</code>，调用的是工厂的<code>context()</code>方法，而默认的<code>VertxFactoryImpl</code>实现类中<code>context()</code>即是<code>VertxImpl</code>的静态方法<code>context()</code>。看这个方法的实现<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">static</span> Context <span class="title">context</span><span class="params">()</span> </span>&#123;</div><div class="line">  Thread current = Thread.currentThread();</div><div class="line">  <span class="keyword">if</span> (current <span class="keyword">instanceof</span> VertxThread) &#123;</div><div class="line">    <span class="keyword">return</span> ((VertxThread) current).getContext();</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">null</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>只有两种情况，当前线程如果为Vertx线程，那么就返回当前线程的Context，如果不是Vertx线程就返回null。</p>
+<h4 id="getContext"><a href="#getContext" class="headerlink" title="getContext()"></a>getContext()</h4><p><code>VertxImpl</code>中有实例方法<code>getContext()</code>，和上面讲的<code>context()</code>不同，<code>context()</code>方法只是获取当前线程的context，而<code>getContext()</code>首先会调用<code>context()</code>获取当前线程的context，并且保证这个context是关联调用<code>getContext()</code>方法的<code>Vertx</code>实例的，否则就返回null。</p>
+<h4 id="createEventLoopContext"><a href="#createEventLoopContext" class="headerlink" title="createEventLoopContext()"></a>createEventLoopContext()</h4><p>这个方法包含四个参数，第一个就是Verticle的deploymentID，第二个是给<code>EventLoopContext</code>执行阻塞任务用的workerPool，第三个参数就是一个自定义的Json config，最后一个是类加载器。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> EventLoopContext <span class="title">createEventLoopContext</span><span class="params">(String deploymentID, WorkerPool workerPool, JsonObject config, ClassLoader tccl)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> EventLoopContext(<span class="keyword">this</span>, internalBlockingPool, workerPool != <span class="keyword">null</span> ? workerPool : <span class="keyword">this</span>.workerPool, deploymentID, config, tccl);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>internalBlockingPool</code>会使用当前<code>Vertx</code>实例的<code>internalBlockingPool</code>。而如果传入参数<code>workerPool</code>为null，那么<code>workerPool</code>也会直接使用当前<code>Vertx</code>实例的<code>workerPool</code>。</p>
+<h4 id="createWorkerContext"><a href="#createWorkerContext" class="headerlink" title="createWorkerContext()"></a>createWorkerContext()</h4><p>除了会根据第一个参数判断创建<code>WorkerContext</code>还是<code>MultiThreadedWorkerContext</code>，<code>createWorkerContext()</code>与<code>createEventLoopContext()</code>方法类似。</p>
+<h4 id="getOrCreateContext"><a href="#getOrCreateContext" class="headerlink" title="getOrCreateContext()"></a>getOrCreateContext()</h4><p>直接看代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> ContextImpl <span class="title">getOrCreateContext</span><span class="params">()</span> </span>&#123;</div><div class="line">  ContextImpl ctx = getContext();</div><div class="line">  <span class="keyword">if</span> (ctx == <span class="keyword">null</span>) &#123;</div><div class="line">    <span class="comment">// We are running embedded - Create a context</span></div><div class="line">    ctx = createEventLoopContext(<span class="keyword">null</span>, <span class="keyword">null</span>, <span class="keyword">new</span> JsonObject(), Thread.currentThread().getContextClassLoader());</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> ctx;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个方法首先会调用<code>getContext()</code>方法，获取当前线程下与这个<code>Vertx</code>实例关联的context，如果不存在，就手动创建一个<code>EventLoopContext</code>。</p>
+<p>注意传给<code>createEventLoopContext()</code>方法的<code>deploymentID</code>,<code>workerPool</code>都为null，那么这个<code>EventLoopContext</code>的<code>workerPool</code>就是<code>Vertx</code>实例的<code>workerPool</code>。</p>
+<p>有一点需要注意，就是在context==null的情况下，创建一个context并不会改变<strong>任何当前已有</strong>的context状态。</p>
+<h4 id="runOnContext"><a href="#runOnContext" class="headerlink" title="runOnContext()"></a>runOnContext()</h4><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">runOnContext</span><span class="params">(Handler&lt;Void&gt; task)</span> </span>&#123;</div><div class="line">  ContextImpl context = getOrCreateContext();</div><div class="line">  context.runOnContext(task);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>通过代码知道<code>runOnContext()</code>会使用当前调用这个方法的<code>Vertx</code>实例首先用<code>getOrCreateContext()</code>获取一个<code>ContextImpl</code>实例，然后再用<code>Context</code>的<code>runOnContext()</code>方法执行task。</p>
+<p>举两种典型情况示例分析：</p>
+<ul>
+<li>在<code>Verticle</code>中调用vertx运行这个方法</li>
+</ul>
+<p>在<code>Verticle</code>中调用，首先<code>getOrCreateContext()</code>会获取到当前这个<code>Verticle</code>绑定的<code>Context</code>，接着就在这个<code>Context</code>上执行task。具体执行的方法在讲<code>Context</code>的时候已经讲过了，这里就不再赘述。</p>
+<ul>
+<li>在Main方法中运行这个方法</li>
+</ul>
+<p>在Main中运行，首先得手动创建一个<code>Vertx</code>实例，注意当前所在线程为<code>main</code>线程，因此调用<code>getOrCreateContext()</code>方法会创建一个新的<code>EventLoopContext</code>，接着用这个context执行task。</p>
+<h4 id="executeBlocking"><a href="#executeBlocking" class="headerlink" title="executeBlocking()"></a>executeBlocking()</h4><p>这个方法与<code>runOnContext()</code>方法的结构类似，也是将具体要执行的任务委托给获取到的<code>Context</code>或者新创建的<code>Context</code>来完成。</p>
+<p>需要注意的是，如果<code>Context</code>是新创建的，那么这个context的<code>workerPool</code>就是它所关联的<code>Vertx</code>实例的<code>workerPool</code>，执行阻塞任务的时候也会交给<code>Vertx</code>实例的<code>workerPool</code>去处理。</p>
+<h3 id="Verticle相关"><a href="#Verticle相关" class="headerlink" title="Verticle相关"></a>Verticle相关</h3><p>在<code>VertxImpl</code>中，如果是标准模式下部署<code>Verticle</code>，这个工作就交给<code>deploymentManager</code>去做了，而如果是HA高可用模式下部署<code>Verticle</code>，就由<code>HaManager</code>部署(其实还是委托给<code>deploymentManager</code>去部署)。<code>registerVerticleFactory()</code>与<code>unregisterVerticleFactory()</code>等等与<code>Verticle</code>相关的操作都是由<code>deploymentManager</code>去完成的。</p>
+<p>我们在<a href="http://billyyccc.com/2017/12/07/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Vert.x%20Core(3)-Verticle/" target="_blank" rel="external">这篇文章</a> 中介绍了<code>deploymentManager</code>部署<code>Verticle</code>的详细过程。</p>
+<h3 id="Vert-x线程"><a href="#Vert-x线程" class="headerlink" title="Vert.x线程"></a>Vert.x线程</h3><p>Vert.x中主要使用了这两种线程<code>EventLoop</code>以及<code>Worker</code>，下面会介绍Vert.x中的线程。</p>
+<h4 id="VertxThread"><a href="#VertxThread" class="headerlink" title="VertxThread"></a>VertxThread</h4><p>我们先看<code>VertxThread</code>的结构。</p>
+<p><img src="/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/VertxThread.png" alt="ShowImage"></p>
+<p><code>VertxThread</code>继承了Netty中的<code>FastThreadLocalThread</code>，而<code>FastThreadLocalThread</code>的父类就是JDK中的<code>Thread</code>类。布尔值<code>worker</code>表示该线程是<code>EventLoop</code>线程还是<code>Worker</code>线程。<code>VertxThread</code>类提供了获取最大执行时间选项、设置线程当前的context等等方法。<code>executeStart()</code>方法可以获取当前时间并存放在<code>VertxThread#execStart</code>中保存,这个方法可以被用来度量任务执行时间的长短，从而得出任务是否阻塞了线程。<code>executeEnd()</code>用来清理<code>execStart</code>状态，一般在任务结束时调用。<code>startTime()</code>方法就是获取<code>execStart</code>的值。</p>
+<h4 id="VertxThreadFactory"><a href="#VertxThreadFactory" class="headerlink" title="VertxThreadFactory"></a>VertxThreadFactory</h4><p>接下来分析Vertx线程工厂的结构。</p>
+<p><img src="/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/VertxThreadFactory.png" alt="ShowImage"></p>
+<p><code>VertxThreadFactory</code>实现了<code>ThreadFactory</code>接口，这个接口中只有一个方法，就是<code>Thread newThread(Runnable r);</code>。<br>进入<code>VertxThreadFactory</code>类中，首先看到<code>prefix</code>与<code>threadCount</code>，前者用来表示这个Vertx线程工厂创建的线程的前缀名，而<code>threadCount</code>就是对创建的线程进行原子计数。它们组合在一起成为新创建的线程的名字<br><code>weakMap</code>与<code>unsetContext()</code>方法是为了在<code>Verticle</code>卸载时，能将该<code>Verticle</code>绑定的<code>Context</code>所在的线程的所有绑定这个<code>Context</code>相关信息清除。<code>weakMap</code>的Key存放了<code>VertxThread</code>对象，Value是一个无意义的值，当<code>VertxThread</code>对象在其他地方没有引用的时候，<code>weakMap</code>会自动进行清理。</p>
+<p><code>newThread()</code>方法执行了以下几个步骤<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> Thread <span class="title">newThread</span><span class="params">(Runnable runnable)</span> </span>&#123;</div><div class="line">  VertxThread t = <span class="keyword">new</span> VertxThread(runnable, prefix + threadCount.getAndIncrement(), worker, maxExecTime);</div><div class="line">  <span class="keyword">if</span> (checker != <span class="keyword">null</span>) &#123;</div><div class="line">    checker.registerThread(t);</div><div class="line">  &#125;</div><div class="line">  addToMap(t);</div><div class="line">  <span class="comment">// we want to prevent the JVM from exiting until Vert.x instances are closed</span></div><div class="line">  t.setDaemon(<span class="keyword">false</span>);</div><div class="line">  <span class="keyword">return</span> t;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<ol>
+<li>创建新的Vertx线程，线程名字就是上面说的prefix+threadCount的组合</li>
+<li>在<code>BlockedThreadChecker</code>中注册这个线程</li>
+<li>在弱引用<code>weakMap</code>中存放这个线程</li>
+<li>让这个线程成为用户线程而不是守护线程(daemon)</li>
+</ol>
+<h4 id="线程阻塞操作检测机制"><a href="#线程阻塞操作检测机制" class="headerlink" title="线程阻塞操作检测机制"></a>线程阻塞操作检测机制</h4><p>在Vertx线程工厂创建Vertx线程时，会用<code>BlockedThreadChecker</code> 对象注册每个新创建的线程。</p>
+<p><code>BlockedThreadChecker</code> 类中，<code>registerThread()</code> 方法将<code>VertxThread</code> 对象添加到弱引用HashMap <code>threads</code>中。而线程阻塞操作的检测逻辑是在构造方法中完成的，循环检测通过<code>java.util.Timer</code> 实现，Timer会运行一个固定间隔时间的task。这个间隔时间就是检测阻塞线程的周期，可以在<code>VertxOptions#setBlockedThreadCheckInterval()</code> 方法中进行设置，间隔时间就是构造器的第一个参数，而构造器的第二个参数是表示异常警告时间，就是如果任务执行时间超过了这个阈值，那么就不只是在Log日志打印信息，还会抛出异常，这个参数也可以在<code>VertxOptions#setWarningExceptionTime()</code> 方法中设置。</p>
+<p>检测过程逻辑不复杂，对<code>weakMap</code> 中每个线程进行检查，通过获取当前时间<code>now</code> 减去线程中保留的任务启动时间<code>Vertx#startTime()</code> 得到任务当前正在执行已经占用线程的时间，再进行时间的相关判断逻辑。</p>
+<p>在<code>VertxImpl</code> 类的初始化过程中，可以看到初始化了阻塞线程checker的代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">checker = <span class="keyword">new</span> BlockedThreadChecker(options.getBlockedThreadCheckInterval(), options.getWarningExceptionTime());</div></pre></td></tr></table></figure></p>
+<h3 id="Vertx-EventLoop机制"><a href="#Vertx-EventLoop机制" class="headerlink" title="Vertx EventLoop机制"></a>Vertx EventLoop机制</h3><p>我们都知道在Vert.x中，一个<code>EventLoopContext</code>只会绑定一个<code>EventLoop</code> 线程，而这个<code>EventLoop</code> 就是通过<code>VertxImpl#getEventLoopGroup()#next()</code> 获取到的。我们现在来仔细分析<code>VertxImpl</code> 中的<code>EventLoopGroup</code>是怎么得到的。</p>
+<p>首先先看这行代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">eventLoopThreadFactory = <span class="keyword">new</span> VertxThreadFactory(<span class="string">"vert.x-eventloop-thread-"</span>, checker, <span class="keyword">false</span>, options.getMaxEventLoopExecuteTime());</div></pre></td></tr></table></figure>
+<p>首先会准备好一个Vertx线程工厂，这个工厂的prefix为<code>vert.x-eventloop-thread-</code>，然后是阻塞线程检测器<code>checker</code>参数，<code>worker</code>选项当然是false，还有<code>VertxOptions</code>中<code>EventLoop</code>最大执行时间(超过就发出警告)的选项，待会这个线程工厂会给<code>EventLoopGroup</code>提供线程。</p>
+<p>然后看到<code>EventLoopGroup</code>创建的代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">eventLoopGroup = transport.eventLoopGroup(options.getEventLoopPoolSize(), eventLoopThreadFactory, NETTY_IO_RATIO);</div></pre></td></tr></table></figure>
+<p>注意到<code>transport.eventLoopGroup()</code>方法，在Netty完成了对Native Transports(包括Epoll以及Kqueue)的支持后，Vert.x 3.5.0也加入了Native Transports的支持。如果在<code>VertxOptions</code>中开启了<code>setPreferNativeTransport(true)</code> 选项，那么Vert.x就会去优先使用Native Transports而不是JDK原生的NIO。<code>VertxImpl</code>的<code>EventLoopGroup</code>会根据传输方式选择对应的Netty中的<code>EventLoopGroup</code>。如果是Epoll，最后就是<code>EpollEventLoopGroup</code>；如果是Kqueue，就是<code>KQueueEventLoopGroup</code>，如果使用NIO，那么就是<code>NioEventLoopGroup</code>。这些<code>EventLoopGroup</code>的size都可以通过<code>VertxOptions</code>去设置，线程就是由刚才创建的Vertx线程工厂提供。</p>
+<p>除此之外，Vert.x提供了一个<code>SystemProperty</code>去修改EventLoopGroup的<code>IO Ratio</code>。</p>
+<p>这里简单的提一下Netty的线程模型。在Netty的<code>NioEventLoop</code>这个<code>reactor</code>线程中，有两种事件需要处理，一种是IO事件，还有一种是Task任务。IO事件就包括读写操作read,write、connect、close、挂起等等，而Task任务就是我们封装提交给<code>EventLoop</code>的<code>Runnable</code>对象。在Netty的<code>NioEventLoop</code>的<code>run()</code>方法中，这个方法是无限循环的，大概有3个步骤。</p>
+<ol>
+<li>进行SELECT操作，将所有关联到当前<code>EventLoop</code>的<code>Channel</code>上的IO事件轮询出来</li>
+<li><code>processSelectKeys()</code>，处理这些IO事件</li>
+<li><code>runAllTasks()</code>，处理任务队列</li>
+</ol>
+<p>这个<code>IO Ratio</code>就是<code>EventLoop</code>一次循环处理IO事件与任务所占时间的比例，也就是第2步与第3步的占比，默认是1:1，即50。</p>
+<p>那么我们之前讲过的<code>EventLoopContext</code>的执行<code>executeAsync()</code>方法都是封装成<code>Runnable</code>对象提交给<code>EventLoop</code>,为什么提交的方式是任务队列呢，我们知道不能阻塞EventLoop，所以我们在<code>EventLoopContext</code>中执行的任务都是CPU占用时间短或者非阻塞的操作，通过任务队列的方式提交时，Netty的EventLoop会帮我们将任务队列中的所有任务串行化执行(顺序执行)，不会产生并行执行的问题。</p>
+<p>现在就能将<code>EventLoopContext</code>与<code>VertxImpl</code>中的<code>EventLoopGroup</code>关联起来了，<code>VertxImpl</code>这个大脑为<code>EventLoopContext</code>提供(Netty中的)<code>EventLoop</code>执行自定义<code>Runnable</code>对象(任务)。</p>
+<h3 id="Vertx-WorkerPool机制"><a href="#Vertx-WorkerPool机制" class="headerlink" title="Vertx WorkerPool机制"></a>Vertx WorkerPool机制</h3><p>可以看到<code>WorkerPool</code>就是对<code>ExecutorService</code>与<code>Metrics</code>的封装。</p>
+<p><img src="/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/WorkerPool.png" alt="ShowImage"></p>
+<p>那我们再来看一看<code>VertxImpl</code>中的<code>internalBlockingPool</code>与<code>workerPool</code>，它们创建的代码如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">internalBlockingPool = <span class="keyword">new</span> WorkerPool(internalBlockingExec, internalBlockingPoolMetrics);</div><div class="line">workerPool = <span class="keyword">new</span> WorkerPool(workerExec, workerPoolMetrics);</div></pre></td></tr></table></figure></p>
+<p>继续往上看，可以看到<code>ExecutorService</code>的创建过程<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">ExecutorService workerExec = Executors.newFixedThreadPool(options.getWorkerPoolSize(),</div><div class="line">    <span class="keyword">new</span> VertxThreadFactory(<span class="string">"vert.x-worker-thread-"</span>, checker, <span class="keyword">true</span>, options.getMaxWorkerExecuteTime()));</div><div class="line">PoolMetrics workerPoolMetrics = metrics != <span class="keyword">null</span> ? metrics.createMetrics(workerExec, <span class="string">"worker"</span>, <span class="string">"vert.x-worker-thread"</span>, options.getWorkerPoolSize()) : <span class="keyword">null</span>;</div><div class="line">ExecutorService internalBlockingExec = Executors.newFixedThreadPool(options.getInternalBlockingPoolSize(),</div><div class="line">    <span class="keyword">new</span> VertxThreadFactory(<span class="string">"vert.x-internal-blocking-"</span>, checker, <span class="keyword">true</span>, options.getMaxWorkerExecuteTime()));</div><div class="line">PoolMetrics internalBlockingPoolMetrics = metrics != <span class="keyword">null</span> ? metrics.createMetrics(internalBlockingExec, <span class="string">"worker"</span>, <span class="string">"vert.x-internal-blocking"</span>, options.getInternalBlockingPoolSize()) : <span class="keyword">null</span>;</div></pre></td></tr></table></figure></p>
+<p>发现<code>WorkerPool</code>的线程池是由<code>Executors.newFixedThreadPool</code>支撑的，这里简单的介绍一下<code>FixedThreadPool</code>。</p>
+<blockquote>
+<p>这个线程池创建后会复用一定数量的线程来处理一个共享的无边界任务队列，任何时候都只有固定数量(创建时指定的线程数)的线程处理任务，一旦需要处理的任务数量超过了线程数，那么多余无法处理的任务就会在队列中堆积一直到有可用的线程来处理它们。需要注意的是，这些线程会一直保留在线程池中除非线程池被显式关闭。</p>
+</blockquote>
+<p>现在我们知道<code>VertxOptions</code>中可以设置的<code>workerPoolSize</code>其实就是这个<code>VertxImpl</code>实例对象中<code>FixedThreadPool</code>的线程数量，默认的值是20。<code>internalBlockingPoolSize</code>也是同样的原理。</p>
+<p>我们使用<code>deploymentManager</code>部署<code>Verticle</code> 的过程中，会给每个<code>Verticle</code> 创建一个相关联的context，在调用<code>VertxImpl</code> 的三种创建Context方法时，都需要指定<code>internalBlockingPool</code> ,而这个<code>internalBlockingPool</code> 直接就是使用<code>VertxImpl</code> 实例的内部阻塞池。</p>
+<p>除此之外，还需要给每种Context指定一个<code>workerPool</code> 。在<code>DeploymentManager#doDeploy()</code> 中，如果不去指定<code>DeploymentOptions</code>的<code>workerPoolName</code> ，就不会根据名字去获取一个共享的<code>workerExecutor</code> ,那么<code>workerPool</code> 就会为null，所以此时使用<code>VertxImpl</code> 实例的<code>workerPool</code> 。而如果指定了<code>workerPoolName</code> ，就会使用<code>VertxInternal#createSharedWorkerExecutor()</code> 方法为这个Context单独创建一个<code>WorkerExecutor</code> ，而不是用<code>VertxImpl</code> 实例中的<code>workerPool</code> 。</p>
+<p>下面谈一谈Vert.x中的<code>SharedWorkerExecutor</code> 。</p>
+<h3 id="SharedWorkerExecutor"><a href="#SharedWorkerExecutor" class="headerlink" title="SharedWorkerExecutor"></a>SharedWorkerExecutor</h3><p><code>WorkerExecutor</code>是Vert.x中的接口，表示在Vert.x中执行阻塞代码的<code>executor</code>，这个接口提供了<code>executeBlocking()</code>方法，类似<code>Context</code>接口中的同名方法，但是<code>WorkerExecutor</code>会使用一个独立的<code>WorkerPool</code>。先看<code>WorkerExecutor</code>的层次结构：</p>
+<p><img src="/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/WorkerExecutor.png" alt="ShowImage"></p>
+<p>其实可以看到<code>WorkerExecutorImpl</code>中包裹了一个<code>WorkerPool</code>对象，而<code>executeBlocking()</code>方法就是使用该WorkerExecutor关联的<code>Vertx</code>当前所处的Context下执行<code>executeBlocking()</code>方法，只不过<code>workerPool</code>使用的是这个WorkerExecutor的WorkerPool。</p>
+<p>那么我们的<code>SharedWorkerExecutor</code>是如何实现的呢？<br><code>VertxImpl</code>中有一个Key为<code>String</code>，Value为<code>SharedWorkerPool</code>的Map<code>namedWorkerPools</code>，这个Map就是用来保存<code>SharedWorkerPool</code>实例的，字符串Key是我们的<code>SharedWorkerExecutor</code>的名字。<code>SharedWorkerPool</code>是<code>VertxImpl</code>的内部类，在继承<code>WorkerPool</code>的基础上加上了String字段<code>name</code>以及一个引用计数<code>refCount</code>。</p>
+<p>我们看<code>VertxImpl#createSharedWorkerExecutor()</code>方法代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> WorkerExecutorImpl <span class="title">createSharedWorkerExecutor</span><span class="params">(String name, <span class="keyword">int</span> poolSize, <span class="keyword">long</span> maxExecuteTime)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (poolSize &lt; <span class="number">1</span>) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"poolSize must be &gt; 0"</span>);</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">if</span> (maxExecuteTime &lt; <span class="number">1</span>) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"maxExecuteTime must be &gt; 0"</span>);</div><div class="line">  &#125;</div><div class="line">  SharedWorkerPool sharedWorkerPool = namedWorkerPools.get(name);</div><div class="line">  <span class="keyword">if</span> (sharedWorkerPool == <span class="keyword">null</span>) &#123;</div><div class="line">    ExecutorService workerExec = Executors.newFixedThreadPool(poolSize, <span class="keyword">new</span> VertxThreadFactory(name + <span class="string">"-"</span>, checker, <span class="keyword">true</span>, maxExecuteTime));</div><div class="line">    PoolMetrics workerMetrics = metrics != <span class="keyword">null</span> ? metrics.createMetrics(workerExec, <span class="string">"worker"</span>, name, poolSize) : <span class="keyword">null</span>;</div><div class="line">    namedWorkerPools.put(name, sharedWorkerPool = <span class="keyword">new</span> SharedWorkerPool(name, workerExec, workerMetrics));</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    sharedWorkerPool.refCount++;</div><div class="line">  &#125;</div><div class="line">  ContextImpl context = getOrCreateContext();</div><div class="line">  WorkerExecutorImpl namedExec = <span class="keyword">new</span> WorkerExecutorImpl(<span class="keyword">this</span>, sharedWorkerPool, <span class="keyword">true</span>);</div><div class="line">  context.addCloseHook(namedExec);</div><div class="line">  <span class="keyword">return</span> namedExec;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>创建时首先通过<code>namedWorkerPools</code>这个Map根据名字name去查询是否已经有这个<code>SharedWorkerPool</code>了，如果不存在(即取出结果为null)，那么就会重新创建一个<code>FixedThreadPool</code>并用这个线程池去创建一个<code>SharedWorkerPool</code>，然后将这个<code>SharedWorkerPool</code>放入Map中；如果已经存在同名<code>SharedWorkerPool</code>，直接将引用计数+1。最后就是用<code>SharedWorkerPool</code>创建一个<code>WorkerExecutorImpl</code>对象返回。</p>
+<p>因此这个<code>SharedWorkerExecutor</code>它们之间通过名字name来共享WorkerPool。</p>
+<p>我们可以将<code>WorkerExecutor</code>,<code>WorkerPool</code>,<code>FixedThreadPool</code>以及<code>Context</code>,<code>Verticle</code>等等的关系总结一下，用下面这张图比较直观。</p>
+<p><img src="/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/RelationsOfExecutorsAndPools.png" alt="ShowImage"></p>
+<p>还有一点，就是如果在<code>DeployOptions</code>中只指定<code>workerPoolSize</code>而不指定<code>workerPoolName</code>，那么实际上Context使用的还是<code>VertxImpl</code>中的<code>workerPool</code>，而不是用设置的size重新创建的<code>WorkerPool</code>，<code>workerPoolSize</code>设置就没有生效，这个size实际上还是<code>VertxImpl</code>的<code>workerPool</code>的size。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><ol>
+<li>Vertx线程可以绑定不同的Context，Context只能绑定一个线程。</li>
+<li>不同的Vertx线程工厂为<code>EventLoopGroup</code>以及<code>WorkerPool</code>提供线程。</li>
+<li>Vertx对象操纵<code>Verticle</code>的相关工作交给<code>deploymentManager</code>完成。</li>
+<li><code>EventLoopContext</code>中的任务是交给Netty的<code>EventLoop</code>的任务队列串行执行。</li>
+<li><code>WorkerPool</code>底层使用<code>FixedThreadPool</code>实现。</li>
+<li>SharedWorkerExecutor是独立的，它们共享的是<code>WorkerPool</code>。</li>
+</ol>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+
+       
+    </div>
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Vert-x/" rel="tag"># Vert.x</a>
+          
+            <a href="/tags/Netty/" rel="tag"># Netty</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/07/深入理解Vert.x Core(3)-Verticle/" rel="next" title="深入理解Vert.x Core(3)-Verticle">
+                <i class="fa fa-chevron-left"></i> 深入理解Vert.x Core(3)-Verticle
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Billy Yuan" />
+            
+              <p class="site-author-name" itemprop="name">Billy Yuan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/BillyYccc" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:billy112487983@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/billyyccc" target="_blank" title="Twitter">
+                    
+                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#创建Vertx实例"><span class="nav-number">1.</span> <span class="nav-text">创建Vertx实例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#VertxImpl"><span class="nav-number">2.</span> <span class="nav-text">VertxImpl</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Context相关"><span class="nav-number">2.1.</span> <span class="nav-text">Context相关</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Vertx-currentContext"><span class="nav-number">2.1.1.</span> <span class="nav-text">Vertx.currentContext()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#getContext"><span class="nav-number">2.1.2.</span> <span class="nav-text">getContext()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#createEventLoopContext"><span class="nav-number">2.1.3.</span> <span class="nav-text">createEventLoopContext()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#createWorkerContext"><span class="nav-number">2.1.4.</span> <span class="nav-text">createWorkerContext()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#getOrCreateContext"><span class="nav-number">2.1.5.</span> <span class="nav-text">getOrCreateContext()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#runOnContext"><span class="nav-number">2.1.6.</span> <span class="nav-text">runOnContext()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#executeBlocking"><span class="nav-number">2.1.7.</span> <span class="nav-text">executeBlocking()</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Verticle相关"><span class="nav-number">2.2.</span> <span class="nav-text">Verticle相关</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vert-x线程"><span class="nav-number">2.3.</span> <span class="nav-text">Vert.x线程</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#VertxThread"><span class="nav-number">2.3.1.</span> <span class="nav-text">VertxThread</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#VertxThreadFactory"><span class="nav-number">2.3.2.</span> <span class="nav-text">VertxThreadFactory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#线程阻塞操作检测机制"><span class="nav-number">2.3.3.</span> <span class="nav-text">线程阻塞操作检测机制</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vertx-EventLoop机制"><span class="nav-number">2.4.</span> <span class="nav-text">Vertx EventLoop机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Vertx-WorkerPool机制"><span class="nav-number">2.5.</span> <span class="nav-text">Vertx WorkerPool机制</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SharedWorkerExecutor"><span class="nav-number">2.6.</span> <span class="nav-text">SharedWorkerExecutor</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/BillyYccc/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "middleRight";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
