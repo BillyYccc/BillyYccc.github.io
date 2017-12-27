@@ -315,6 +315,191 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/05/29/设计模式（13）：享元模式FLYWEIGHT/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/05/29/设计模式（13）：享元模式FLYWEIGHT/" itemprop="url">设计模式（13）：享元模式FLYWEIGHT</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-29T00:06:58+08:00">
+                2017-05-29
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
+                    <span itemprop="name">DesignPatterns</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="享元模式"><a href="#享元模式" class="headerlink" title="享元模式"></a>享元模式</h2><h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p>运用共享技术有效地支持大量细粒度的对象。</p>
+<hr>
+<h3 id="使用场景"><a href="#使用场景" class="headerlink" title="使用场景"></a>使用场景</h3><p>Flyweight模式的有效性很大程度上取决于如何使用它以及在何处使用它。当以下情况都成立时使用Flyweight模式：</p>
+<ul>
+<li>一个应用程序使用了大量的对象。</li>
+<li>完全由于使用大量的对象，造成很大的存储开销。</li>
+<li>对象的大多数状态都可变为外部状态。</li>
+<li>如果删除对象的外部状态，那么可以用相对较少的共享对象取代很多组对象。</li>
+<li>应用程序不依赖于对象标识。由于Flyweight对象可以被共享，对于概念上明显有别的对<br>象，标识测试将返回真值。</li>
+</ul>
+<hr>
+<h3 id="结构"><a href="#结构" class="headerlink" title="结构"></a>结构</h3><p>享元模式结构如下<br><img src="/2017/05/29/设计模式（13）：享元模式FLYWEIGHT/Flyweight1.png" alt="ShowImage"></p>
+<ul>
+<li><p>Flyweight<br><br> – 描述一个接口，通过这个接口flyweight可以接受并作用于外部状态。</p>
+</li>
+<li><p>ConcreteFlyweight<br><br> – 实现Flyweight接口，并且为内部状态(如果有)提供储存。一个ConcreteFlyweight对象必须是可以共享的。它所存储的任何状态都应该是内部的，也就是说，它必须独立于ConcreteFlyweight对象的上下文(Context)。</p>
+</li>
+<li><p>UnsharedConcreteFlyweight<br><br> – 并非所有的Flyweight子类都需要被共享。Flyweight接口提供了共享的能力，但是它并不是强制共享。在Flyweight的某些层次，UnsharedConcreteFlyweight对象通常会将ConcreteFlyweight对象当做子节点。</p>
+</li>
+<li><p>FlyweightFactory<br><br> – 创建并且管理Flyweight对象<br><br> – 确保flyweights对象能被合理地共享。当一个client请求一个flyweight时，FlyweightFactory对象提供一个已经存在的实例或者新建一个(如果一个都不存在的话)。</p>
+</li>
+<li><p>Client<br><br> – 维护一个对flyweight的引用<br><br> – 计算或者储存flyweight对象的外部状态</p>
+</li>
+</ul>
+<h3 id="协作"><a href="#协作" class="headerlink" title="协作"></a>协作</h3><ul>
+<li>flyweight执行时所需的状态必定是内部的或外部的。内部状态存储于ConcreteFlyweight对象之中；而外部状态则由Client对象存储或计算。当用户调用flyweight对象的操作时，将该外部状态传递给它。</li>
+<li>Client不应直接对ConcreteFlyweight类进行实例化，而只能从FlyweightFactory对象得到ConcreteFlyweight对象，这可以保证对它们适当地进行共享。</li>
+</ul>
+<h3 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h3><p>使用Flyweight模式时，传输、查找和/或计算外部状态都会产生运行时的开销，尤其当flyweight原先被存储为内部状态时。然而，空间上的节省抵消了这些开销。共享的flyweight越多，空间节省也就越大。<br>存储节约由以下几个因素决定：</p>
+<ul>
+<li>因为共享，实例总数减少的数目</li>
+<li>对象内部状态的平均数目</li>
+<li>外部状态是计算的还是存储的</li>
+</ul>
+<p>共享的Flyweight越多，存储节约也就越多。节约量随着共享状态的增多而增大。当对象使用大量的内部及外部状态，并且外部状态是计算出来的而非存储的时候，节约量将达到最大。所以，可以用两种方法来节约存储：用共享减少内部状态的消耗，用计算时间换取对外部状态的存储。</p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/05/29/设计模式（13）：享元模式FLYWEIGHT/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    <div>
+       
+    </div>
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/05/26/设计模式（12）：外观模式FACADE/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1823,164 +2008,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/05/03/设计模式（4）：工厂方法FACTORYMETHOD/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Billy Yuan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BillyYccc">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/05/03/设计模式（4）：工厂方法FACTORYMETHOD/" itemprop="url">设计模式（4）：工厂方法FACTORY METHOD</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-05-03T20:25:45+08:00">
-                2017-05-03
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
-                    <span itemprop="name">DesignPatterns</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="工厂方法"><a href="#工厂方法" class="headerlink" title="工厂方法"></a>工厂方法</h2><p>工厂方法(Factory Method)也称虚构造器(Virtual Constructor)</p>
-<h3 id="意图"><a href="#意图" class="headerlink" title="意图"></a>意图</h3><p>定义一个用于创建对象的接口，让子类决定实例化哪一个类。Factory Method使一个类的实例化延迟到其子类。</p>
-<h3 id="适用性"><a href="#适用性" class="headerlink" title="适用性"></a>适用性</h3><p>Use the Factory Method pattern when</p>
-<ul>
-<li>a class can’t anticipate the class of objects it must create.(一个类不知道它所需要的对象的类，也就是说，不需要知道具体产品的类名，只需要知道创建它的具体工厂就行了)</li>
-<li>a class wants its subclasses to specify the objects it creates.(一个类通过子类来指定所要创建的对象，抽象工厂类只提供创建产品的接口，由子类来确定要创建的具体的对象，充分利用多态的特性，运行时子类对象替换父类对象)</li>
-<li>classes delegate responsibility to one of several helper subclasses, and you want to localize the knowledge of which helper subclass is the delegate.(将创建对象的任务委托给多个工厂子类中的一个，这样使用时就不用关心到底是哪一个工厂子类创建产品子类，需要的时候动态指定就可以了)</li>
-</ul>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/05/03/设计模式（4）：工厂方法FACTORYMETHOD/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    <div>
-       
-    </div>
-
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -2035,7 +2062,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">42</span>
+                  <span class="site-state-item-count">43</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>

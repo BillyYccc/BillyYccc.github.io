@@ -1,0 +1,980 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Convergence:300,300italic,400,400italic,700,700italic|Tauri:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,Vert.x,Netty," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="CloseHooks机制CloseHooks是Vert.x中一项内部使用的特性，在Vertx实例或者Verticle关闭时，CloseHooks能实现自动清理(比如HTTP Server,Net Server…)的功能。
+我们了解下CloseHooks实现的大概流程。
+在我们的Verticle或者Vertx实例部署好以后，我们通常会使用vertx.createHttpServer()去部署一些HT">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Vert.x Core(5)-Vertx(II)">
+<meta property="og:url" content="http://billyyccc.github.io/2017/12/25/深入理解Vert.x Core(5)-Vertx(II)/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="CloseHooks机制CloseHooks是Vert.x中一项内部使用的特性，在Vertx实例或者Verticle关闭时，CloseHooks能实现自动清理(比如HTTP Server,Net Server…)的功能。
+我们了解下CloseHooks实现的大概流程。
+在我们的Verticle或者Vertx实例部署好以后，我们通常会使用vertx.createHttpServer()去部署一些HT">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/25/深入理解Vert.x Core(5)-Vertx(II)/InternalTimerHandler.png">
+<meta property="og:image" content="http://billyyccc.github.io/2017/12/25/深入理解Vert.x Core(5)-Vertx(II)/NioEventLoop.png">
+<meta property="og:updated_time" content="2017-12-27T07:12:51.806Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解Vert.x Core(5)-Vertx(II)">
+<meta name="twitter:description" content="CloseHooks机制CloseHooks是Vert.x中一项内部使用的特性，在Vertx实例或者Verticle关闭时，CloseHooks能实现自动清理(比如HTTP Server,Net Server…)的功能。
+我们了解下CloseHooks实现的大概流程。
+在我们的Verticle或者Vertx实例部署好以后，我们通常会使用vertx.createHttpServer()去部署一些HT">
+<meta name="twitter:image" content="http://billyyccc.github.io/2017/12/25/深入理解Vert.x Core(5)-Vertx(II)/InternalTimerHandler.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2017/12/25/深入理解Vert.x Core(5)-Vertx(II)/"/>
+
+
+
+
+
+  <title>深入理解Vert.x Core(5)-Vertx(II) | BillyYccc</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99992019-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/12/25/深入理解Vert.x Core(5)-Vertx(II)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解Vert.x Core(5)-Vertx(II)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-12-25T20:51:41+08:00">
+                2017-12-25
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vert-x/" itemprop="url" rel="index">
+                    <span itemprop="name">Vert.x</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="CloseHooks机制"><a href="#CloseHooks机制" class="headerlink" title="CloseHooks机制"></a>CloseHooks机制</h2><p><code>CloseHooks</code>是Vert.x中一项内部使用的特性，在Vertx实例或者Verticle关闭时，<code>CloseHooks</code>能实现自动清理(比如HTTP Server,Net Server…)的功能。</p>
+<p>我们了解下<code>CloseHooks</code>实现的大概流程。</p>
+<p>在我们的<code>Verticle</code>或者<code>Vertx</code>实例部署好以后，我们通常会使用<code>vertx.createHttpServer()</code>去部署一些HTTP Server或者Net Server,Net Client等等。这些都是可以在关联的Verticle或者Vertx实例关闭之后实现自动清理的资源。<br>下面以在Verticle上的Net Server为例<br>①通过<code>vertx.createNetServer()</code>创建一个NetServer，返回一个<code>NetServerImpl</code>实例<br>②在<code>NetServerImpl</code>构造器中，会将当前<code>Verticle</code>所在<code>Context</code> hook上这个NetServer。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="title">NetServerImpl</span><span class="params">(VertxInternal vertx, NetServerOptions options)</span> </span>&#123;</div><div class="line">  <span class="keyword">this</span>.vertx = vertx;</div><div class="line">  <span class="comment">// ...</span></div><div class="line">  <span class="keyword">this</span>.creatingContext = vertx.getContext();</div><div class="line">  <span class="keyword">if</span> (creatingContext != <span class="keyword">null</span>) &#123;</div><div class="line">    <span class="comment">// ...</span></div><div class="line">    creatingContext.addCloseHook(<span class="keyword">this</span>);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>NetServerImpl</code>实现了<code>Closeable</code>接口，<code>Closeable</code>接口只有一个<code>close</code>方法。</p>
+<p><code>Context</code>的<code>addCloseHook()</code>方法就是将实现了<code>Closeable</code>接口的资源添加到自己内部类<code>CloseHooks</code>中<code>closeHooks</code>的这个<code>Set</code>中。</p>
+<p>③<code>Verticle</code>在<code>unDeploy()</code>以后，会将自己持有的Context对象的<code>CloseHooks</code>对象执行<code>run()</code>方法，就是对每一个Set中<code>Closeable</code>对象调用<code>close()</code>方法，这样就能实现自动清理所有hook上的资源的功能。</p>
+<p>这种机制其实是一种观察者模式的实现，<code>Verticle</code>的<code>Context</code>或者<code>Vertx</code>实例是被观察者，可以添加观察者<code>Closeable</code>，在订阅的关系形成之后，一旦<code>Verticle</code>或者<code>Vertx</code>关闭，那么就会通知观察者(可以关闭的资源)去执行它们自己的<code>close()</code>方法，这样就可以实现自动清理的机制。</p>
+<a id="more"></a>
+<h2 id="周期任务与延时任务机制"><a href="#周期任务与延时任务机制" class="headerlink" title="周期任务与延时任务机制"></a>周期任务与延时任务机制</h2><p>Vert.x提供了一些API用来执行周期任务或者延时任务，在<code>Vertx</code>接口中定义好了以下API<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">long</span> <span class="title">setTimer</span><span class="params">(<span class="keyword">long</span> delay, Handler&lt;Long&gt; handler)</span></span>;</div><div class="line"></div><div class="line"><span class="function">TimeoutStream <span class="title">timerStream</span><span class="params">(<span class="keyword">long</span> delay)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">long</span> <span class="title">setPeriodic</span><span class="params">(<span class="keyword">long</span> delay, Handler&lt;Long&gt; handler)</span></span>;</div><div class="line"></div><div class="line"><span class="function">TimeoutStream <span class="title">periodicStream</span><span class="params">(<span class="keyword">long</span> delay)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">cancelTimer</span><span class="params">(<span class="keyword">long</span> id)</span></span>;</div></pre></td></tr></table></figure></p>
+<p>我们可以使用这些API非常简单的执行一些延时任务、周期任务或者取消任务的操作。</p>
+<h3 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h3><h4 id="setTimer-与setPeriodic"><a href="#setTimer-与setPeriodic" class="headerlink" title="setTimer()与setPeriodic()"></a>setTimer()与setPeriodic()</h4><p>在<code>VertxImpl</code>类中找到<code>setTimer()</code>与<code>setPeriodic()</code>方法的实现。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">setPeriodic</span><span class="params">(<span class="keyword">long</span> delay, Handler&lt;Long&gt; handler)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> scheduleTimeout(getOrCreateContext(), handler, delay, <span class="keyword">true</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">long</span> <span class="title">setTimer</span><span class="params">(<span class="keyword">long</span> delay, Handler&lt;Long&gt; handler)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> scheduleTimeout(getOrCreateContext(), handler, delay, <span class="keyword">false</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这两个方法都是调用<code>scheduleTimeout()</code>方法，接着看这个方法的实现<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">long</span> <span class="title">scheduleTimeout</span><span class="params">(ContextImpl context, Handler&lt;Long&gt; handler, <span class="keyword">long</span> delay, <span class="keyword">boolean</span> periodic)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (delay &lt; <span class="number">1</span>) &#123;</div><div class="line">    <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"Cannot schedule a timer with delay &lt; 1 ms"</span>);</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">long</span> timerId = timeoutCounter.getAndIncrement();</div><div class="line">  InternalTimerHandler task = <span class="keyword">new</span> InternalTimerHandler(timerId, handler, periodic, delay, context);</div><div class="line">  timeouts.put(timerId, task);</div><div class="line">  context.addCloseHook(task);</div><div class="line">  <span class="keyword">return</span> timerId;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这个方法返回的是我们创建的任务的<code>timerId</code>，这个id可以用在<code>cancelTimer()</code>方法取消该任务。ID是通过原子long类型变量<code>timeoutCounter</code>生成，每次新增一个任务时，这个原子变量就会取值并且自增1。然后创建一个<code>InternalTimerHandler</code>对象，我们马上会介绍这个类。id与task对象组成的kv会被添加到<code>timeouts</code>这个Map中，并且context会增加一个属于task的CloseHook。</p>
+<h4 id="InternalTimerHandler"><a href="#InternalTimerHandler" class="headerlink" title="InternalTimerHandler"></a>InternalTimerHandler</h4><p><code>InternalTimerHandler</code>是<code>VertxImpl</code>的内部类，实现了<code>Handler</code>与<code>Closeable</code>接口。我们可以看下这个类的结构</p>
+<p><img src="/2017/12/25/深入理解Vert.x Core(5)-Vertx(II)/InternalTimerHandler.png" alt="ShowImage"></p>
+<h5 id="handle"><a href="#handle" class="headerlink" title="handle()"></a>handle()</h5><p>由于实现了<code>Handler</code>，那么就会有<code>handle()</code>方法，我们看<code>handle()</code>代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(Void v)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (!cancelled.get()) &#123;</div><div class="line">    <span class="keyword">try</span> &#123;</div><div class="line">      handler.handle(timerID);</div><div class="line">    &#125; <span class="keyword">finally</span> &#123;</div><div class="line">      <span class="keyword">if</span> (!periodic) &#123;</div><div class="line">        <span class="comment">// Clean up after it's fired</span></div><div class="line">        cleanupNonPeriodic();</div><div class="line">      &#125;</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>这段代码不复杂，就是检查当前任务是否被取消，如果没有取消，就去执行持有的handler的逻辑，这个handler对象是在构造器传入的，通过<code>this.handler = runnable;</code>将我们最开始在调用API时写的handler保存到这个对象的handler对象中，handler执行完以后如果不是周期任务就执行<code>cleanupNonPeriodic</code>清理。</p>
+<h5 id="Constructor"><a href="#Constructor" class="headerlink" title="Constructor"></a>Constructor</h5><p>我们注意到之前传递给<code>InternalTimerHandler</code>构造器参数包括了任务ID，任务要执行的Handler，是否为周期任务的布尔值，执行间隔(延时)，以及调用的context。我们直接看构造器中代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">EventLoop el = context.nettyEventLoop();</div><div class="line">Runnable toRun = () -&gt; context.runOnContext(<span class="keyword">this</span>);</div><div class="line"><span class="keyword">if</span> (periodic) &#123;</div><div class="line">  future = el.scheduleAtFixedRate(toRun, delay, delay, TimeUnit.MILLISECONDS);</div><div class="line">&#125; <span class="keyword">else</span> &#123;</div><div class="line">  future = el.schedule(toRun, delay, TimeUnit.MILLISECONDS);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>通过调用的context获取关联的<code>EventLoop</code>(Netty)，将<code>context.runOnContext(this)</code>这个方法封装成一个Runnable对象，<code>this</code>指的就是自己<code>InternalTimerHandler</code>对象，因为这个对象也是一个<code>Handler</code>对象，然后将Runnable对象提交给<code>EventLoop</code>的任务队列处理，如果是周期任务就使用<code>scheduleAtFixedRate()</code>提交，延时任务就使用<code>schedule()</code>提交。这些任务提交后的返回值是一个<code>ScheduledFuture</code>对象，保存在<code>future</code>对象中。</p>
+<h5 id="cancel"><a href="#cancel" class="headerlink" title="cancel()"></a>cancel()</h5><p><code>cancel()</code>方法就是通过刚才保存的<code>future</code>对象来控制取消，可以调用<code>Future</code>的<code>cancel()</code>方法来取消任务。</p>
+<h4 id="cancelTimer"><a href="#cancelTimer" class="headerlink" title="cancelTimer"></a>cancelTimer</h4><p><code>cancelTimer(long id)</code> 这个API就是委托<code>InternalTimerHandler</code>对象的<code>cancel()</code>方法完成取消任务。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">boolean</span> <span class="title">cancelTimer</span><span class="params">(<span class="keyword">long</span> id)</span> </span>&#123;</div><div class="line">  InternalTimerHandler handler = timeouts.remove(id);</div><div class="line">  <span class="keyword">if</span> (handler != <span class="keyword">null</span>) &#123;</div><div class="line">    handler.context.removeCloseHook(handler);</div><div class="line">    <span class="keyword">return</span> handler.cancel();</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h4 id="timerStream与periodicStream"><a href="#timerStream与periodicStream" class="headerlink" title="timerStream与periodicStream"></a>timerStream与periodicStream</h4><p>除了直接创建任务之外，还可以使用提供的API创建一个延时流或者周期流。注意这个流只能执行一个你指定的任务（延时任务或者周期任务），但是你可以对流进行一些常用的操作。</p>
+<p>开启<code>TimeoutStream</code>的代码，返回的是一个<code>TimeoutStreamImpl</code>对象。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> TimeoutStream <span class="title">timerStream</span><span class="params">(<span class="keyword">long</span> delay)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> TimeoutStreamImpl(delay, <span class="keyword">false</span>);</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> TimeoutStream <span class="title">periodicStream</span><span class="params">(<span class="keyword">long</span> delay)</span> </span>&#123;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">new</span> TimeoutStreamImpl(delay, <span class="keyword">true</span>);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p><code>TimeoutStreamImpl</code>类实现了<code>TimeoutStream</code>接口与<code>Handler&lt;Long&gt;</code>接口。`</p>
+<p><code>TimeoutStream</code>继承了<code>ReadStream</code>接口,提供一些常用的流操作的接口<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function">TimeoutStream <span class="title">exceptionHandler</span><span class="params">(Handler&lt;Throwable&gt; handler)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function">TimeoutStream <span class="title">handler</span><span class="params">(Handler&lt;Long&gt; handler)</span></span>;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function">TimeoutStream <span class="title">pause</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function">TimeoutStream <span class="title">resume</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function">TimeoutStream <span class="title">endHandler</span><span class="params">(Handler&lt;Void&gt; endHandler)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">cancel</span><span class="params">()</span></span>;</div></pre></td></tr></table></figure></p>
+<h5 id="handle-1"><a href="#handle-1" class="headerlink" title="handle()"></a>handle()</h5><p>我们看<code>handle()</code>方法，如果流没有停止,那么就会使用该对象持有的handler去执行逻辑,如果是延时任务并且注册了<code>endHandler</code>，那么执行完handler后还会执行endHandler。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> <span class="keyword">void</span> <span class="title">handle</span><span class="params">(Long event)</span> </span>&#123;</div><div class="line">  <span class="keyword">try</span> &#123;</div><div class="line">    <span class="keyword">if</span> (!paused) &#123;</div><div class="line">      handler.handle(event);</div><div class="line">    &#125;</div><div class="line">  &#125; <span class="keyword">finally</span> &#123;</div><div class="line">    <span class="keyword">if</span> (!periodic &amp;&amp; endHandler != <span class="keyword">null</span>) &#123;</div><div class="line">      endHandler.handle(<span class="keyword">null</span>);</div><div class="line">    &#125;</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<h5 id="handler"><a href="#handler" class="headerlink" title="handler()"></a>handler()</h5><p><code>handler()</code>方法为这个<code>TimeoutStream</code>注册一个handler，当触发了时间事件时(延时或者周期)，这个注册的handler就会执行。如果注册的handler是null，那么就取消这个任务。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">synchronized</span> TimeoutStream <span class="title">handler</span><span class="params">(Handler&lt;Long&gt; handler)</span> </span>&#123;</div><div class="line">  <span class="keyword">if</span> (handler != <span class="keyword">null</span>) &#123;</div><div class="line">    <span class="keyword">if</span> (id != <span class="keyword">null</span>) &#123;</div><div class="line">      <span class="keyword">throw</span> <span class="keyword">new</span> IllegalStateException();</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">this</span>.handler = handler;</div><div class="line">    id = scheduleTimeout(getOrCreateContext(), <span class="keyword">this</span>, delay, periodic);</div><div class="line">  &#125; <span class="keyword">else</span> &#123;</div><div class="line">    cancel();</div><div class="line">  &#125;</div><div class="line">  <span class="keyword">return</span> <span class="keyword">this</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>看实现就知道一个<code>TimeoutStream</code>是不可以注册多个任务的，会抛出<code>IllegalStateException</code>。设置任务的工作还是交给了<code>scheduleTimeout()</code>这个方法去处理。和之前有点不同的是传入参数handler是<code>TimeoutStreamImpl</code>对象，通过多态机制<code>TimeoutStreamImpl</code>在这里扮演了<code>handler</code>的角色。</p>
+<p><code>TimeoutStreamImpl</code>上面写了一些注释</p>
+<blockquote>
+<p>This class is optimised for performance when used on the same event loop that is was passed to the handler with. However it can be used safely from other threads. The internal state is protected using the synchronized keyword. If always used on the same event loop, then we benefit from biased locking which makes the overhead of synchronized near zero.</p>
+</blockquote>
+<p>尽管大量使用了<code>synchronized</code> 关键字，但由于JDK1.6后偏向锁的优势，如果总是在一个EventLoop线程上，而该EventLoop线程如果没有被其他线程抢占锁，这时偏向锁是偏向模式，那么这个线程再进行请求锁时，就不用再一次进行同步操作，这样开销会降低从而避免了性能由于重量级锁急剧下降，同时偏向锁也能保证程序的线程安全执行。</p>
+<h3 id="Netty任务队列机制"><a href="#Netty任务队列机制" class="headerlink" title="Netty任务队列机制"></a>Netty任务队列机制</h3><p>上面说到了我们的延时任务或者周期任务都是通过提交给<code>EventLoop</code> 实现的，下面以<code>NioEventLoop</code>为例介绍Netty中的任务队列的机制。</p>
+<p>我们先大致看一下<code>NioEventLoop</code>的结构</p>
+<p><img src="/2017/12/25/深入理解Vert.x Core(5)-Vertx(II)/NioEventLoop.png" alt="ShowImage"></p>
+<p>可以看到层次非常多，我们针对任务队列自底向上进行分析。</p>
+<h4 id="execute-执行任务"><a href="#execute-执行任务" class="headerlink" title="execute()执行任务"></a>execute()执行任务</h4><p><code>execute()</code>方法之前在vert.x context接触过，就是将一个任务封装成Runnable对象提交到任务队列。<code>execute()</code>方法在<code>Executor</code>接口中定义，我们在<code>SingleThreadEventExecutor</code>找到它的实现如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@Override</span></div><div class="line"><span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">execute</span><span class="params">(Runnable task)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (task == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">"task"</span>);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">boolean</span> inEventLoop = inEventLoop();</div><div class="line">    <span class="keyword">if</span> (inEventLoop) &#123;</div><div class="line">        addTask(task);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        startThread();</div><div class="line">        addTask(task);</div><div class="line">        <span class="keyword">if</span> (isShutdown() &amp;&amp; removeTask(task)) &#123;</div><div class="line">            reject();</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">if</span> (!addTaskWakesUp &amp;&amp; wakesUpForTask(task)) &#123;</div><div class="line">        wakeup(inEventLoop);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>实际上<code>execute()</code>方法只是执行了<code>addTask(task)</code>添加任务。</p>
+<p>添加任务代码如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">protected</span> <span class="keyword">void</span> <span class="title">addTask</span><span class="params">(Runnable task)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (task == <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> NullPointerException(<span class="string">"task"</span>);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">if</span> (!offerTask(task)) &#123;</div><div class="line">        reject(task);</div><div class="line">    &#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">final</span> <span class="keyword">boolean</span> <span class="title">offerTask</span><span class="params">(Runnable task)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (isShutdown()) &#123;</div><div class="line">        reject();</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> taskQueue.offer(task);</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>我们的任务都被通过<code>offer()</code>操作提交到队列<code>taskQueue</code>中了，而这个任务队列的定义是<code>private final Queue&lt;Runnable&gt; taskQueue;</code>，任务队列维护着一组Runnable对象。</p>
+<p>而在一次NioEventLoop循环中，即无限循环<code>run()</code>方法逻辑中，调用<code>runAllTasks()</code>方法去执行任务队列中的任务，而这些任务就是通过<code>pollTaskFrom(taskQueue)</code>从任务队列中取出Runnable对象，最后调用<code>safeExecute(task);</code> 直接<code>run()</code>执行。这些从任务队列取出任务去执行的逻辑即<code>runAllTasks()</code>都是在<code>SingleThreadEventExecutor</code>类中实现的。</p>
+<h4 id="schedule调度执行任务"><a href="#schedule调度执行任务" class="headerlink" title="schedule调度执行任务"></a>schedule调度执行任务</h4><p>在<code>EventLoop</code>中，由于<code>NioEventLoop</code>实现了<code>ScheduledExecutorService</code>接口，因此有该接口的调度任务的方法。<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">①<span class="keyword">public</span> ScheduledFuture&lt;?&gt; schedule(Runnable command, <span class="keyword">long</span> delay, TimeUnit unit);</div><div class="line"></div><div class="line">②<span class="keyword">public</span> &lt;V&gt; <span class="function">ScheduledFuture&lt;V&gt; <span class="title">schedule</span><span class="params">(Callable&lt;V&gt; callable, <span class="keyword">long</span> delay, TimeUnit unit)</span></span>;</div><div class="line"></div><div class="line">③<span class="keyword">public</span> ScheduledFuture&lt;?&gt; scheduleAtFixedRate(Runnable command, <span class="keyword">long</span> initialDelay, <span class="keyword">long</span> period, TimeUnit unit);</div><div class="line"></div><div class="line">④<span class="keyword">public</span> ScheduledFuture&lt;?&gt; scheduleWithFixedDelay(Runnable command, <span class="keyword">long</span> initialDelay, <span class="keyword">long</span> delay, TimeUnit unit);</div></pre></td></tr></table></figure></p>
+<p>这几个调度执行任务的方法都是可以在<code>EventLoop</code>上调用的。Schedule具体的实现是在<code>AbstractScheduledEventExecutor</code>中完成的。下面我们以Vert.x中的周期任务与延时任务为例分析<code>scheduleAtFixedRate()</code>与<code>schedule()</code>的实现。</p>
+<h5 id="添加任务"><a href="#添加任务" class="headerlink" title="添加任务"></a>添加任务</h5><p>我们关注上面调度方法①与④的实现部分，在<code>AbstractScheduledEventExecutor</code> 中找到对应实现。</p>
+<p>方法①的返回值如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> schedule(<span class="keyword">new</span> ScheduledFutureTask&lt;Void&gt;(</div><div class="line">                <span class="keyword">this</span>, command, <span class="keyword">null</span>, ScheduledFutureTask.deadlineNanos(unit.toNanos(delay))));</div></pre></td></tr></table></figure>
+<p>方法④的返回值如下</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">return</span> schedule(<span class="keyword">new</span> ScheduledFutureTask&lt;Void&gt;(</div><div class="line">                <span class="keyword">this</span>, Executors.&lt;Void&gt;callable(command, <span class="keyword">null</span>),</div><div class="line">                ScheduledFutureTask.deadlineNanos(unit.toNanos(initialDelay)), unit.toNanos(period)));</div></pre></td></tr></table></figure>
+<p>它们都返回了一个接受参数<code>ScheduledFutureTask</code> 的重载方法，我们先看重载方法的实现</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">&lt;V&gt; <span class="function">ScheduledFuture&lt;V&gt; <span class="title">schedule</span><span class="params">(<span class="keyword">final</span> ScheduledFutureTask&lt;V&gt; task)</span> </span>&#123;</div><div class="line">    <span class="keyword">if</span> (inEventLoop()) &#123;</div><div class="line">        scheduledTaskQueue().add(task);</div><div class="line">    &#125; <span class="keyword">else</span> &#123;</div><div class="line">        execute(<span class="keyword">new</span> Runnable() &#123;</div><div class="line">            <span class="meta">@Override</span></div><div class="line">            <span class="function"><span class="keyword">public</span> <span class="keyword">void</span> <span class="title">run</span><span class="params">()</span> </span>&#123;</div><div class="line">                scheduledTaskQueue().add(task);</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> task;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这个重载方法就是将刚才传入的<code>ScheduledFutureTask</code>对象加入到调度任务队列<code>scheduledTaskQueue</code>中，并且返回这个任务。注意到Netty中很多方法都是命令与查询不分离的，即方法不仅仅是返回结果，还有对结果的操作，这个重载方法就干了命令与查询两件事。</p>
+<h5 id="ScheduledFutureTask"><a href="#ScheduledFutureTask" class="headerlink" title="ScheduledFutureTask"></a>ScheduledFutureTask</h5><p>接下来我们看一看刚才加入到调度任务队列中的<code>ScheduledFutureTask</code>是干什么用的。<br>我们先从构造器开始，先看周期任务创建的<code>ScheduledFutureTask</code>调用的构造器<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">ScheduledFutureTask(</div><div class="line">        AbstractScheduledEventExecutor executor,</div><div class="line">        Callable&lt;V&gt; callable, <span class="keyword">long</span> nanoTime, <span class="keyword">long</span> period) &#123;</div><div class="line"></div><div class="line">    <span class="keyword">super</span>(executor, callable);</div><div class="line">    <span class="keyword">if</span> (period == <span class="number">0</span>) &#123;</div><div class="line">        <span class="keyword">throw</span> <span class="keyword">new</span> IllegalArgumentException(<span class="string">"period: 0 (expected: != 0)"</span>);</div><div class="line">    &#125;</div><div class="line">    deadlineNanos = nanoTime;</div><div class="line">    periodNanos = period;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>首先会接收一个<code>AbstractScheduledEventExecutor</code>对象作为第一个参数，指定了该任务执行的Executor，然后是一个<code>Callable</code>对象，这个Callable对象是将我们提交的<code>Runnable</code>对象通过<code>Executors.&lt;Void&gt;callable(command, null)</code>转换而得，这个command代表我们需要执行的任务，而null值代表结果(由于Runnable执行无法直接获取结果，转换成Callable后用null代替结果)。第三个参数是该周期任务下一次执行(也有可能是第一次)的开始时间，在调用处使用<code>ScheduledFutureTask.deadlineNanos(unit.toNanos(initialDelay))</code>静态方法计算而得，第四个参数是周期任务的周期时间，注意时间的单位都会被转换成纳秒，并且用nanoTime方式表示。</p>
+<p>我们可以看到<code>ScheduledFutureTask</code>的作用，就是将一个调度任务执行的Executor,执行时间，周期信息保存在该对象中。</p>
+<p>同样的，对于定时任务创建<code>ScheduledFutureTask</code><br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">ScheduledFutureTask(</div><div class="line">        AbstractScheduledEventExecutor executor,</div><div class="line">        Callable&lt;V&gt; callable, <span class="keyword">long</span> nanoTime) &#123;</div><div class="line"></div><div class="line">    <span class="keyword">super</span>(executor, callable);</div><div class="line">    deadlineNanos = nanoTime;</div><div class="line">    periodNanos = <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>第一个参数还是一样，表示该定时任务执行的Executor，<code>Callable</code>对象通过<code>toCallable(runnable, result)</code>转换而得，第三个参数是定时任务执行的实际nanoTime时间，周期时间当然是0，这些信息同样也被保存在<code>ScheduledFutureTask</code>对象中。</p>
+<p>现在我们了解了<code>ScheduledFutureTask</code>的作用，接下来分析执行过程。</p>
+<h5 id="执行调度任务"><a href="#执行调度任务" class="headerlink" title="执行调度任务"></a>执行调度任务</h5><p>回到<code>NioEventLoop</code> 类的循环<code>run()</code> 方法，注意到任务队列处理的地方，会根据<code>ioRatio</code> 进行判断，如果<code>ioRatio</code> 是100，那么就执行<code>runAllTasks()</code> 无参方法；否则就执行<code>runAllTasks(ioTime * (100 - ioRatio) / ioRatio);</code> 方法。</p>
+<p>我们先看<code>runAllTasks()</code> 无参方法，选取关键部分代码</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">do</span> &#123;</div><div class="line">    fetchedAll = fetchFromScheduledTaskQueue();</div><div class="line">    <span class="keyword">if</span> (runAllTasksFrom(taskQueue)) &#123;</div><div class="line">        ranAtLeastOne = <span class="keyword">true</span>;</div><div class="line">    &#125;</div><div class="line">&#125; <span class="keyword">while</span> (!fetchedAll); <span class="comment">// keep on processing until we fetched all scheduled tasks.</span></div></pre></td></tr></table></figure>
+<p>在分析上面代码之前，我们先注意<code>fetchFromScheduledTaskQueue()</code> 方法</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line"><span class="function"><span class="keyword">private</span> <span class="keyword">boolean</span> <span class="title">fetchFromScheduledTaskQueue</span><span class="params">()</span> </span>&#123;</div><div class="line">    <span class="keyword">long</span> nanoTime = AbstractScheduledEventExecutor.nanoTime();</div><div class="line">    Runnable scheduledTask  = pollScheduledTask(nanoTime);</div><div class="line">    <span class="keyword">while</span> (scheduledTask != <span class="keyword">null</span>) &#123;</div><div class="line">        <span class="keyword">if</span> (!taskQueue.offer(scheduledTask)) &#123;</div><div class="line">            <span class="comment">// No space left in the task queue add it back to the scheduledTaskQueue so we pick it up again.</span></div><div class="line">            scheduledTaskQueue().add((ScheduledFutureTask&lt;?&gt;) scheduledTask);</div><div class="line">            <span class="keyword">return</span> <span class="keyword">false</span>;</div><div class="line">        &#125;</div><div class="line">        scheduledTask  = pollScheduledTask(nanoTime);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="keyword">true</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p><code>fetchFromScheduledTaskQueue()</code> 方法就是将调度任务队列的任务抽取出来，然后加入到普通任务队列中，如果普通任务队列满了，调度任务就退回原来的调度任务队列，接着继续循环一直到调度任务队列取不出来为止。</p>
+<p>这里要特别关注抽取方法<code>pollScheduledTask()</code> 方法，因为这个方法就是用来确定我们的调度任务是否满足时间触发条件的，在这个方法中会将要取出的调度任务的下一次运行时间(定时运行时间) 与当前时间进行比较，如果满足了时间条件，那么才会把这个调度任务从队列中取出。而我们的调度任务中已经保存了周期任务的下一次执行时间(或者定时任务的定时时间)的信息。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (scheduledTask.deadlineNanos() &lt;= nanoTime) &#123;</div><div class="line">    scheduledTaskQueue.remove();</div><div class="line">    <span class="keyword">return</span> scheduledTask;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>然后回到之前<code>runAllTasks()</code> 方法，现在知道了<code>fetchedAll</code> 表示调度任务队列中可以取出任务是否全部被取出，而上面代码的目的就是将调度任务队列所有能取出的任务放入普通任务队列中，然后<code>runAllTasksFrom(taskQueue)</code> 执行所有任务。</p>
+<p>还有一点要想起的是，我们的周期任务是怎么周期运行的呢？还要回到<code>ScheduledFutureTask</code> 类，找到<code>run()</code> 方法，可以见到如果周期时间<code>periodNanos</code>被设置为0，那么这个任务就是个定时任务，那么仅仅执行<code>task.call()</code> 一次即可；而如果周期时间不为0，那么任务就是周期任务了，这个时候除了执行<code>task.call()</code>，还会修改<code>deadlineNanos</code>，把下一次执行时间累加上这个周期任务的周期时间，接着把修改好的任务再插入到调度任务队列中去，这样我们的周期任务也能周期执行了，可以对照下面的代码。</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">if</span> (!isCancelled()) &#123;</div><div class="line">    task.call();</div><div class="line">    <span class="keyword">if</span> (!executor().isShutdown()) &#123;</div><div class="line">        <span class="keyword">long</span> p = periodNanos;</div><div class="line">        <span class="keyword">if</span> (p &gt; <span class="number">0</span>) &#123;</div><div class="line">            deadlineNanos += p;</div><div class="line">        &#125; <span class="keyword">else</span> &#123;</div><div class="line">            deadlineNanos = nanoTime() - p;</div><div class="line">        &#125;</div><div class="line">        <span class="keyword">if</span> (!isCancelled()) &#123;</div><div class="line">            <span class="comment">// scheduledTaskQueue can never be null as we lazy init it before submit the task!</span></div><div class="line">            Queue&lt;ScheduledFutureTask&lt;?&gt;&gt; scheduledTaskQueue =</div><div class="line">                    ((AbstractScheduledEventExecutor) executor()).scheduledTaskQueue;</div><div class="line">            <span class="keyword">assert</span> scheduledTaskQueue != <span class="keyword">null</span>;</div><div class="line">            scheduledTaskQueue.add(<span class="keyword">this</span>);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>再来分析<code>ioRatio</code> 不为100的情况，即调用<code>runAllTasks(long timeoutNanos)</code> 方法。基本的逻辑都一样，首先将满足条件的调度任务从调度任务队列取出到普通任务队列，接着执行普通任务。<br>不过这里多了一步检查的逻辑，它会对每个执行过的任务进行计数，每当执行的任务计数到达64时（用位与来实现），就会将执行这些任务的总时间与分配的时间进行对比，如果超出分配时间了，那么这次循环就不再执行任务队列中的任务，这个分配的时间是由io事件执行时间(<code>processSelectedKeys()</code>这个方法执行时间)与ioRatio计算所得，代码<code>ioTime * (100 - ioRatio) / ioRatio</code> 比较直观。需要提醒的是，<code>ioRatio</code> 被设置为100的时候，意味着我们取消了超时检测的机制，这时EventLoop会处理所有当前任务队列中的任务。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p>在本文中一开始介绍了Vert.x的<code>CloseHooks</code> 的机制，接着对Vert.x周期任务，定时任务的源码进行了探索，还对Netty中事件循环的任务调度处理机制进行了仔细的分析。现在我们应该明白了Vert.x中周期任务与定时任务的原理。</p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+
+       
+    </div>
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Vert-x/" rel="tag"># Vert.x</a>
+          
+            <a href="/tags/Netty/" rel="tag"># Netty</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/15/深入理解Vert.x Core(4)-Vertx(I)/" rel="next" title="深入理解Vert.x Core(4)-Vertx(I)">
+                <i class="fa fa-chevron-left"></i> 深入理解Vert.x Core(4)-Vertx(I)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Billy Yuan" />
+            
+              <p class="site-author-name" itemprop="name">Billy Yuan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">43</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">5</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">12</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/BillyYccc" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:billy112487983@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/billyyccc" target="_blank" title="Twitter">
+                    
+                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#CloseHooks机制"><span class="nav-number">1.</span> <span class="nav-text">CloseHooks机制</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#周期任务与延时任务机制"><span class="nav-number">2.</span> <span class="nav-text">周期任务与延时任务机制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#实现"><span class="nav-number">2.1.</span> <span class="nav-text">实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#setTimer-与setPeriodic"><span class="nav-number">2.1.1.</span> <span class="nav-text">setTimer()与setPeriodic()</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#InternalTimerHandler"><span class="nav-number">2.1.2.</span> <span class="nav-text">InternalTimerHandler</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#handle"><span class="nav-number">2.1.2.1.</span> <span class="nav-text">handle()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#Constructor"><span class="nav-number">2.1.2.2.</span> <span class="nav-text">Constructor</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#cancel"><span class="nav-number">2.1.2.3.</span> <span class="nav-text">cancel()</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#cancelTimer"><span class="nav-number">2.1.3.</span> <span class="nav-text">cancelTimer</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#timerStream与periodicStream"><span class="nav-number">2.1.4.</span> <span class="nav-text">timerStream与periodicStream</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#handle-1"><span class="nav-number">2.1.4.1.</span> <span class="nav-text">handle()</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#handler"><span class="nav-number">2.1.4.2.</span> <span class="nav-text">handler()</span></a></li></ol></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Netty任务队列机制"><span class="nav-number">2.2.</span> <span class="nav-text">Netty任务队列机制</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#execute-执行任务"><span class="nav-number">2.2.1.</span> <span class="nav-text">execute()执行任务</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#schedule调度执行任务"><span class="nav-number">2.2.2.</span> <span class="nav-text">schedule调度执行任务</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#添加任务"><span class="nav-number">2.2.2.1.</span> <span class="nav-text">添加任务</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#ScheduledFutureTask"><span class="nav-number">2.2.2.2.</span> <span class="nav-text">ScheduledFutureTask</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#执行调度任务"><span class="nav-number">2.2.2.3.</span> <span class="nav-text">执行调度任务</span></a></li></ol></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#小结"><span class="nav-number">3.</span> <span class="nav-text">小结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/BillyYccc/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "middleRight";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
