@@ -1,0 +1,1091 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Convergence:300,300italic,400,400italic,700,700italic|Tauri:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="System Design,Distributed System," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="最近读完了 Designing Data-Intensive Applications，这本书从实际工程的角度出发，全方位地剖析了现代系统与数据的关系和各种技术背后的设计思想，为我们分析了每种设计天生所带来的优势劣势以及为了适用不同使用场景上所作出的权衡。此系列文章是对该书内容的一些总结和精炼。
+前言近些年服务端或者后端系统都被存储与处理数据这两个目标带来的问题围绕。我们可以将这样的一个应用称作数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDIA distilled(I)">
+<meta property="og:url" content="http://billyyccc.github.io/2018/01/12/DDIA distilled(I)/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="最近读完了 Designing Data-Intensive Applications，这本书从实际工程的角度出发，全方位地剖析了现代系统与数据的关系和各种技术背后的设计思想，为我们分析了每种设计天生所带来的优势劣势以及为了适用不同使用场景上所作出的权衡。此系列文章是对该书内容的一些总结和精炼。
+前言近些年服务端或者后端系统都被存储与处理数据这两个目标带来的问题围绕。我们可以将这样的一个应用称作数">
+<meta property="og:updated_time" content="2018-01-14T14:14:18.060Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DDIA distilled(I)">
+<meta name="twitter:description" content="最近读完了 Designing Data-Intensive Applications，这本书从实际工程的角度出发，全方位地剖析了现代系统与数据的关系和各种技术背后的设计思想，为我们分析了每种设计天生所带来的优势劣势以及为了适用不同使用场景上所作出的权衡。此系列文章是对该书内容的一些总结和精炼。
+前言近些年服务端或者后端系统都被存储与处理数据这两个目标带来的问题围绕。我们可以将这样的一个应用称作数">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2018/01/12/DDIA distilled(I)/"/>
+
+
+
+
+
+  <title>DDIA distilled(I) | BillyYccc</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99992019-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2018/01/12/DDIA distilled(I)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DDIA distilled(I)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-12T10:00:44+08:00">
+                2018-01-12
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Reading/" itemprop="url" rel="index">
+                    <span itemprop="name">Reading</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>最近读完了 <a href="https://dataintensive.net/" target="_blank" rel="external"><em>Designing Data-Intensive Applications</em></a>，这本书从实际工程的角度出发，全方位地剖析了现代系统与数据的关系和各种技术背后的设计思想，为我们分析了每种设计天生所带来的优势劣势以及为了适用不同使用场景上所作出的权衡。此系列文章是对该书内容的一些总结和精炼。</p>
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>近些年服务端或者后端系统都被存储与处理数据这两个目标带来的问题围绕。我们可以将这样的一个应用称作数据密集型应用(Data-intensive applications)，这个应用的首要挑战是数据，包括数据量，数据复杂性以及数据变化的速度。</p>
+<p>以下一些条件推动了构建数据库、分布式系统或者基于前二者的应用上的发展。</p>
+<ul>
+<li>互联网公司有着海量数据与流量需要处理，使得他们必须找出一种能高效处理如此大规模数据的新工具</li>
+<li>业务需要更加敏捷，为了快速响应市场必须缩短开发周期并且保持数据模型的灵活</li>
+<li>开源软件行业更加成功，并且被大量使用在商业环境中</li>
+<li>CPU的速度增长减缓，<em>“The free lunch is over”</em>, 而多核处理器与网络却在高速发展，并行处理成为了唯一增加性能的方式</li>
+<li>IaaS使得构建在多台甚至跨地理区域的多台机器的系统更加容易</li>
+<li>服务对高可用性要求更高</li>
+</ul>
+<p>过去的十年间，为了帮助数据密集型应用响应存储与处理数据的需要，NoSQL, Big Data等等新兴技术出现了爆炸式增长，消息队列、缓存、搜索索引、批处理与流处理框架等等工具被使用在实战中。</p>
+<p>在如此多技术中选出适合自身需求的工具成为新的烦恼，但是只需要记住<em>“There are no silver bullets.”</em> 这一条经典法则即可。这些不同的工具不过是不同目标导致设计理念上差异化带来的结果，因此它们有自己独特的优势，也一定会因为一些局限性做出了trade-offs。</p>
+<a id="more"></a>
+<h1 id="数据系统的基石"><a href="#数据系统的基石" class="headerlink" title="数据系统的基石"></a>数据系统的基石</h1><h2 id="可靠的，可伸缩的，可维护的应用"><a href="#可靠的，可伸缩的，可维护的应用" class="headerlink" title="可靠的，可伸缩的，可维护的应用"></a>可靠的，可伸缩的，可维护的应用</h2><p>一个数据密集型应用都会代表性地包括一些基本的标准模块，这样标准的模块都会提供一些必要的功能。举例来说，许多应用都需要</p>
+<ul>
+<li>存储数据，过后该应用或者其它应用能够再次读取数据(数据库)</li>
+<li>记录一些需要较高开销操作的结果，加速读取速度(缓存)</li>
+<li>让用户可以通过关键词搜索数据或者过滤数据(搜索索引)</li>
+<li>向另外的进程发送可以被异步处理的消息(流处理)</li>
+<li>周期性地处理大量累积数据(批处理)</li>
+</ul>
+<p>当我们使用这些工具构建自己的服务时，API为我们隐藏了这些工具实现的细节。而我们的目标是实现一个好的服务，那么什么可以算上一个好的服务呢？<br>在大多数软件系统中，我们应该集中关注以下3点</p>
+<ul>
+<li><p>Reliability 可靠性<br>可靠性是指系统可以在异常情况下按照期望(一定的等级)继续正确地工作。</p>
+</li>
+<li><p>Scalability 可伸缩性<br>随着系统不断增长(数据容量，流量，复杂性)，系统能够处理这些增长的需求并且依然保持较高性能。</p>
+</li>
+<li><p>Maintainability 可维护性<br>不同人员或者团队在该系统上进行工作时，系统能使得协同工作更加容易。</p>
+</li>
+</ul>
+<h3 id="Reliability"><a href="#Reliability" class="headerlink" title="Reliability"></a>Reliability</h3><p>对一个系统可靠性典型的期望应该是</p>
+<ul>
+<li><p>应用可以按用户期望的目标完成功能</p>
+</li>
+<li><p>系统可以容忍用户犯错或者用一种意外的方式去使用软件</p>
+</li>
+<li><p>在预想的负载与数据容量下，系统性能足以满足用户用例</p>
+</li>
+<li><p>系统阻止任何无权限的访问或者恶意操作</p>
+</li>
+</ul>
+<p>错误(fault)是指一些事情弄错了(go wrong)，而我们的容错机制(fault-tolerant)是指在一定程度上容忍错误的发生，这不意味着我们能完全解决所有错误，假如整个地球都被黑洞吞噬，那么显然在这种条件下错误是不可能可以解决的。因此我们只能容忍一定程度上的错误。</p>
+<p>错误(fault)和失败(failure)不同，错误是指系统的一些部件偏离了它们的正常使用，而失败是指整个系统都完全无法向用户提供需要的服务。</p>
+<p>Reliability需要解决硬件错误(Hardware Faults)、软件错误(Software Errors)、人为错误(Human Errors)。</p>
+<p>硬件错误可以通过冗余(redundancy)等手段来解决。<br>软件错误没有较快的解决方法，但是可以通过设计时仔细的思考、测试、进程隔离、允许进程崩溃并重启、测量(measuring)、监控(monitoring)或者分析系统等等方式来处理。<br>人为错误一般可以通过抽象(abstractions)、将最容易出错的地方解耦(decouple)、各个级别的测试(test)、快速恢复机制(quick and easy recovery)、监控(monitoring)、良好的管理(management)帮助解决。</p>
+<h3 id="Scalability"><a href="#Scalability" class="headerlink" title="Scalability"></a>Scalability</h3><p>我们首先能给出系统当前的负载状态，比如100k requests/sec，然后我们能根据新的需求去决定负载指数(load parameter)。</p>
+<p>一些术语：<br>吞吐量(throughput)：我们每秒能处理的请求的数量<br>延迟(latency): 请求等待被处理这个过程的时间<br>响应时间(response time): 处理整个请求的时间(包括网络延时以及处理队列延时)<br>百分位(percentile): 给出一定性能条件，满足这个条件所占的百分比</p>
+<p>通常有两种解决方案</p>
+<ul>
+<li>垂直扩展(scale up): 使用更加强大性能的机器</li>
+<li>水平扩展(scale out): 将负载均摊到多个更小的机器上</li>
+</ul>
+<p>scale up在一定条件下有用，但是它不是无限增加的，单个机器的性能是有限的，CPU也不可能无限提高自身的性能，而且高性能的机器会带来昂贵的成本，因此scale out成为了另一种更可行的解决方法。</p>
+<h3 id="Maintainability"><a href="#Maintainability" class="headerlink" title="Maintainability"></a>Maintainability</h3><p>以下三点都是系统设计在可维护性上需要考虑的</p>
+<ul>
+<li><p>可操作性(Operability): 团队操作更加容易</p>
+</li>
+<li><p>简易性(Simplicity): 对于新手更加友好</p>
+</li>
+<li><p>可进化性(Evolvability): 即可扩展性(extensibility)，未来系统修改时更加容易</p>
+</li>
+</ul>
+<h2 id="数据模型与查询语言"><a href="#数据模型与查询语言" class="headerlink" title="数据模型与查询语言"></a>数据模型与查询语言</h2><h3 id="数据模型"><a href="#数据模型" class="headerlink" title="数据模型"></a>数据模型</h3><p>关系型数据模型(Relational Model)已经经历住了时间的考验，并且成为了最为熟知的数据模型，SQL也获得了巨大的成功，关系型模型在1970年就已经提出：数据由关系(SQL中的表)来组织，每个关系就是一系列元组(tuple,SQL中的行row)的无序集合。</p>
+<p>NoSQL = Not Only SQL<br>NoSQL由以下需求驱动</p>
+<ul>
+<li>比关系型数据库更好的伸缩性</li>
+<li>拥抱开源软件而不是商业数据库产品</li>
+<li>提供关系模型不支持的查询操作</li>
+<li>针对关系型数据模式(schema)的局限性，需要更加灵活和具有表达力的数据模型</li>
+</ul>
+<p>阻抗失配(Impedance mismatch): 应用代码中的对象与数据库模型中的表、行、列之间需要一个映射层，而不是直接对应的关系。</p>
+<p>文档型数据模型(Document Model)将数据形成自独立(self-contained)的文档，文档之间的关联比较少。</p>
+<p>图数据模型(Graph Model)将所有事物都看做是有关系的，它们(顶点vertice)之间通过边(edge)来关联。</p>
+<h3 id="关联"><a href="#关联" class="headerlink" title="关联"></a>关联</h3><p>通常有三种关联需要处理</p>
+<ul>
+<li><p>一对一关联(One-To-One)</p>
+</li>
+<li><p>一对多关联(One-To-Many)<br>关系型模型或者层次文档模型</p>
+</li>
+<li><p>多对多关联(Many-To-Many)</p>
+</li>
+</ul>
+<h3 id="查询语言"><a href="#查询语言" class="headerlink" title="查询语言"></a>查询语言</h3><ul>
+<li>SQL</li>
+<li>MapReduce Query</li>
+<li>Aggregation pipeline</li>
+<li>Graph Query</li>
+</ul>
+<p>关系(relational)、文档型(document)、图(graph)三种模型都有自己的使用场景。</p>
+<h2 id="存储与检索"><a href="#存储与检索" class="headerlink" title="存储与检索"></a>存储与检索</h2><p>在最基本的角度来看，一个数据库需要做两件事：你给它一些数据，它将数据存下来；你过一段时间找它要这些数据，它会将数据返回给你。</p>
+<h3 id="索引"><a href="#索引" class="headerlink" title="索引"></a>索引</h3><p>为了在数据库中高效率地找出一个指定的关键字，我们需要一种数据结构：索引。索引背后基本的思想就是为存储的数据再多余保存一些元数据(metadata)，这个元数据就好像指示牌一样能帮你过后找到存储的数据。索引只是原始数据衍生出的额外结构，它并不会影响原始数据本身，它只会影响查询原始数据时的速度。任何索引都会降低写数据的速度，因为每次写数据时都会更新索引，而这些索引是额外的内容。在存储系统中有一个重要的trade-off，适当的索引会加速查询读的速度，但是每个索引都会降低写的速度，因此，数据库通常不会为每一个存储的数据建立索引。</p>
+<h4 id="Hash-index"><a href="#Hash-index" class="headerlink" title="Hash index"></a>Hash index</h4><p>最简单的一种Hash索引就是在内存中保存一个Hash表，里面存着每个key以及对应数据的字节偏移量，当需要查询值时，就用这个哈希表通过偏移量找出该key所对应的数据文件中对应值得位置，然后读出。写入值时就采用append-only顺序写入(sequential write)的方式。</p>
+<p>因为我们在不断顺序写入，为了避免用光所有空间，一种可行的解决办法是，将这个顺序写入的记录(log)拆分成若干固定大小的段(segment)，当一个段写满时，就停止写入并且开启下一个段。接着我们就能对这些段进行压缩合并操作(compaction)，compaction就是将记录中重复的key丢弃只保留最新更新的那个key。</p>
+<p>append-only只追加数据这种方式看起来比较浪费，为什么不直接去将对应旧值替换成新值呢？</p>
+<ul>
+<li>由于追加(append)与段合并(segment merging)都是顺序写操作，这种方式比随机写速度要快很多，在磁盘上表现尤其明显</li>
+<li>并发写与崩溃恢复(crash recovery)更加简单，因为段文件是只可以追加的，你不用担心部分旧值与部分覆盖的新值混合在一起的情况</li>
+<li>合并旧的段避免了数据文件随着时间带来的碎片化(fragment)</li>
+</ul>
+<p>然而，这种hash table index也有一些限制</p>
+<ul>
+<li><p>hash table必须能适合内存大小，如果keys非常大的话，那么就有问题了。而将hash map存在磁盘上性能会大大降低</p>
+</li>
+<li><p>范围查询低效</p>
+</li>
+</ul>
+<h4 id="SSTable"><a href="#SSTable" class="headerlink" title="SSTable"></a>SSTable</h4><p>前面讲的index模型就是一个顺序的key-value集合，这些kv对的顺序就是它们被写入时的顺序，因此在这种结构中并没有考虑顺序。</p>
+<p>现在做出一些改变，我们要求kv对的顺序是按照key来进行排序。这种形式叫作Sorted String Table(SSTable)</p>
+<p>先来看看这种方式有什么优势</p>
+<ul>
+<li>合并段(segment)更加高效了，因为我们的segment都是有序的，所以只需要对每个segment逐个复制合并即可。</li>
+<li>我们现在不需要在内存中保存所有的key了，因为kv是有序的，只需要保存一部分key，这样我们就可以通过两个索引的key确定要查找的kv的范围，然后再查找，这样速度就非常快了，而且还节省了索引占用空间。</li>
+<li>还可以将两两key间隔的范围对应的数据进行压缩成块进行存储，这样也节省了磁盘空间和io带宽。</li>
+</ul>
+<p>在内存中保持一个顺序结构十分容易，可以使用平衡树这种数据结构来实现。我们现在的存储引擎工作方式是这样的：</p>
+<ol>
+<li>写请求来时，将它加入到一个内存中的平衡树的数据结构，这个数通常叫作memtable</li>
+<li>当memtable大小超过一定限额时，把这个memtable写入到磁盘中，并且提供一个新的memtable实例去继续提供写功能</li>
+<li>读请求来时，首先查询memtable中的key，然后到最近更新的磁盘上的segment，接着按时间顺序一直找下去</li>
+<li>同时在后台开启一项进程对segments进行合并与压缩操作</li>
+</ol>
+<p>这种模式还有一个问题，如果数据库崩溃了，那么memtable中还没有写入磁盘的数据就丢失了。为了避免这个问题，可以在磁盘上保持一个分离的日志，这个日志会记录每次写的信息，在崩溃后恢复时可以找回memtable，而每次memtable被写到SSTable中时，这个日志就可以丢弃掉并重新用一份新的。</p>
+<h4 id="LSM-Tree"><a href="#LSM-Tree" class="headerlink" title="LSM-Tree"></a>LSM-Tree</h4><p>上面这种索引结构被叫做Log-Structured Merge-Tree(LSM-Tree)，而基于合并与压缩分类文件这种思想的存储引擎通常被叫做LSM存储引擎。</p>
+<p>这种引擎在实战中还有很多可以优化的细节，比如增加一个Bloom filters来检测要查询的key是否存在，这样如果该key不存在就不需要查询整个segments了。</p>
+<p>LSM-Trees的基本思想就是保持一个级联的SSTables，并且让它们在后台合并。这种方式能处理数据集比可用内存更大的情形，而且由于数据是有序的，因此可以使用范围查询，而且写操作也是顺序的，因此可以满足高吞吐的要求。</p>
+<h4 id="B-Tree"><a href="#B-Tree" class="headerlink" title="B-Tree"></a>B-Tree</h4><p>B-Tree是使用最广泛的索引结构。和SSTables相似，B-tree的KV对也是按key来排序的，这样查询值和范围查询时会更高效。但是B-Tree和SSTables在设计思想上还是有很大不同的地方，SSTables的段(segments)是变长的，并且是顺序写(sequential write)，而B-Tree是将数据划分为块(block)或者页(page)，块是定长的，并且一次只会读写一个块，每个块都会用固定的标识符标识，这样就能通过标识符找到对应的块。B-Tree的块会指向更深层次的块，类似指针，这样能缩小查询时的范围，并且B-Tree会保证树的平衡。B-Tree更新某个key的值就可以直接查询该key并更新对应的值，如果增加新的值而空间不够时，就会将该块再往下层迁移成新的两个块。为了保证B-Tree崩溃时有足够的可靠性，B-tree实现通常会在磁盘上增加一个额外的数据结构，一个预写式日志(write-ahead log WAL)，这个日志是只追加方式写的(append-only)，它在做出修改前先将修改的操作写入这个日志，这样能在数据库崩溃后进行恢复操作。一般来说，LSM-trees通常写更快，而B-trees读更快，但是这得根据实际场景进行测试，并不是绝对的。</p>
+<p>上面的索引结构都是Key-Value索引，类似关系模型(relational model)中的主键(primary key)索引，下面有一些其它类型的索引。</p>
+<ul>
+<li>secondary index</li>
+</ul>
+<p>二级索引(secondary index)可以从key-value索引中很容易地创建，比如在关系型数据库中<code>CREATE INDEX</code>语句。</p>
+<ul>
+<li><p>storing values within the index </p>
+</li>
+<li><p>Multi-column index</p>
+</li>
+<li><p>fuzzy index</p>
+</li>
+</ul>
+<p>比如全文搜索引擎一般就支持模糊匹配，它允许搜索关键词有一些语法上的错误。</p>
+<h3 id="OLTP-amp-OLAP"><a href="#OLTP-amp-OLAP" class="headerlink" title="OLTP&amp;OLAP"></a>OLTP&amp;OLAP</h3><p>OLTP(Online transaction processing) 联机事务处理，通常是面向用户的，每一次查询请求只会使用到少量的数据，因此磁盘查找时间(seek time)一般是系统瓶颈。<br>OLAP(Online analytic processing) 联机分析处理，通常面向商业分析，而不是终端用户，每一次查询请求会使用大量的数据，因此磁盘带宽(disk bandwidth)是系统瓶颈。OLAP一次会顺序扫描大量数据，而查询的索引并不是它的核心关注点，更加精简地压缩数据才是关注点，这样可以减小从磁盘中读取的数据量，提高效率，面向列的存储(column-oriented storage)可以使用在这种场景。</p>
+<h3 id="Column-Oriented-Storage"><a href="#Column-Oriented-Storage" class="headerlink" title="Column-Oriented Storage"></a>Column-Oriented Storage</h3><p>与按行存储数据的方式不同，行式存储是将一行所有的数据存储在一起，而列式存储是将一列所有的数据存储在一起。由于一列中数据的值的区别较小，因此将它们压缩存储更加容易。存储的时候会按照一定的顺序存储，这样我们就能知道哪个值对应哪一条数据(item)。排序不仅可以加快查询速度，而且可以使得压缩列的时候更加高效。</p>
+<h2 id="编码与演变"><a href="#编码与演变" class="headerlink" title="编码与演变"></a>编码与演变</h2><p>应用不可避免地在变化，随着新产品的发布，功能会被增加或者修改，而对应的数据也在不断变化。而这种变化在大型应用中不可能立即全部完成，旧的与新的代码、数据格式可能共存</p>
+<ul>
+<li>在服务端(server-side)应用中，可以执行滚动升级(rolling-upgrade)，即把新版本先部署到一部分节点上，然后将旧版本节点慢慢进行迁移到新版本。</li>
+<li>在客户端(client-side)应用中，用户不一定会立即升级到最新版本。</li>
+</ul>
+<p>因此我们需要在两个方向保持兼容性(compatibility)。</p>
+<ul>
+<li><p>Backward compatibility向后兼容：新的代码可以读取旧代码写入的数据</p>
+</li>
+<li><p>Forward compatibility 向前兼容： 旧的代码可以读取新代码写入的数据</p>
+</li>
+</ul>
+<p>程序通常会有(至少)两种形式处理数据</p>
+<ol>
+<li>在内存中，数据可以以对象(object)、结构(struct)、列表(list)、数组(array)、哈希表(hash table)、树(tree)等等形式存在，都是为了CPU可以进行更高效处理。</li>
+<li>当需要将数据写入文件或者在网络上传输时，这时必须将数据编码(encode)为一组独立的字节序列(比如JSON)。</li>
+</ol>
+<p>有以下一些方式对数据进行编码</p>
+<ul>
+<li>语言特定格式<br>比如<code>java.io.Serializable</code>，具有较多限制，在性能和兼容性上不足</li>
+<li>JSON,XML, CSV<br>这些都是文本格式，易于阅读，如果有良好的设计可以保持较好的兼容性，但是在处理数字(number)和二进制串(binary string)时都不易处理</li>
+<li>Binary Encoding<br>二进制编码格式有很多成熟的解决方案，比如Thrift、Protocol Buffers、Avro等等。特点是高效率，并且能保持良好的兼容性，缺点是必须解码(decode)后才可读(human-readable)。</li>
+</ul>
+<p>常见的数据编码场景</p>
+<ul>
+<li>数据库Database</li>
+<li>RPC与REST API</li>
+<li>异步消息传递</li>
+</ul>
+<h3 id="RPC-Remote-Procedure-Call"><a href="#RPC-Remote-Procedure-Call" class="headerlink" title="RPC(Remote Procedure Call)"></a>RPC(Remote Procedure Call)</h3><p>RPC是通过网络服务进行调用，使得client好像在调用本地函数一样。但是两者有着很大不同</p>
+<ul>
+<li>本地函数调用是可以预知的，即要么失败要么成功只取决于调用时传入的参数，而RPC调用会被网络所影响，因此它无法预知(unpredicable)</li>
+<li>本地函数调用会返回一个结果或者抛出一个异常，或者不返回(无限循环或者进程崩溃)。而网络请求有可能没有任何回应，比如超时(timeout)，这种情况无法知道发生了什么。</li>
+<li>如果重试一次失败的网络请求，有可能之前的请求已经完成了，只不过是响应丢失了，这种情况请求有可能会发生两次，所以需要幂等机制(idempotence)。</li>
+<li>每次本地函数调用时时间基本是在一定范围内的，而网络调用就不一定了，有可能时间差异非常大。</li>
+<li>网络调用必须先转换成字节序列，如果是很大的对象(big objects)那么就会是比较麻烦的问题</li>
+<li>客户端与服务有可能用不同语言实现，因此有一个数据类型和语言层面的转换。</li>
+</ul>
+<p>上述的一些问题新出现的RPC框架都在解决，比如将可能失败的异步操作封装起来，让它与普通的函数调用看上去不同。</p>
+<p>RESTful API一个吸引人的地方在于，它并没有隐藏它是基于网络(一般是HTTP+JSON)的事实。而且RESTful API在试验与调试时更加方便，可以使用任何浏览器或者curl这种工具，不需要额外安装工具，并且支持所有编程语言与平台。</p>
+<p>所以基于上述原因，REST主要适合公有API(public API)的场景，而RPC框架更适合一个组织内的使用。</p>
+<h3 id="Message-Passing-Dataflow"><a href="#Message-Passing-Dataflow" class="headerlink" title="Message-Passing Dataflow"></a>Message-Passing Dataflow</h3><p>异步消息传递(Asynchronous message-passing)和RPC不同，往往发送者(sender)不关心他发出消息的响应，而仅仅是将消息投递过去。这种异步的通信模式即：发送者发出消息后不等待消息的传递，而是发出过后然后忘记掉这个消息一样。</p>
+<p>异步消息传递通常有两种模型</p>
+<ul>
+<li><p>Message brokers<br>一个进程将消息发送到一个指定的queue或者topic，broker确保该消息会被传递到一个或者多个与该topic关联的消费者(consumer)或者订阅者(subscriber)</p>
+</li>
+<li><p>Distributed actor framework<br>每个actor内维护自己内部本地的状态，actor之间传递immutable的消息，消息传递不是100%保证的，有可能会丢失。由于每个actor一次只会处理一条消息，这样就避免了并发模型中使用线程经常会出现的race condition。</p>
+</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+
+       
+    </div>
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/System-Design/" rel="tag"># System Design</a>
+          
+            <a href="/tags/Distributed-System/" rel="tag"># Distributed System</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/12/25/深入理解Vert.x Core(5)-Vertx(II)/" rel="next" title="深入理解Vert.x Core(5)-Vertx(II)">
+                <i class="fa fa-chevron-left"></i> 深入理解Vert.x Core(5)-Vertx(II)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Billy Yuan" />
+            
+              <p class="site-author-name" itemprop="name">Billy Yuan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">44</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/BillyYccc" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:billy112487983@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/billyyccc" target="_blank" title="Twitter">
+                    
+                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#数据系统的基石"><span class="nav-number">2.</span> <span class="nav-text">数据系统的基石</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#可靠的，可伸缩的，可维护的应用"><span class="nav-number">2.1.</span> <span class="nav-text">可靠的，可伸缩的，可维护的应用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Reliability"><span class="nav-number">2.1.1.</span> <span class="nav-text">Reliability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Scalability"><span class="nav-number">2.1.2.</span> <span class="nav-text">Scalability</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Maintainability"><span class="nav-number">2.1.3.</span> <span class="nav-text">Maintainability</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据模型与查询语言"><span class="nav-number">2.2.</span> <span class="nav-text">数据模型与查询语言</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#数据模型"><span class="nav-number">2.2.1.</span> <span class="nav-text">数据模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#关联"><span class="nav-number">2.2.2.</span> <span class="nav-text">关联</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#查询语言"><span class="nav-number">2.2.3.</span> <span class="nav-text">查询语言</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#存储与检索"><span class="nav-number">2.3.</span> <span class="nav-text">存储与检索</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#索引"><span class="nav-number">2.3.1.</span> <span class="nav-text">索引</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Hash-index"><span class="nav-number">2.3.1.1.</span> <span class="nav-text">Hash index</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#SSTable"><span class="nav-number">2.3.1.2.</span> <span class="nav-text">SSTable</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#LSM-Tree"><span class="nav-number">2.3.1.3.</span> <span class="nav-text">LSM-Tree</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#B-Tree"><span class="nav-number">2.3.1.4.</span> <span class="nav-text">B-Tree</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#OLTP-amp-OLAP"><span class="nav-number">2.3.2.</span> <span class="nav-text">OLTP&OLAP</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Column-Oriented-Storage"><span class="nav-number">2.3.3.</span> <span class="nav-text">Column-Oriented Storage</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#编码与演变"><span class="nav-number">2.4.</span> <span class="nav-text">编码与演变</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#RPC-Remote-Procedure-Call"><span class="nav-number">2.4.1.</span> <span class="nav-text">RPC(Remote Procedure Call)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Message-Passing-Dataflow"><span class="nav-number">2.4.2.</span> <span class="nav-text">Message-Passing Dataflow</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/BillyYccc/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "middleRight";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
