@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Convergence:300,300italic,400,400italic,700,700italic|Tauri:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="System Design,Distributed System," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="分布式数据我们有以下一些理由去将数据库分布在多台机器上：
+
+可伸缩性Scalability如果数据量、读写负载大到超过单台机器所能达到的上限，就可以将负载分摊到多台机器上。
+
+容错能力/高可用性Fault tolerance/high availability如果单台机器或者部分机器出现故障，我们需要多台机器提供的冗余(redundancy)能力确保服务依然可用。
+
+延迟Latency如果用户分布">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DDIA distilled(II)">
+<meta property="og:url" content="http://billyyccc.github.io/2018/01/15/DDIA distilled(II)/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="分布式数据我们有以下一些理由去将数据库分布在多台机器上：
+
+可伸缩性Scalability如果数据量、读写负载大到超过单台机器所能达到的上限，就可以将负载分摊到多台机器上。
+
+容错能力/高可用性Fault tolerance/high availability如果单台机器或者部分机器出现故障，我们需要多台机器提供的冗余(redundancy)能力确保服务依然可用。
+
+延迟Latency如果用户分布">
+<meta property="og:updated_time" content="2018-01-19T04:26:52.146Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="DDIA distilled(II)">
+<meta name="twitter:description" content="分布式数据我们有以下一些理由去将数据库分布在多台机器上：
+
+可伸缩性Scalability如果数据量、读写负载大到超过单台机器所能达到的上限，就可以将负载分摊到多台机器上。
+
+容错能力/高可用性Fault tolerance/high availability如果单台机器或者部分机器出现故障，我们需要多台机器提供的冗余(redundancy)能力确保服务依然可用。
+
+延迟Latency如果用户分布">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2018/01/15/DDIA distilled(II)/"/>
+
+
+
+
+
+  <title>DDIA distilled(II) | BillyYccc</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99992019-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2018/01/15/DDIA distilled(II)/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">DDIA distilled(II)</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-15T10:01:13+08:00">
+                2018-01-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Reading/" itemprop="url" rel="index">
+                    <span itemprop="name">Reading</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="分布式数据"><a href="#分布式数据" class="headerlink" title="分布式数据"></a>分布式数据</h1><p>我们有以下一些理由去将数据库分布在多台机器上：</p>
+<ul>
+<li><p>可伸缩性Scalability<br>如果数据量、读写负载大到超过单台机器所能达到的上限，就可以将负载分摊到多台机器上。</p>
+</li>
+<li><p>容错能力/高可用性Fault tolerance/high availability<br>如果单台机器或者部分机器出现故障，我们需要多台机器提供的冗余(redundancy)能力确保服务依然可用。</p>
+</li>
+<li><p>延迟Latency<br>如果用户分布在世界各地，我们期望用户能够访问离他们地理位置最近的服务器或者数据中心，这样可以减少网络延时。</p>
+</li>
+</ul>
+<p>通常有两种方式将数据分布到多个节点</p>
+<ul>
+<li><p>复制Replication<br>将相同的数据拷贝到多个不同的节点上，复制能够提供冗余能力，保证服务的高可用性，并且还能提升性能。</p>
+</li>
+<li><p>分区Partitioning<br>将一个大的数据库划分为更小的子集，这些子集被称作分区(partition)，不同的分区就会被分配到不同的节点上(这种方式也被称为分片sharding)。</p>
+</li>
+</ul>
+<a id="more"></a>
+<h2 id="复制Replication"><a href="#复制Replication" class="headerlink" title="复制Replication"></a>复制Replication</h2><p>使用复制有以下几个动机：</p>
+<ul>
+<li>使数据在地理位置上离用户更近(减小延迟latency)</li>
+<li>允许系统在一部分节点故障后继续工作(增加可用性)</li>
+<li>水平扩展处理查询的机器(增加读吞吐量)</li>
+</ul>
+<p>存储数据库拷贝的每个节点被称为副本(replica)。为了保证副本数据是相同的，最通用的一种解决方法是主从复制(leader-based replication or active/passive replication or master-slave replication)。工作流程如下：</p>
+<ol>
+<li>某个副本被指定一个主节点(leader)，当客户端需要向数据库写操作时，必须先发送请求给主节点，主节点首先写入它的本地存储。</li>
+<li>其它副本被称为从节点(follower)。当主节点写入新数据时，它会通知所有从节点数据变化，从节点更新自己的本地数据到最新状态。</li>
+<li>客户端进行读请求时，它可以向任意节点发起请求，然后写请求只能由主节点完成。</li>
+</ol>
+<h3 id="复制策略"><a href="#复制策略" class="headerlink" title="复制策略"></a>复制策略</h3><p>复制过程分为同步(Synchronous)复制与异步(Asynchronous)复制两种机制。</p>
+<p>同步复制是指主节点会等待从节点完成复制过程，收到从节点的成功响应后才会向发起写请求的用户报告这次写操作是成功的。<br>异步复制是指主节点向从节点发送更新通知，但是不等待从节点的响应。<br>同步复制的优点在于每个从节点的副本都是最新的数据，缺点很明显，主节点写操作必须阻塞等待从节点更新的完成，如果发生网络故障，写操作就无法被处理。一个节点的故障就可能导致整个系统的写操作故障，因此同步复制其实并不实用。通常采用异步复制的策略，这种情形下，如果主节点发生故障并且无法恢复，任何还没有更新到从节点的数据就丢失了，但是这样即使所有从节点都挂掉，主节点依然能够提供写能力。这其实是在durability与availability之间做出的trade-off。</p>
+<h3 id="处理节点故障"><a href="#处理节点故障" class="headerlink" title="处理节点故障"></a>处理节点故障</h3><h4 id="从节点故障"><a href="#从节点故障" class="headerlink" title="从节点故障"></a>从节点故障</h4><p>每个从节点都会在本地保存一份更新日志，如果从节点故障并且重启，或者主从节点之间的网络暂时不可用，从节点就可以从日志轻易地进行恢复，从节点重新建立和主节点的通信后，就会赶上(catch up)主节点的数据。</p>
+<h4 id="主节点故障"><a href="#主节点故障" class="headerlink" title="主节点故障"></a>主节点故障</h4><p>如果主节点发生故障，那么就需要推出一个新的主节点，并且所有新的写请求都将被新的主节点处理，从节点也会从新的主节点获取数据变化，这个过程被称为failover。一个自动化的failover工作流程如下：</p>
+<ol>
+<li>做出原有主节点已经发生故障的决定。（比如经过固定心跳周期而未响应）</li>
+<li>选出一个新的主节点（通常是拥有最多最新数据的从节点，尽可能减少数据丢失，并且所有从节点达成一个共识）</li>
+<li>重新配置系统采用新的主节点（如果主节点过后恢复了，让这个主节点去知道自己已经成为了从节点）</li>
+</ol>
+<h3 id="复制日志的一些实现"><a href="#复制日志的一些实现" class="headerlink" title="复制日志的一些实现"></a>复制日志的一些实现</h3><ul>
+<li>Statement-based replication</li>
+<li>Write-ahead log(WAL) shipping</li>
+<li>Logical(row-based) log replication</li>
+<li>Trigger-based replication</li>
+</ul>
+<h3 id="复制延时带来的问题"><a href="#复制延时带来的问题" class="headerlink" title="复制延时带来的问题"></a>复制延时带来的问题</h3><p>如果采用了异步复制，那么客户端有可能读到一个已经过时的数据，因为也许一些从节点还没有更新到最新的状态，显然在数据库中这是不一致的状态。但是这种不一致只是暂时的，如果停止写请求，过一会儿从节点就会保持到最新的状态，这种效果被熟知为最终一致性(eventual consistency)。最终(eventually)是一个模糊的概念，我们并不确定什么时候它们会保持一致。</p>
+<h4 id="Reading-Your-Own-Writes"><a href="#Reading-Your-Own-Writes" class="headerlink" title="Reading Your Own Writes"></a>Reading Your Own Writes</h4><p>一个用户在更新值后再去查询发现更新的值没有生效，这有可能是用户访问到了还没有同步到更新状态的从节点。</p>
+<h4 id="Monotonic-Reads"><a href="#Monotonic-Reads" class="headerlink" title="Monotonic Reads"></a>Monotonic Reads</h4><p>一个用户在更新值后，另一个用户进行两次查询发现两次查询结果不一样，因为这个查询的用户两次查询访问的分别是新的副本与旧的副本。</p>
+<h4 id="Consistent-Prefix-Reads"><a href="#Consistent-Prefix-Reads" class="headerlink" title="Consistent Prefix Reads"></a>Consistent Prefix Reads</h4><p>两个用户进行一次写操作后，另一个用户查询时发现这个操作的顺序反了。</p>
+<h3 id="Multi-Leader-Replication"><a href="#Multi-Leader-Replication" class="headerlink" title="Multi-Leader Replication"></a>Multi-Leader Replication</h3><p>之前所谈到主从复制都是单一主节点(Single-leader)的做法，事实上，还有多主节点(Multi-leader)的策略。</p>
+<h4 id="处理写冲突"><a href="#处理写冲突" class="headerlink" title="处理写冲突"></a>处理写冲突</h4><ul>
+<li><p>同步写策略<br>等待写操作同步到所有副本后才向用户返回写成功的响应。虽然这样会使得冲突可见，但是这种做法失去多主节点主要的优势：允许每个副本独立地写。</p>
+</li>
+<li><p>避免冲突<br>一种可行的做法是让某个记录的所有相关写操作都通过同一个主节点进行。</p>
+</li>
+<li><p>收敛到一致状态</p>
+</li>
+</ul>
+<ol>
+<li>Last write win(LWW)，给每一个写操作一个单一的ID(比如一个时间戳)，最后选择拥有最大ID的写操作结果作为所有副本的结果</li>
+<li>给每一个副本一个独特的ID，具有较高ID的副本拥有优先权，也就是该副本的写操作值覆盖更低ID副本冲突的值</li>
+<li>将值合并起来(可能得到B/C这种形式)</li>
+<li>将冲突记录在某种数据结构中，并保留所有相关信息，过后让应用代码来处理</li>
+</ol>
+<h3 id="Leaderless-Replication"><a href="#Leaderless-Replication" class="headerlink" title="Leaderless Replication"></a>Leaderless Replication</h3><p>客户端将每次写请求发送到多个节点，并且从多个节点读，并行化处理从而检测并纠正旧的值。</p>
+<p>由于客户端会并行地发送多个请求并收到多个响应，因此可以用版本号(Version numbers)来决定一个值是不是最新的。</p>
+<h4 id="quorum-reads-and-writes"><a href="#quorum-reads-and-writes" class="headerlink" title="quorum reads and writes"></a>quorum reads and writes</h4><p>一共有n个副本，每次写操作都必须被w个节点所确认，我们每次读请求必须查询至少r个节点。<br>只要w+r&gt;n，我们就可以读时获取最新值，因为写入的节点与读的节点至少会有一个是重叠的，从w+r&gt;n这点不难想象，所以不管怎么样我们都可以读取到最新值。</p>
+<h4 id="sloppy-quorum"><a href="#sloppy-quorum" class="headerlink" title="sloppy quorum"></a>sloppy quorum</h4><p>还可以将w与r设置得更小一些，w+r&lt;=n会导致可能读到旧的值，但是这种情况给予了更低的延时与更高的可用性。一旦网络发生故障，许多副本将不可达，如果w和r设置的值太高，那么服务可能不可用。</p>
+<h2 id="分区Partitioning"><a href="#分区Partitioning" class="headerlink" title="分区Partitioning"></a>分区Partitioning</h2><p>使用分区的主要动机就是可伸缩性。分区通常和复制一起使用，每个分区的多个副本被存储在不同的节点中。</p>
+<h3 id="Partitioning-of-Key-Value-Data"><a href="#Partitioning-of-Key-Value-Data" class="headerlink" title="Partitioning of Key-Value Data"></a>Partitioning of Key-Value Data</h3><p>我们的目标是散布数据并且将查询负载均衡地分摊到多个节点上，最理想的情况是，10个节点可以处理10倍的数据量并且读写吞吐量也能达到单一节点的10倍。但是如果分区不均匀，一些分区数据量和负载比其它分区高，这种现象被称为skewed。这种现象会降低分区的效率，因为瓶颈有可能集中在某一个分区上，一个有着不按正常比例的高负载的分区被称为hot spot。</p>
+<p>避免hot spot最简单的方式就是将数据随机分配到节点上，但是这种方式有很大的问题，当要读一个指定的数据时，没办法知道该数据在哪个节点上，所以必须并行执行查询所有的节点。</p>
+<h4 id="按Key范围进行分区"><a href="#按Key范围进行分区" class="headerlink" title="按Key范围进行分区"></a>按Key范围进行分区</h4><p>按照一个连续范围的key进行分区，比如一个维基百科可以范围性地按字母顺序进行分区。</p>
+<p>这种分区方式的缺点是某些特定的访问模式可能会导致hot spot。(比如时间戳)一种可行的解决办法是增加一个前缀(prefix)再分区。</p>
+<h4 id="按Key的Hash进行分区"><a href="#按Key的Hash进行分区" class="headerlink" title="按Key的Hash进行分区"></a>按Key的Hash进行分区</h4><p>按照key的Hash进行分区，这种方式可以较好将数据均匀分布到分区中。但是这种方式也有缺点，由于是按hash进行分区，所以一个范围的数据会散落到各个分区中，执行范围查询时可能需要访问多个分区节点。</p>
+<h3 id="Partitioning-and-Secondary-Indexes"><a href="#Partitioning-and-Secondary-Indexes" class="headerlink" title="Partitioning and Secondary Indexes"></a>Partitioning and Secondary Indexes</h3><p>有两种主要的方式对二级索引的数据库进行分区：</p>
+<ul>
+<li>基于文档(document)的分区</li>
+<li>基于项(term)的分区</li>
+</ul>
+<h4 id="按文档对二级索引分区"><a href="#按文档对二级索引分区" class="headerlink" title="按文档对二级索引分区"></a>按文档对二级索引分区</h4><p>在这种索引方式中，每个分区是完全分离的：每个分区维护它自己的二级索引(仅仅覆盖该分区的文档)，他并不关心其它分区中存储的数据。所以，一个document-partitioned index也被称为local index。<br>因此，要查询满足某个条件的文档，可能需要查询所有的分区，因为二级索引被打散到各个节点中，这种方式有时可以看做scatter/gather，这样查询二级索引的开销是很大的。</p>
+<h4 id="按项对二级索引分区"><a href="#按项对二级索引分区" class="headerlink" title="按项对二级索引分区"></a>按项对二级索引分区</h4><p>不像前面每个分区管理自己的二级索引(a local index)，我们可以在所有分区中构建<code>a global index</code>覆盖所有数据。一个全局的索引(global index)也必须被分区到多个节点。</p>
+<p>这种方式的优点在于读更加高效，客户端并不需要在所有分区查询二级索引并做一次scatter/gather操作，这种查询时只需要去包含指定二级索引的分区即可。缺点就是写更慢并且更复杂，因为写一个文档时可能就会影响到索引的多个分区。</p>
+<h3 id="Rebalancing-Partitions"><a href="#Rebalancing-Partitions" class="headerlink" title="Rebalancing Partitions"></a>Rebalancing Partitions</h3><p>将集群中一个节点的负载转移到另一个节点的过程被叫做rebalancing。</p>
+<p>Rebalancing有以下策略</p>
+<h4 id="Hash-mod-N"><a href="#Hash-mod-N" class="headerlink" title="Hash mod N"></a>Hash mod N</h4><p>这种方式有一个很大缺陷，增加节点时，由于N变化了，所以很多分区都需要重新调整，增大了不必要的开销。</p>
+<h4 id="Fixed-number-of-partitions"><a href="#Fixed-number-of-partitions" class="headerlink" title="Fixed number of partitions"></a>Fixed number of partitions</h4><p>预先设置好固定数量的分区，将分区平均分配给各个节点，增加新节点时，将原有每个节点划分一部分分区给新节点。这个固定数量需要提前设计好，以确保获得最好的性能。</p>
+<h4 id="Dynamic-partitioning"><a href="#Dynamic-partitioning" class="headerlink" title="Dynamic partitioning"></a>Dynamic partitioning</h4><p>每个分区都会设置一个固定大小，当分区超过这个大小时，就会将它拆分出一个新的分区，每个分区都会被分给一个节点。动态分区的好处是分区的数量随数据总量动态变化。</p>
+<h2 id="事务Transactions"><a href="#事务Transactions" class="headerlink" title="事务Transactions"></a>事务Transactions</h2><p>事务(transaction)是一种让应用将一组读写操作组成一个逻辑单元的方式。事务其实是为了简化应用访问数据库的一种编程模型。使用事务可以让应用不用自己去处理一部分错误场景与并发问题，因为数据库会替它们处理。并不是所有应用都需要事务，有时可以通过弱化事务保证或者完全舍弃事务达到更好的性能和更高可用性。</p>
+<p><code>ACID</code>一般被用作描述事务能提供的安全保证。但是有时候实现并不是像预想中的那样。</p>
+<ul>
+<li><p>Atomicity 原子性<br>系统仅仅可以是操作之前或者之后的状态，而不能处于两者之间。</p>
+</li>
+<li><p>Consistency 一致性<br>一致性这个术语被多次重载(overload)，也就是说在不同场景有不同含义。在ACID中，一致性是指你有一个明确的概念数据总是正确的，符合你的预期。然而一致性并不能仅仅依赖于数据库，它与应用也有关系，明确事务是正确的从而保证一致性是应用的职责。</p>
+</li>
+<li><p>Isolation 隔离性<br>隔离性指并发执行的事务互相之间是隔离的。</p>
+</li>
+<li><p>Durability 持久性<br>持久性是一旦一个事务被成功提交，那么任何提交的数据都不会被丢失。</p>
+</li>
+</ul>
+<h3 id="Weak-Isolation-Levels"><a href="#Weak-Isolation-Levels" class="headerlink" title="Weak Isolation Levels"></a>Weak Isolation Levels</h3><p>并发的bugs通常很难通过测试去定位，因为这种bug有时候可能只会在特定的时机才会被不幸地触发一次。理论上来说，串行化可以使得好像没有并发的存在，这意味着数据库的事务好像是一个一个执行一样，然而串行隔离有很大性能开销，而很多数据库不愿意牺牲如此大的性能去保证。因此系统往往会使用弱级别的隔离，可以避免一部分并发问题，但不是全部。</p>
+<h4 id="读提交Read-Commited"><a href="#读提交Read-Commited" class="headerlink" title="读提交Read Commited"></a>读提交Read Commited</h4><p>读提交做出两个保证</p>
+<ul>
+<li>当从数据库中读取数据时，只会看到已经被提交的数据。(没有脏读dirty reads)</li>
+<li>当向数据库中写入数据时，只会覆盖已经被提交的数据。(没有脏写dirty writes)</li>
+</ul>
+<p>通常来说，数据库使用行级别锁(row-level locks)来避免脏写，而在避免脏读时，为了性能上的考虑，数据库会记录旧值与将被提交的新值，在提交完成之前数据库返回旧值，提交完成之后返回新值。</p>
+<h4 id="快照隔离与可重复读Snapshot-Isolation-and-Repeatable-Read"><a href="#快照隔离与可重复读Snapshot-Isolation-and-Repeatable-Read" class="headerlink" title="快照隔离与可重复读Snapshot Isolation and Repeatable Read"></a>快照隔离与可重复读Snapshot Isolation and Repeatable Read</h4><p>不可重复读(nonrepeatable read)或者读偏(read skew)：在一个事务中查询两次相同的值，而另外一个事务在修改这个值，从而两次查询结果不一样。读偏在读提交级别是可以接受的，但是有的场景不可以，所以我们使用快照隔离来解决。快照隔离是让每个事务从数据库中读取一个一致的快照，也就是每个事务看到所有的数据都是在该事务开始时数据库中已提交的数据。从性能角度上说，快照隔离的原则是：读者不会阻塞写者，写者也不会阻塞读者。因此快照隔离使用了一种叫作多版本并发控制(MVVC multi-version concurrency control)的技术。</p>
+<h4 id="防止丢失更新Preventing-Lost-Updates"><a href="#防止丢失更新Preventing-Lost-Updates" class="headerlink" title="防止丢失更新Preventing Lost Updates"></a>防止丢失更新Preventing Lost Updates</h4><p>在并发的写冲突时容易产生丢失更新(lost update)的问题。</p>
+<p>数据库往往提供了原子写操作(Atomic write operation)，原子操作会给操作的对象上加一个互斥锁(exclusive lock)。</p>
+<p>还有一种方法防止丢失更新，可以在应用中使用显式锁(explicity lock)，防止该应用其它事务对值的并发操作。</p>
+<p>CAS(Compare-and-set)可以满足自动检测丢失更新的目标，只有在读取的要操作的值没有改变的条件下，它才允许一次更新的完成。</p>
+<h4 id="写偏与幻读Write-Skew-and-Phantoms"><a href="#写偏与幻读Write-Skew-and-Phantoms" class="headerlink" title="写偏与幻读Write Skew and Phantoms"></a>写偏与幻读Write Skew and Phantoms</h4><p>幻读是指一个事务改变了另一个事务正在查询的值。幻读可能会导致写偏。</p>
+<p>一种解决方式是使用物化冲突(materializing conflicts)，将幻读转为数据库中存在的一些具体的行(row)的锁冲突。不过，物化冲突使用时比较容易产生错误并且将并发控制机制泄露到应用数据模型中不是一个好的做法，所以尽可能使用串行化隔离级别。</p>
+<h3 id="实现可串行化的事务"><a href="#实现可串行化的事务" class="headerlink" title="实现可串行化的事务"></a>实现可串行化的事务</h3><p>弱隔离级别只能抵御一部分异常，而其它的问题必须由应用开发者自行去解决。只有可串行化的隔离才能完全避免这些问题。</p>
+<h4 id="Literally-executing-transactions-in-a-serial-order"><a href="#Literally-executing-transactions-in-a-serial-order" class="headerlink" title="Literally executing transactions in a serial order"></a>Literally executing transactions in a serial order</h4><p>完全串行化执行一系列事务是一种思路。即在一个单一线程(single-threaded loop)中将事务完全放入内存中处理。但是这种方法有很多限制</p>
+<ul>
+<li>每个事务都必须小而快，一旦有一个缓慢的事务将阻塞住所有事务的执行</li>
+<li>事务必须完全放入内存中</li>
+<li>写吞吐量只能在单一CPU核心承受范围内</li>
+<li>跨分区事务有诸多限制</li>
+</ul>
+<h4 id="Two-phase-locking"><a href="#Two-phase-locking" class="headerlink" title="Two-phase locking"></a>Two-phase locking</h4><p>两阶段锁有两种模式，共享模式(shared mode)和排斥模式(exclusive mode)。</p>
+<p>如果一个事务想要读一个对象，那么首先它必须以共享模式获取该锁，如果另一个事务已经给该对象加上了排斥锁，那么这个事务就得等待。</p>
+<p>如果事务想要写一个对象，那么首先它必须以排斥模式获取该锁，一旦它获取该锁，其它事务都无法持有锁，而如果该对象已经有锁了，那么写事务就得等待。</p>
+<p>事务如果先读后写，那么它会将锁模式进行升级。</p>
+<p>事务一旦获得锁后，它一会一直保持到事务的结束(commit 或者 abort)。</p>
+<p>一些应用会为了性能避免使用两阶段锁。</p>
+<h4 id="Serializable-snapshot-isolation-SSI"><a href="#Serializable-snapshot-isolation-SSI" class="headerlink" title="Serializable snapshot isolation(SSI)"></a>Serializable snapshot isolation(SSI)</h4><p>之前两种串行化的实现，要么性能不好(两阶段锁)，或者伸缩性不好(串行执行)。</p>
+<p>两阶段锁是一种悲观(pessimistic)的并发控制机制，而SSI不同，它使用的是乐观(optimistic)的并发控制机制。</p>
+<p>SSI基于快照隔离，当一个事务需要提交时会被检查，如果它不是串行化的才会被抛弃掉(aborted)。</p>
+<p>为了知道查询结果和快照中已经不同了，有两种情况需要考虑</p>
+<ul>
+<li>检测是否读到了一个旧的MVCC对象版本(uncommited write occured before the read)</li>
+<li>检测影响了之前读的写(the writes occurs after the read)</li>
+</ul>
+<h2 id="分布式系统的烦恼"><a href="#分布式系统的烦恼" class="headerlink" title="分布式系统的烦恼"></a>分布式系统的烦恼</h2><p>分布式系统错误(failure)与单机上很不同，在分布式系统中，系统的一部分可能工作正常，而一部分出现故障，这种叫做局部性错误(partial failure)。局部性错误带来的很大挑战就是它的不确定性(nondeterministic)。我们要让分布式系统运作起来，就必须接受局部性错误的出现，并且在软件中建立容错机制。</p>
+<h3 id="Unreliable-Network"><a href="#Unreliable-Network" class="headerlink" title="Unreliable Network"></a>Unreliable Network</h3><p>这里所说的分布式系统是share-nothing systems，也就是一些通过网络连接的机器，网络是它们之间通信的唯一方式。实际上share-nothing不仅仅是唯一的途径，但是它被最广泛使用，因为不需要额外的硬件，网络就可以将机器连接起来。</p>
+<p>但是网络并不是可靠的，它并不能保证消息什么时候到达，甚至消息会不会到达。因此消息传递中任意一个环节都可能出错。</p>
+<h3 id="Unreliable-Clocks"><a href="#Unreliable-Clocks" class="headerlink" title="Unreliable Clocks"></a>Unreliable Clocks</h3><p>时间有两种表示方式，一种是durations(即发送请求和接收响应的间隔时间)，还有一种是points in time(事件发生的一个固定的时间点)。但是单台机器的时钟会漂移，并且不同机器上时钟并不是完全同步的。</p>
+<h3 id="The-Truth-Is-Defined-by-the-Majority"><a href="#The-Truth-Is-Defined-by-the-Majority" class="headerlink" title="The Truth Is Defined by the Majority"></a>The Truth Is Defined by the Majority</h3><p>一个分布式系统不能唯一地依赖于一个单一节点，因为一个节点可能在任意时候故障，导致系统瘫痪并且无法恢复。因此，引入了Quorum机制，也就是在节点之中投票。做出决定时需要系统中一些节点的投票才可以通过，这样减少了对单一节点的依赖。</p>
+<h3 id="System-Model-and-Reality"><a href="#System-Model-and-Reality" class="headerlink" title="System Model and Reality"></a>System Model and Reality</h3><p>很多算法被用来解决分布式系统的问题，而这些算法需要容忍分布式系统中的多种错误才能有使用的场景。算法应该以一种不太依赖于硬件与运行的软件配置的方式存在，这反过来要求我们能够形式化系统中能预料到的可能出现的问题。这叫做定义一个系统模型(system model)，即描述算法假设的前提的抽象。</p>
+<h4 id="timing-assumptions"><a href="#timing-assumptions" class="headerlink" title="timing assumptions"></a>timing assumptions</h4><ul>
+<li><p>Synchronous model<br>同步模型假定网络延迟、进程暂停、时钟错误都是有界的。即这些东西都不会超过一个固定的上限，但这种模型往往是不实际的，因为现实中无界的网络延时与进程暂停总会发生。</p>
+</li>
+<li><p>Partially synchronous model</p>
+</li>
+</ul>
+<p>局部同步意味着系统大多数时间都像同步模型系统一样工作，只会有时候发生一些超出上限的网络延时等等情况。这种模型更符合我们现实中的场景。</p>
+<ul>
+<li>Asynchronous model</li>
+</ul>
+<p>这种模型中，算法不能做出任何时间上的假设，实际上，它甚至都没有时钟(因此超时无法使用)。</p>
+<h4 id="node-failures"><a href="#node-failures" class="headerlink" title="node failures"></a>node failures</h4><ul>
+<li><p>Crash-stop model<br>在Crash-stop模型中，算法假定节点可能在任意时刻停止响应，并且再也不会恢复。</p>
+</li>
+<li><p>Crash-recovery model<br>与上面的模型不同，节点可能在任意时刻崩溃，但是在过后的一个不确定的时间又可能重新响应。</p>
+</li>
+<li><p>Byzantine fault<br>节点可能做任何事，包括欺骗其它节点。</p>
+</li>
+</ul>
+<p>建模真正的系统时，partially synchronous model 与crash-recovery model 是最有用的模型。</p>
+<h2 id="一致性与共识"><a href="#一致性与共识" class="headerlink" title="一致性与共识"></a>一致性与共识</h2><p>构建容错系统最好的方式就是找出一些通用抽象，这些抽象能给我们提供一些有用的保证，将这些抽象实现并且让应用依赖于这些保证。事务就是上述的一个例子，而在分布式系统中，一个最重要的抽象就是共识(consensus)，即让所有节点在一件事情上取得一致意见。</p>
+<h3 id="Linearizability"><a href="#Linearizability" class="headerlink" title="Linearizability"></a>Linearizability</h3><p>Linearizability(也叫强一致性strong consistency)的基本思想是让一个系统表现得好像只有一个副本存在并且所有之上的操作都是原子的。下面是一些会用到linearizability的场景：</p>
+<ul>
+<li>Locking and leader election</li>
+<li>Constraints and uniqueness guarantees</li>
+<li>Cross-channel timing dependencies</li>
+</ul>
+<h4 id="The-Cost-of-Linearizability"><a href="#The-Cost-of-Linearizability" class="headerlink" title="The Cost of Linearizability"></a>The Cost of Linearizability</h4><ul>
+<li><p>如果应用要求强一致性，如果一些副本节点由于网络原因和其它节点断开连接了，那么这些节点在断开连接时就不能处理请求，此时就进入不可用的状态。</p>
+</li>
+<li><p>如果应用不要求强一致性，那么每个副本都可以独立自主地处理请求，即使它们之间的网络连接断开了。这种情形下应用可以在网络故障下保持可用状态，但是该行为不是linearizable的。</p>
+</li>
+</ul>
+<h3 id="Ordering-Guarantees"><a href="#Ordering-Guarantees" class="headerlink" title="Ordering Guarantees"></a>Ordering Guarantees</h3><p>total order与partial order的区别反应在不同的数据库一致性模型中：</p>
+<ul>
+<li><p>Linearizability<br>对于任何两个操作我们都能说出哪一个先发生。</p>
+</li>
+<li><p>Causality<br>一些操作是有序的，但是一些操作是无法比较顺序的。</p>
+</li>
+</ul>
+<p>强一致性(strong consistency)同时保证了因果一致性(causal consistency)。</p>
+<p>我们可以使用序号(sequence numbers)或者时间戳(timestamps)来给时间排序。这个时间戳不一定是从物理时钟得来的，它可以是逻辑时钟，即生成一个顺序的数字序列，用计数器给每个事件排序。</p>
+<p>两种生成序号时的解决方法</p>
+<ul>
+<li>NonCausal sequence number generators</li>
+<li>Lamport timestamps</li>
+</ul>
+<p>Total order broadcast需要两个最基本的条件</p>
+<ul>
+<li><p>Reliable Delivery<br>不会丢失任何消息，一条消息如果被传递到一个节点，那么所有节点都会收到这条消息</p>
+</li>
+<li><p>Totally ordered deliver<br>到每个节点的消息都是同样顺序的</p>
+</li>
+</ul>
+<h3 id="Distributed-Transactions-and-Consensus"><a href="#Distributed-Transactions-and-Consensus" class="headerlink" title="Distributed Transactions and Consensus"></a>Distributed Transactions and Consensus</h3><p>两阶段提交(Two-phase commit)实现了多节点上的原子事务提交，即保证了要么所有节点提交(commit)，要么所有节点放弃(abort)。</p>
+<p>两阶段提交(2PC)和两阶段锁(2PL)是完全不同的概念，2PC在分布式数据库中提供了原子提交的能力，而2PL实现了串行化隔离。</p>
+<p>通俗来说，共识(consensus)意味着多个节点在一件事情上达成一致意见。共识算法应该满足下面条件</p>
+<ul>
+<li><p>Uniform agreement<br>没有两个意见不同的节点</p>
+</li>
+<li><p>Integrity<br>任何节点都不会做出两次决定</p>
+</li>
+<li><p>Validity<br>如果值v被一个节点确定了，那么这个值v一定是某个节点提出的</p>
+</li>
+<li><p>Termination<br>每个没有崩溃的节点最终都会决定一些值</p>
+</li>
+</ul>
+<p>一个单一主节点(single-leader)的数据库即使不在每次写时执行共识算法，也能提供强一致性。但是依然需要共识来保证主从关系(leadership and leadership changes)。</p>
+<p>但是并不是每个系统都需要共识，比如：无主节点(leaderless)与多主节点(multi-leader)复制系统不会使用全局共识(global consensus)算法。</p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+
+       
+    </div>
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/System-Design/" rel="tag"># System Design</a>
+          
+            <a href="/tags/Distributed-System/" rel="tag"># Distributed System</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/01/12/DDIA distilled(I)/" rel="next" title="DDIA distilled(I)">
+                <i class="fa fa-chevron-left"></i> DDIA distilled(I)
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Billy Yuan" />
+            
+              <p class="site-author-name" itemprop="name">Billy Yuan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">45</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">14</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/BillyYccc" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:billy112487983@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/billyyccc" target="_blank" title="Twitter">
+                    
+                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#分布式数据"><span class="nav-number">1.</span> <span class="nav-text">分布式数据</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#复制Replication"><span class="nav-number">1.1.</span> <span class="nav-text">复制Replication</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#复制策略"><span class="nav-number">1.1.1.</span> <span class="nav-text">复制策略</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理节点故障"><span class="nav-number">1.1.2.</span> <span class="nav-text">处理节点故障</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#从节点故障"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">从节点故障</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#主节点故障"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">主节点故障</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复制日志的一些实现"><span class="nav-number">1.1.3.</span> <span class="nav-text">复制日志的一些实现</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#复制延时带来的问题"><span class="nav-number">1.1.4.</span> <span class="nav-text">复制延时带来的问题</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Reading-Your-Own-Writes"><span class="nav-number">1.1.4.1.</span> <span class="nav-text">Reading Your Own Writes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Monotonic-Reads"><span class="nav-number">1.1.4.2.</span> <span class="nav-text">Monotonic Reads</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Consistent-Prefix-Reads"><span class="nav-number">1.1.4.3.</span> <span class="nav-text">Consistent Prefix Reads</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Multi-Leader-Replication"><span class="nav-number">1.1.5.</span> <span class="nav-text">Multi-Leader Replication</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#处理写冲突"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">处理写冲突</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Leaderless-Replication"><span class="nav-number">1.1.6.</span> <span class="nav-text">Leaderless Replication</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#quorum-reads-and-writes"><span class="nav-number">1.1.6.1.</span> <span class="nav-text">quorum reads and writes</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#sloppy-quorum"><span class="nav-number">1.1.6.2.</span> <span class="nav-text">sloppy quorum</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分区Partitioning"><span class="nav-number">1.2.</span> <span class="nav-text">分区Partitioning</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Partitioning-of-Key-Value-Data"><span class="nav-number">1.2.1.</span> <span class="nav-text">Partitioning of Key-Value Data</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#按Key范围进行分区"><span class="nav-number">1.2.1.1.</span> <span class="nav-text">按Key范围进行分区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#按Key的Hash进行分区"><span class="nav-number">1.2.1.2.</span> <span class="nav-text">按Key的Hash进行分区</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Partitioning-and-Secondary-Indexes"><span class="nav-number">1.2.2.</span> <span class="nav-text">Partitioning and Secondary Indexes</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#按文档对二级索引分区"><span class="nav-number">1.2.2.1.</span> <span class="nav-text">按文档对二级索引分区</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#按项对二级索引分区"><span class="nav-number">1.2.2.2.</span> <span class="nav-text">按项对二级索引分区</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Rebalancing-Partitions"><span class="nav-number">1.2.3.</span> <span class="nav-text">Rebalancing Partitions</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Hash-mod-N"><span class="nav-number">1.2.3.1.</span> <span class="nav-text">Hash mod N</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Fixed-number-of-partitions"><span class="nav-number">1.2.3.2.</span> <span class="nav-text">Fixed number of partitions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Dynamic-partitioning"><span class="nav-number">1.2.3.3.</span> <span class="nav-text">Dynamic partitioning</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#事务Transactions"><span class="nav-number">1.3.</span> <span class="nav-text">事务Transactions</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Weak-Isolation-Levels"><span class="nav-number">1.3.1.</span> <span class="nav-text">Weak Isolation Levels</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#读提交Read-Commited"><span class="nav-number">1.3.1.1.</span> <span class="nav-text">读提交Read Commited</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#快照隔离与可重复读Snapshot-Isolation-and-Repeatable-Read"><span class="nav-number">1.3.1.2.</span> <span class="nav-text">快照隔离与可重复读Snapshot Isolation and Repeatable Read</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#防止丢失更新Preventing-Lost-Updates"><span class="nav-number">1.3.1.3.</span> <span class="nav-text">防止丢失更新Preventing Lost Updates</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#写偏与幻读Write-Skew-and-Phantoms"><span class="nav-number">1.3.1.4.</span> <span class="nav-text">写偏与幻读Write Skew and Phantoms</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#实现可串行化的事务"><span class="nav-number">1.3.2.</span> <span class="nav-text">实现可串行化的事务</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Literally-executing-transactions-in-a-serial-order"><span class="nav-number">1.3.2.1.</span> <span class="nav-text">Literally executing transactions in a serial order</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Two-phase-locking"><span class="nav-number">1.3.2.2.</span> <span class="nav-text">Two-phase locking</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Serializable-snapshot-isolation-SSI"><span class="nav-number">1.3.2.3.</span> <span class="nav-text">Serializable snapshot isolation(SSI)</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式系统的烦恼"><span class="nav-number">1.4.</span> <span class="nav-text">分布式系统的烦恼</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Unreliable-Network"><span class="nav-number">1.4.1.</span> <span class="nav-text">Unreliable Network</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Unreliable-Clocks"><span class="nav-number">1.4.2.</span> <span class="nav-text">Unreliable Clocks</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#The-Truth-Is-Defined-by-the-Majority"><span class="nav-number">1.4.3.</span> <span class="nav-text">The Truth Is Defined by the Majority</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#System-Model-and-Reality"><span class="nav-number">1.4.4.</span> <span class="nav-text">System Model and Reality</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#timing-assumptions"><span class="nav-number">1.4.4.1.</span> <span class="nav-text">timing assumptions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#node-failures"><span class="nav-number">1.4.4.2.</span> <span class="nav-text">node failures</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#一致性与共识"><span class="nav-number">1.5.</span> <span class="nav-text">一致性与共识</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Linearizability"><span class="nav-number">1.5.1.</span> <span class="nav-text">Linearizability</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#The-Cost-of-Linearizability"><span class="nav-number">1.5.1.1.</span> <span class="nav-text">The Cost of Linearizability</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Ordering-Guarantees"><span class="nav-number">1.5.2.</span> <span class="nav-text">Ordering Guarantees</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Distributed-Transactions-and-Consensus"><span class="nav-number">1.5.3.</span> <span class="nav-text">Distributed Transactions and Consensus</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/BillyYccc/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "middleRight";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
