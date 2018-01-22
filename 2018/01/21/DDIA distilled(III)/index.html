@@ -106,7 +106,7 @@
 
 
 
-  <meta name="keywords" content="Java,OOP,设计模式," />
+  <meta name="keywords" content="System Design,Distributed System," />
 
 
 
@@ -117,26 +117,28 @@
 
 
 
-<meta name="description" content="面向对象的六大原则面向对象设计的原则是面向对象思想的提炼，它比面向对象思想的核心要素更具可操作性，但与设计模式相比，却又更加的抽象，是设计精神要义的抽象概括。形象地讲，面向对象思想像法理的精神，设计原则则相对于基本宪法，而设计模式就好比各式各样的具体法律条文了。  
-面向对象设计原则一般有六大原则，分别是：单一职责原则，开闭原则，里氏替换原则，依赖倒置原则，接口隔离原则，迪米特原则。
-单一职责原则">
+<meta name="description" content="Derived Data存储与处理数据的系统大致上可以分为两个大类：
+
+Systems of record记录系统(system of record)，也被认为是事实的来源(source of truth)，保存着权威版本的数据。每一个事实(fact)都被准确地表达了一次(这个表达representation的过程被称为normalized)。
+
+Derived data systems衍生系统(">
 <meta property="og:type" content="article">
-<meta property="og:title" content="面向对象的六大原则（一）">
-<meta property="og:url" content="http://billyyccc.github.io/2017/04/16/面向对象的六大原则（一）/index.html">
+<meta property="og:title" content="DDIA distilled(III)">
+<meta property="og:url" content="http://billyyccc.github.io/2018/01/21/DDIA distilled(III)/index.html">
 <meta property="og:site_name" content="BillyYccc">
-<meta property="og:description" content="面向对象的六大原则面向对象设计的原则是面向对象思想的提炼，它比面向对象思想的核心要素更具可操作性，但与设计模式相比，却又更加的抽象，是设计精神要义的抽象概括。形象地讲，面向对象思想像法理的精神，设计原则则相对于基本宪法，而设计模式就好比各式各样的具体法律条文了。  
-面向对象设计原则一般有六大原则，分别是：单一职责原则，开闭原则，里氏替换原则，依赖倒置原则，接口隔离原则，迪米特原则。
-单一职责原则">
-<meta property="og:image" content="http://billyyccc.github.io/2017/04/16/面向对象的六大原则（一）/SRP1.png">
-<meta property="og:image" content="http://billyyccc.github.io/2017/04/16/面向对象的六大原则（一）/SRP2.png">
-<meta property="og:image" content="http://billyyccc.github.io/2017/04/16/面向对象的六大原则（一）/SRP3.png">
-<meta property="og:updated_time" content="2017-04-28T17:19:10.767Z">
+<meta property="og:description" content="Derived Data存储与处理数据的系统大致上可以分为两个大类：
+
+Systems of record记录系统(system of record)，也被认为是事实的来源(source of truth)，保存着权威版本的数据。每一个事实(fact)都被准确地表达了一次(这个表达representation的过程被称为normalized)。
+
+Derived data systems衍生系统(">
+<meta property="og:updated_time" content="2018-01-22T09:04:35.430Z">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:title" content="面向对象的六大原则（一）">
-<meta name="twitter:description" content="面向对象的六大原则面向对象设计的原则是面向对象思想的提炼，它比面向对象思想的核心要素更具可操作性，但与设计模式相比，却又更加的抽象，是设计精神要义的抽象概括。形象地讲，面向对象思想像法理的精神，设计原则则相对于基本宪法，而设计模式就好比各式各样的具体法律条文了。  
-面向对象设计原则一般有六大原则，分别是：单一职责原则，开闭原则，里氏替换原则，依赖倒置原则，接口隔离原则，迪米特原则。
-单一职责原则">
-<meta name="twitter:image" content="http://billyyccc.github.io/2017/04/16/面向对象的六大原则（一）/SRP1.png">
+<meta name="twitter:title" content="DDIA distilled(III)">
+<meta name="twitter:description" content="Derived Data存储与处理数据的系统大致上可以分为两个大类：
+
+Systems of record记录系统(system of record)，也被认为是事实的来源(source of truth)，保存着权威版本的数据。每一个事实(fact)都被准确地表达了一次(这个表达representation的过程被称为normalized)。
+
+Derived data systems衍生系统(">
 
 
 
@@ -166,13 +168,13 @@
 
 
 
-  <link rel="canonical" href="http://billyyccc.github.io/2017/04/16/面向对象的六大原则（一）/"/>
+  <link rel="canonical" href="http://billyyccc.github.io/2018/01/21/DDIA distilled(III)/"/>
 
 
 
 
 
-  <title>面向对象的六大原则（一） | BillyYccc</title>
+  <title>DDIA distilled(III) | BillyYccc</title>
   
 
 
@@ -328,7 +330,7 @@
   
   
   <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/04/16/面向对象的六大原则（一）/">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2018/01/21/DDIA distilled(III)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="name" content="Billy Yuan">
@@ -345,7 +347,7 @@
 
         
         
-          <h1 class="post-title" itemprop="name headline">面向对象的六大原则（一）</h1>
+          <h1 class="post-title" itemprop="name headline">DDIA distilled(III)</h1>
         
 
         <div class="post-meta">
@@ -357,8 +359,8 @@
               
                 <span class="post-meta-item-text">发表于</span>
               
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-16T12:08:19+08:00">
-                2017-04-16
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-01-21T19:10:27+08:00">
+                2018-01-21
               </time>
             
 
@@ -380,8 +382,8 @@
               
               
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/DesignPatterns/" itemprop="url" rel="index">
-                    <span itemprop="name">DesignPatterns</span>
+                  <a href="/categories/Reading/" itemprop="url" rel="index">
+                    <span itemprop="name">Reading</span>
                   </a>
                 </span>
 
@@ -417,22 +419,89 @@
       
 
       
-        <h2 id="面向对象的六大原则"><a href="#面向对象的六大原则" class="headerlink" title="面向对象的六大原则"></a>面向对象的六大原则</h2><p>面向对象设计的原则是面向对象思想的提炼，它比面向对象思想的核心要素更具可操作性，但与设计模式相比，却又更加的抽象，是设计精神要义的抽象概括。形象地讲，面向对象思想像法理的精神，设计原则则相对于基本宪法，而设计模式就好比各式各样的具体法律条文了。  </p>
-<p>面向对象设计原则一般有六大原则，分别是：单一职责原则，开闭原则，里氏替换原则，依赖倒置原则，接口隔离原则，迪米特原则。</p>
-<h2 id="单一职责原则"><a href="#单一职责原则" class="headerlink" title="单一职责原则"></a>单一职责原则</h2><p>单一职责原则的英文名称是Single Responsibility Principle,缩写是SRP。单一职责原则的定义是：There should never be more than one reason for a class to change.（不要存在多于一个导致类变更的原因）。通俗来讲就是一个类只负责一个职责。</p>
-<a id="more"></a>
-<p>下面看一个设计示例，打电话的时候会有四个过程发生：拨号，通话，回应，挂机。现在写一个接口如下图所示</p>
-<p><img src="/2017/04/16/面向对象的六大原则（一）/SRP1.png" alt="ShowImage"></p>
-<p>接口代码如下<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">Iphone</span> </span>&#123;</div><div class="line">    <span class="comment">//拨号</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">dial</span><span class="params">(String phoneNumber)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">//通话过程</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">chat</span><span class="params">(Object o)</span></span>;</div><div class="line"></div><div class="line">    <span class="comment">//通话完挂机</span></div><div class="line">    <span class="function"><span class="keyword">void</span> <span class="title">hangup</span><span class="params">()</span></span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>Iphone这个接口表面看上去没什么问题，但是它违背了单一职责原则。分析这个接口，Iphone包含了两个职责：第一个是协议管理，第二个是数据传输。dial()和hangup()两个方法表示协议管理，负责拨号和挂机；chat()方法表示的是数据的传输，负责把语音与传输信号进行转换。这样一来，数据传输如果变化了会引起这个接口的实现类的变化，也就影响到了协议管理的实现，反之亦然，那么这两个职责之间就会相互影响。我们应该想达到的目标是：拨号应该接通就可以了，不管是哪家的协议；电话连接后也不关心传递什么数据了。现在我们考虑拆分成两个接口，如下图所示<br><img src="/2017/04/16/面向对象的六大原则（一）/SRP2.png" alt="ShowImage"></p>
-<p>这样一改就满足了单一职责的要求，每个接口都是职责分明，结构清晰，但是这样的话，Phone类需要把ConnectionManager和DataTransfer两个实现类组合在一起才能使用。组合产生了一种强耦合关系，还增加了类的实现复杂性，多了两个类。再修改一次，这次Phone类实现了两个接口，虽然两个职责融合在一个类中，但是我们对外公布的是接口而不是实现类，通过面向接口编程这种方式使得结构简洁清晰、职责分明。<br><img src="/2017/04/16/面向对象的六大原则（一）/SRP3.png" alt="ShowImage"></p>
-<h2 id="单一职责原则的好处"><a href="#单一职责原则的好处" class="headerlink" title="单一职责原则的好处"></a>单一职责原则的好处</h2><ul>
-<li>类的复杂性降低，实现什么职责都有清晰明确的定义；</li>
-<li>可读性提高，复杂性降低，那当然可读性提高了；</li>
-<li>可维护性提高，可读性提高，那当然更容易维护了；</li>
-<li>变更引起的风险降低，变更是必不可少的，如果接口的单一职责做得好，一个接口修改只对相应的实现类有影响，对其他的接口无影响，这对系统的扩展性、维护性都有非常大的帮助。</li>
+        <h1 id="Derived-Data"><a href="#Derived-Data" class="headerlink" title="Derived Data"></a>Derived Data</h1><p>存储与处理数据的系统大致上可以分为两个大类：</p>
+<ul>
+<li><p>Systems of record<br>记录系统(system of record)，也被认为是事实的来源(source of truth)，保存着权威版本的数据。每一个事实(fact)都被准确地表达了一次(这个表达representation的过程被称为normalized)。</p>
+</li>
+<li><p>Derived data systems<br>衍生系统(derived system)中的数据是另外一个系统中已有的数据以某种方式转换或处理得出的结果。从技术角度来说，衍生数据是冗余的，因为它重复了已有的信息。如果你丢失掉了衍生数据，你可以通过源数据再重新得到这份数据。从一个单一的数据源衍生出不同的数据集，可以从不同角度来理解这份数据，这个过程被称为denormalized。</p>
+</li>
 </ul>
-<h2 id="参考代码"><a href="#参考代码" class="headerlink" title="参考代码"></a><a href="https://github.com/BillyYccc/DesignPatternsPrinciples/tree/master/SRPDemo" target="_blank" rel="external">参考代码</a></h2>
+<p>我们现在来区分三种不同类型的系统：</p>
+<ul>
+<li><p>Services(online systems)<br>一个服务等待着客户端的一个请求或者指令的到达，之后尽可能快地处理然后发送响应。响应时间(response time)通常是服务性能的衡量标准，可用性也非常重要。</p>
+</li>
+<li><p>Batch processing systems(offline systems)<br>一个批处理系统一次接收大量的输入数据，运行一个任务(job)，处理数据并生成一些数据。这种任务通常会花费一段时间，因此用户一般不会等待任务的完成。衡量批处理的性能指标是吞吐量(throughput)。</p>
+</li>
+<li><p>Stream processing systems(near-real-time systems)<br>流处理介于在线(online)处理与离线(offline/batch)处理之间，因此有时被叫做近实时(near-real-time)处理。类似批处理系统，流处理消费输入数据并生成输出数据，不同之处在于，流处理任务在事件发生后短暂时间内就开始处理，而批处理一次操作一个固定的输入数据集。</p>
+</li>
+</ul>
+<a id="more"></a>
+<h2 id="Batch-Processing"><a href="#Batch-Processing" class="headerlink" title="Batch Processing"></a>Batch Processing</h2><h3 id="Unix的设计哲学"><a href="#Unix的设计哲学" class="headerlink" title="Unix的设计哲学"></a>Unix的设计哲学</h3><p>在Unix中，类似<code>sort</code>,<code>awk</code>,<code>uniq</code>等等这样的unix工具命令都可以为我们完成一些处理数据的工作，而<code>bash shell</code>可以将这些命令组合起来，构建出一个强大数据处理任务。不同的人写出的这些不同的程序都可以用一种灵活的方式工作在一起，以下几条就是Unix满足这项能力的原因。</p>
+<ul>
+<li><p>统一的接口<br>如果想要任何程序的输出都可以连接到任何程序的输入，那么就需要一套输入输出的接口，而这个接口就是文件描述符(file descriptor)。一个文件仅仅是一些字节(bytes)，而很多东西都可以用这个接口来表示：文件系统上的文件，进程间通信通道(unix socket,stdin,stdout)，设备驱动，TCP套接字等等…由于统一的接口，这些东西都能更加容易地工作在一起。</p>
+</li>
+<li><p>分离逻辑与装配<br>将程序逻辑与输入输出的装配(wiring)过程解耦，这使得用户能够以任意方式去装配输入输出，从而更容易把小的工具组装成更大的系统。</p>
+</li>
+<li><p>透明度<br>Unix工具使得很多事情都可见了：</p>
+</li>
+</ul>
+<ol>
+<li>输入通常是不可变的(immutable)，也就是说可以用不同选项运行任意次数的命令，这都不会影响原有的输入数据。</li>
+<li>可以在任意时刻终止这个管道，调试更加容易</li>
+<li>可以将一个阶段管道的输出存到一个文件，作为下个阶段的输入，这样可以运行阶段的任务，而不用重新运行整个管道任务。</li>
+</ol>
+<p>Unix工具十分有趣，但是最大的限制就是Unix只能在单机上运行，因此Hadoop这样的工具出现了。</p>
+<h3 id="MapReduce与分布式文件系统"><a href="#MapReduce与分布式文件系统" class="headerlink" title="MapReduce与分布式文件系统"></a>MapReduce与分布式文件系统</h3><p>MapReduce是一种底层的编程模型，它使得在廉价的机器上实现大规模的处理成为可能。类似Unix工具将stdin与stdout作为输入和输出，MapReduce 任务从分布式文件系统(distributed system)中读与写文件。在MapReduce的一种实现Hadoop中，这个文件系统即HDFS。HDFS在每个机器上都有一个daemon进程，这个进程暴露出一个网络服务使得其它节点可以访问该机器上的文件。概括的说，HDFS创建了一个大的文件系统，这个文件系统可以使用所有运行该daemon的机器的磁盘空间。</p>
+<p>分布式批处理框架需要解决两个主要的问题：</p>
+<ul>
+<li><p>分区Partitioning<br>在MapReduce中，mappers会根据输入的文件块被分区，mappers的输出会被重新分区、排序并且合并到可配置数量的reducer分区中。这个目的是为了将所有关联的数据(比如有着相同key的所有记录)放在同样的位置。</p>
+</li>
+<li><p>容错Fault tolerance<br>MapReduce会频繁地往磁盘中写入信息，使得出现一个单独失败的任务时更加容易恢复，不必重新运行整个任务，这样会降低拖慢执行时间。</p>
+</li>
+</ul>
+<p>MapReduce中有多种join算法，它们也说明了分区算法是如何工作的。</p>
+<ul>
+<li>Sort-merge joins</li>
+<li>Broadcast hash joins</li>
+<li>Partitioned hash joins</li>
+</ul>
+<p>分布式批处理引擎使用了一种严格的编程模型：回调函数(比如mappers与reducers)被认为是无状态的，并且除了指定输出以外没有外部可见的副作用。这个限制使得框架隐藏了抽象背后一些复杂的分布式系统的问题：当出现异常或者网络故障时，任务可以安全地重试，任何失败任务的输出都可以被丢弃。框架使得实现批处理作业并不需要关心实现容错机制，框架能够保证任务最终的输出和没有错误发生时任务的输出是一样的。</p>
+<h2 id="Stream-Processing"><a href="#Stream-Processing" class="headerlink" title="Stream Processing"></a>Stream Processing</h2><p>在批处理系统中，一个很重要的前提是输入是有界的，但是在现实中，很多数据是无界的，因为数据是随着时间推移而逐渐到达的。用户可能会在昨天和今天产生数据，明天他们可能依然会产生更多数据，因此除非你的业务结束，这个处理过程不会停止下来，数据集永远都不会达到完成状态。而批处理的过程产生输出的时间太久，对于一些用户来说太慢，需要将这个时间缩短到每秒甚至到每个事件就产生一个输出，这就是流处理的思想。</p>
+<h3 id="传递事件流"><a href="#传递事件流" class="headerlink" title="传递事件流"></a>传递事件流</h3><p>在批处理系统中，一个文件被一次写入，然后被多个任务(jobs)读取。类似的，在流处理中，一个事件被一个producer(或者publisher,sender)生成，然后可能被多个consumer(subscriber,recipient)处理。消费者consumer可能可以通过poll的方式来检查新的事件，但是在低延时持续处理时，polling这种方式开销太大，最好有一种机制能够让consumer在新的事件到达时被通知(notified)。所以一些特定的工具被用来传递事件通知。</p>
+<p>message broker有以下两种类型：</p>
+<ul>
+<li><p>AMQP/JMS-style message broker<br>broker将单独的消息分配到consumer，当consumer成功处理后会进行acknowledge操作，acknowledge过后的消息会从broker中删掉。这种方式适合于消息处理顺序不重要并且被处理过得消息不会再被读取的情形。</p>
+</li>
+<li><p>Log-based message broker<br>broker将所有消息分配到相同consumer节点的一个分区中，并且总是以相同顺序去传递消息。并行化通过分区实现，consumers检查最后处理消息的偏移量offset来定位它们目前的进度。消息会被broker保留在磁盘中，因此如果有必要的话可以对被处理过的消息再次读取。</p>
+</li>
+</ul>
+<h3 id="处理周期的窗口类型"><a href="#处理周期的窗口类型" class="headerlink" title="处理周期的窗口类型"></a>处理周期的窗口类型</h3><p>窗口可以用于聚合操作，比如给事件计数，计算一个窗口内的均值等等操作，有几种常用的窗口：</p>
+<ul>
+<li>Tumbling window</li>
+<li>Hopping window</li>
+<li>Sliding window</li>
+<li>Session window</li>
+</ul>
+<h3 id="流的合并"><a href="#流的合并" class="headerlink" title="流的合并"></a>流的合并</h3><p>流处理中三种类型的join操作</p>
+<ul>
+<li>Stream-stream join</li>
+<li>Stream-table join</li>
+<li>Table-table join</li>
+</ul>
+<h3 id="容错机制"><a href="#容错机制" class="headerlink" title="容错机制"></a>容错机制</h3><ul>
+<li>Microbatching and checkpointing</li>
+<li>Atomic commit revisited</li>
+<li>Idempotence</li>
+<li>Rebuilding state after a failure</li>
+</ul>
+<h2 id="The-Future-of-Data-Systems"><a href="#The-Future-of-Data-Systems" class="headerlink" title="The Future of Data Systems"></a>The Future of Data Systems</h2><p>在最后一章作者提出了自己对于未来数据系统的主观看法。包括下列几个方面</p>
+<ul>
+<li>数据系统的集成</li>
+<li>将数据库松耦合</li>
+<li>容错</li>
+<li>道德问题</li>
+</ul>
+
       
     </div>
     
@@ -468,11 +537,9 @@
       
         <div class="post-tags">
           
-            <a href="/tags/Java/" rel="tag"># Java</a>
+            <a href="/tags/System-Design/" rel="tag"># System Design</a>
           
-            <a href="/tags/OOP/" rel="tag"># OOP</a>
-          
-            <a href="/tags/设计模式/" rel="tag"># 设计模式</a>
+            <a href="/tags/Distributed-System/" rel="tag"># Distributed System</a>
           
         </div>
       
@@ -500,8 +567,8 @@
         <div class="post-nav">
           <div class="post-nav-next post-nav-item">
             
-              <a href="/2017/01/01/Retrofit2_1的基本使用(一)/" rel="next" title="Retrofit2.1.0的基本使用(一)">
-                <i class="fa fa-chevron-left"></i> Retrofit2.1.0的基本使用(一)
+              <a href="/2018/01/15/DDIA distilled(II)/" rel="next" title="DDIA distilled(II)">
+                <i class="fa fa-chevron-left"></i> DDIA distilled(II)
               </a>
             
           </div>
@@ -509,10 +576,6 @@
           <span class="post-nav-divider"></span>
 
           <div class="post-nav-prev post-nav-item">
-            
-              <a href="/2017/04/16/面向对象的六大原则（二）/" rel="prev" title="面向对象的六大原则（二）">
-                面向对象的六大原则（二） <i class="fa fa-chevron-right"></i>
-              </a>
             
           </div>
         </div>
@@ -675,7 +738,7 @@
             
 
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#面向对象的六大原则"><span class="nav-number">1.</span> <span class="nav-text">面向对象的六大原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单一职责原则"><span class="nav-number">2.</span> <span class="nav-text">单一职责原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#单一职责原则的好处"><span class="nav-number">3.</span> <span class="nav-text">单一职责原则的好处</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#参考代码"><span class="nav-number">4.</span> <span class="nav-text">参考代码</span></a></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Derived-Data"><span class="nav-number">1.</span> <span class="nav-text">Derived Data</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Batch-Processing"><span class="nav-number">1.1.</span> <span class="nav-text">Batch Processing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Unix的设计哲学"><span class="nav-number">1.1.1.</span> <span class="nav-text">Unix的设计哲学</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MapReduce与分布式文件系统"><span class="nav-number">1.1.2.</span> <span class="nav-text">MapReduce与分布式文件系统</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Stream-Processing"><span class="nav-number">1.2.</span> <span class="nav-text">Stream Processing</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#传递事件流"><span class="nav-number">1.2.1.</span> <span class="nav-text">传递事件流</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#处理周期的窗口类型"><span class="nav-number">1.2.2.</span> <span class="nav-text">处理周期的窗口类型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#流的合并"><span class="nav-number">1.2.3.</span> <span class="nav-text">流的合并</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#容错机制"><span class="nav-number">1.2.4.</span> <span class="nav-text">容错机制</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#The-Future-of-Data-Systems"><span class="nav-number">1.3.</span> <span class="nav-text">The Future of Data Systems</span></a></li></ol></li></ol></div>
             
 
           </div>
