@@ -315,6 +315,169 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2018/04/02/深入理解Vert.x Core(6)-SharedData/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2018/04/02/深入理解Vert.x Core(6)-SharedData/" itemprop="url">深入理解Vert.x Core(6)-SharedData</a></h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-02T10:03:49+08:00">
+                2018-04-02
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vert-x/" itemprop="url" rel="index">
+                    <span itemprop="name">Vert.x</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="Vert-x中的共享数据-Shared-Data"><a href="#Vert-x中的共享数据-Shared-Data" class="headerlink" title="Vert.x中的共享数据(Shared Data)"></a>Vert.x中的共享数据(Shared Data)</h2><p>在Vert.x中，提出了共享数据<code>SharedData</code>这个概念。要使用共享数据，可以调用<br><code>SharedData sharedData = vertx.sharedData();</code> 获取共享数据的一个对象。而在<code>VertImpl</code> 类中初始化<code>SharedData</code> 的操作是<code>this.sharedData = new SharedDataImpl(this, clusterManager);</code> ，我们先来看一下<code>SharedData</code>接口。</p>
+<p>官方文档说明了<code>SharedData</code> 的使用目的：</p>
+<blockquote>
+<p>共享数据可以让你在应用的不同部分之间共享数据，或者在同一个Vert.x实例(instance)中的不同应用之间共享数据，还可以在多个Vert.x实例的集群之间共享数据。</p>
+<p>共享数据提供了以下：</p>
+<ul>
+<li>同步的共享map(本地模式)</li>
+<li>异步的maps(本地模式或者集群范围)</li>
+<li>异步的锁(本地模式或者集群范围)</li>
+<li>异步计数器(本地模式或者集群范围)</li>
+</ul>
+</blockquote>
+<p>对应的，我们可以在<code>SharedData</code>接口中看到以下方法：<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">&lt;K, V&gt; <span class="function">LocalMap&lt;K, V&gt; <span class="title">getLocalMap</span><span class="params">(String name)</span></span>;</div><div class="line">&lt;K, V&gt; <span class="function"><span class="keyword">void</span> <span class="title">getAsyncMap</span><span class="params">(String name, Handler&lt;AsyncResult&lt;AsyncMap&lt;K, V&gt;&gt;&gt; resultHandler)</span></span>;</div><div class="line">&lt;K, V&gt; <span class="function"><span class="keyword">void</span> <span class="title">getClusterWideMap</span><span class="params">(String name, Handler&lt;AsyncResult&lt;AsyncMap&lt;K, V&gt;&gt;&gt; resultHandler)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">getLock</span><span class="params">(String name, Handler&lt;AsyncResult&lt;Lock&gt;&gt; resultHandler)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">getLockWithTimeout</span><span class="params">(String name, <span class="keyword">long</span> timeout, Handler&lt;AsyncResult&lt;Lock&gt;&gt; resultHandler)</span></span>;</div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">getCounter</span><span class="params">(String name, Handler&lt;AsyncResult&lt;Counter&gt;&gt; resultHandler)</span></span>;</div></pre></td></tr></table></figure></p>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2018/04/02/深入理解Vert.x Core(6)-SharedData/#more" rel="contents">
+              阅读全文 &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    <div>
+       
+    </div>
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2018/01/21/DDIA distilled(III)/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1740,191 +1903,6 @@
 
 
     
-      
-
-  
-
-  
-  
-  
-
-  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
-  
-  
-  
-  <div class="post-block">
-    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2017/07/10/Java8新特性（二）：流Stream/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="name" content="Billy Yuan">
-      <meta itemprop="description" content="">
-      <meta itemprop="image" content="/images/avatar.png">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="BillyYccc">
-    </span>
-
-    
-      <header class="post-header">
-
-        
-        
-          <h1 class="post-title" itemprop="name headline">
-                
-                <a class="post-title-link" href="/2017/07/10/Java8新特性（二）：流Stream/" itemprop="url">Java8新特性（二）：流Stream</a></h1>
-        
-
-        <div class="post-meta">
-          <span class="post-time">
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-calendar-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">发表于</span>
-              
-              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-10T12:13:38+08:00">
-                2017-07-10
-              </time>
-            
-
-            
-
-            
-          </span>
-
-          
-            <span class="post-category" >
-            
-              <span class="post-meta-divider">|</span>
-            
-              <span class="post-meta-item-icon">
-                <i class="fa fa-folder-o"></i>
-              </span>
-              
-                <span class="post-meta-item-text">分类于</span>
-              
-              
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Java/" itemprop="url" rel="index">
-                    <span itemprop="name">Java</span>
-                  </a>
-                </span>
-
-                
-                
-              
-            </span>
-          
-
-          
-            
-          
-
-          
-          
-
-          
-
-          
-
-          
-
-        </div>
-      </header>
-    
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-      
-
-      
-        
-          <h2 id="流的概念"><a href="#流的概念" class="headerlink" title="流的概念"></a>流的概念</h2><p>流(Stream)是Java8中新增加的API中的一员。流(Stream)通过声明式方式来处理集合(Collection),并且支持并行化操作。先来看一个例子。</p>
-<p>假如现在有一个Student列表，Student的属性包括姓名name,年龄age,分数mark，现在要筛选出年龄小于20岁并且分数大于80的学生的姓名名单，以前的做法是这样的<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">List&lt;Student&gt; studentList = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"><span class="comment">//增加studentList数据</span></div><div class="line">List&lt;String&gt; studentNameList = <span class="keyword">new</span> ArrayList&lt;&gt;();</div><div class="line"><span class="keyword">for</span> (Student student : studentList) &#123;</div><div class="line">    <span class="keyword">if</span> (student.getAge() &lt; <span class="number">20</span> &amp;&amp; student.getMark() &gt; <span class="number">80</span>) &#123;</div><div class="line">        studentNameList.add(student.getName());</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>使用了流以后，代码变成这样了<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">studentNameList = studentList.stream()</div><div class="line">                .filter(student -&gt; student.getAge() &lt; <span class="number">20</span>)</div><div class="line">                .filter(student -&gt; student.getMark() &gt; <span class="number">80</span>)</div><div class="line">                .map(Student::getName)</div><div class="line">                .collect(Collectors.toList());</div></pre></td></tr></table></figure></p>
-<p>通过Stream API来操作集合，这种方式有以下几个好处</p>
-<ul>
-<li>声明性<br>比起自己实现的方式更简洁易读</li>
-<li>复合性<br>具有更佳的灵活性，可以将多个处理链式调用起来</li>
-<li>并行化处理<br>支持并行化操作，性能更好</li>
-</ul>
-<hr>
-<h2 id="流的特性"><a href="#流的特性" class="headerlink" title="流的特性"></a>流的特性</h2><p>在使用流(Stream)之前，先需要了解流的一些特性。</p>
-<h4 id="懒惰特性-laziness"><a href="#懒惰特性-laziness" class="headerlink" title="懒惰特性(laziness)"></a>懒惰特性(laziness)</h4><p>Stream的操作并不会立即执行，只有在真正需要结果的时候才会执行。</p>
-<h4 id="一次消费"><a href="#一次消费" class="headerlink" title="一次消费"></a>一次消费</h4><p>Stream只能被消费一次，比如使用多次foreach进行多次遍历是不行的，只能遍历一次，如果要再遍历只能重新生成流。</p>
-<h4 id="流可以是无限的"><a href="#流可以是无限的" class="headerlink" title="流可以是无限的"></a>流可以是无限的</h4><p>集合是有固定大小的，而流(Stream)可以是无限的。limit和findAny这种短路操作可以对无限流完成很快的计算。</p>
-<h4 id="使用内部迭代-internal-iteration"><a href="#使用内部迭代-internal-iteration" class="headerlink" title="使用内部迭代(internal iteration)"></a>使用内部迭代(internal iteration)</h4><p>在以前的版本中迭代往往都是外部迭代，需要用户通过比如(for,foreach)这样的循环操作去手动迭代，而Stream API则使用内部迭代，替用户完成了迭代的过程，这样也不用去保存一堆中间变量。</p>
-<h4 id="中间操作-intermediate-operations-与终端操作-terminal-operations"><a href="#中间操作-intermediate-operations-与终端操作-terminal-operations" class="headerlink" title="中间操作(intermediate operations)与终端操作(terminal operations)"></a>中间操作(intermediate operations)与终端操作(terminal operations)</h4><p>中间操作通常返回类型是Stream，中间操作会返回一个新的Stream，终端操作会返回用户需要的类型。</p>
-<table>
-<thead>
-<tr>
-<th><strong>操作类型</strong></th>
-<th><strong>操作方法</strong></th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>中间操作(intermediate operations)</td>
-<td>filter,map,flatMap,distinct,sorted,peek,limit,skip,<br>concat,generate,empty…</td>
-</tr>
-<tr>
-<td>终端操作(terminal operations)</td>
-<td>forEach,toArray,reduce,collect,min,max,count,<br>anyMatch,allMatch,noneMatch,findFirst,findAny…</td>
-</tr>
-</tbody>
-</table>
-<hr>
-          <!--noindex-->
-          <div class="post-button text-center">
-            <a class="btn" href="/2017/07/10/Java8新特性（二）：流Stream/#more" rel="contents">
-              阅读全文 &raquo;
-            </a>
-          </div>
-          <!--/noindex-->
-        
-      
-    </div>
-    
-    
-    
-
-    <div>
-       
-    </div>
-
-
-    
-
-    
-
-    
-
-    <footer class="post-footer">
-      
-
-      
-
-      
-
-      
-      
-        <div class="post-eof"></div>
-      
-    </footer>
-  </div>
-  
-  
-  
-  </article>
-
-
-    
   </section>
 
   
@@ -1979,7 +1957,7 @@
               
                 <a href="/archives/">
               
-                  <span class="site-state-item-count">46</span>
+                  <span class="site-state-item-count">47</span>
                   <span class="site-state-item-name">日志</span>
                 </a>
               </div>
