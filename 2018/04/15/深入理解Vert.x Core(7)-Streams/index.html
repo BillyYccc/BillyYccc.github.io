@@ -1,0 +1,944 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Convergence:300,300italic,400,400italic,700,700italic|Tauri:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.3" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon.png?v=5.1.3">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=5.1.3" color="#222">
+
+
+
+
+
+  <meta name="keywords" content="Java,Vert.x,Reactive Streams," />
+
+
+
+
+
+
+
+
+
+
+<meta name="description" content="Reactive ProgrammingVert.x宣称自己是一个反应式(reactive)的工具集，那么reactive在这里代表着什么呢？Wiki百科给出了反应式编程(Reactive Programming)的定义:
+
+In computing, reactive programming is a declarative programming paradigm concerned with">
+<meta property="og:type" content="article">
+<meta property="og:title" content="深入理解Vert.x Core(7)-Streams">
+<meta property="og:url" content="http://billyyccc.github.io/2018/04/15/深入理解Vert.x Core(7)-Streams/index.html">
+<meta property="og:site_name" content="BillyYccc">
+<meta property="og:description" content="Reactive ProgrammingVert.x宣称自己是一个反应式(reactive)的工具集，那么reactive在这里代表着什么呢？Wiki百科给出了反应式编程(Reactive Programming)的定义:
+
+In computing, reactive programming is a declarative programming paradigm concerned with">
+<meta property="og:image" content="http://billyyccc.github.io/2018/04/15/深入理解Vert.x Core(7)-Streams/stream1.png">
+<meta property="og:image" content="http://billyyccc.github.io/2018/04/15/深入理解Vert.x Core(7)-Streams/stream2.png">
+<meta property="og:image" content="http://billyyccc.github.io/2018/04/15/深入理解Vert.x Core(7)-Streams/stream3.png">
+<meta property="og:image" content="http://billyyccc.github.io/2018/04/15/深入理解Vert.x Core(7)-Streams/stream4.png">
+<meta property="og:updated_time" content="2018-04-16T14:59:29.028Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="深入理解Vert.x Core(7)-Streams">
+<meta name="twitter:description" content="Reactive ProgrammingVert.x宣称自己是一个反应式(reactive)的工具集，那么reactive在这里代表着什么呢？Wiki百科给出了反应式编程(Reactive Programming)的定义:
+
+In computing, reactive programming is a declarative programming paradigm concerned with">
+<meta name="twitter:image" content="http://billyyccc.github.io/2018/04/15/深入理解Vert.x Core(7)-Streams/stream1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '5.1.3',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '2WWMQACOEP',
+      apiKey: 'f8df1743d538473615c64518eda8b29a',
+      indexName: 'indexName',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://billyyccc.github.io/2018/04/15/深入理解Vert.x Core(7)-Streams/"/>
+
+
+
+
+
+  <title>深入理解Vert.x Core(7)-Streams | BillyYccc</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-99992019-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "https://hm.baidu.com/hm.js?6e4315659b71ca3dac21c91ab1d6082c";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">BillyYccc</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://billyyccc.github.io/2018/04/15/深入理解Vert.x Core(7)-Streams/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Billy Yuan">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="BillyYccc">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">深入理解Vert.x Core(7)-Streams</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-04-15T20:05:27+08:00">
+                2018-04-15
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Vert-x/" itemprop="url" rel="index">
+                    <span itemprop="name">Vert.x</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Reactive-Programming"><a href="#Reactive-Programming" class="headerlink" title="Reactive Programming"></a>Reactive Programming</h2><p>Vert.x宣称自己是一个反应式(reactive)的工具集，那么reactive在这里代表着什么呢？Wiki百科给出了反应式编程(Reactive Programming)的<a href="https://en.wikipedia.org/wiki/Reactive_programming" target="_blank" rel="external">定义</a>:</p>
+<blockquote>
+<p>In computing, reactive programming is a declarative programming paradigm concerned with data streams and the propagation of change. </p>
+</blockquote>
+<p>在反应式编程中，我们需要处理的是数据流，我们可以基于任何事物来创建一条数据流，流就是一个按照时间顺序发生的事件记录序列，下图就是一个流的示例。</p>
+<p><img src="/2018/04/15/深入理解Vert.x Core(7)-Streams/stream1.png" alt="ShowImage"></p>
+<p>流上面可以记录三种类型的事件，包括</p>
+<ul>
+<li>一个值 element value</li>
+<li>一个错误 error</li>
+<li>流完成的事件 completed</li>
+</ul>
+<p>流可以是无限延长下去的，也就是说，如果不主动去关闭流或者因为错误而终止，流会一直进行。</p>
+<p>我们通常可以对流进行订阅(subscribe)操作，在下游对发射的流数据进行处理。</p>
+<p><img src="/2018/04/15/深入理解Vert.x Core(7)-Streams/stream2.png" alt="ShowImage"></p>
+<p>上图就是我们使用一个订阅者去消费流的过程，看起来很美好，但是这里出现了问题，如果Publisher发布数据的速度远远超过Subscriber消费的速度会怎样，数据会在Subscriber这里产生堆积，一直到产生OOM(OutOfMemory)错误。所以，该如何解决这个问题呢，我们需要一个流控机制(Flow Control)，也就是背压(Back-Pressure)。之前的数据消费是一个推(push)的过程，Publisher有多少数据要发送就推给Subscriber，但现在我们使用一种类似拉(pull)的机制，由Subscriber去控制消费数据的数量，主动去找Publisher索取数据，然后由Publisher push回可控数量内的数据。</p>
+<p><img src="/2018/04/15/深入理解Vert.x Core(7)-Streams/stream3.png" alt="ShowImage"></p>
+<p>Vert.x已经为我们提供了开箱即用的实现(<code>ReadStream</code>与<code>WriteStream</code>)，类似的JVM实现还有RxJava, Project Reactor, Akka Streams等，Vert.x也提供了对<a href="http://www.reactive-streams.org/" target="_blank" rel="external">Reactive Streams标准</a>的支持<a href="https://github.com/vert-x3/vertx-reactive-streams" target="_blank" rel="external">vertx-reactive-streams</a>，这样就可以通过规范在不同流处理实现间进行互操作了。</p>
+<a id="more"></a>
+<h2 id="Vert-x中的流式处理"><a href="#Vert-x中的流式处理" class="headerlink" title="Vert.x中的流式处理"></a>Vert.x中的流式处理</h2><p>Vert.x中内建的流支持在<code>io.vertx.core.streams</code>包中，我们先来看一下这个包中的接口。</p>
+<h3 id="StreamBase"><a href="#StreamBase" class="headerlink" title="StreamBase"></a>StreamBase</h3><p><code>StreamBase</code>中只有一个<code>StreamBase exceptionHandler(@Nullable Handler&lt;Throwable&gt; handler);</code>方法，表示流遇到异常时执行的handler。</p>
+<h3 id="ReadStream"><a href="#ReadStream" class="headerlink" title="ReadStream"></a>ReadStream</h3><p>实现<code>ReadStream</code>接口的类产生的对象就可以被看做可以读取数据的流了，我们可以对这个数据流进行控制，<code>ReadStream</code>继承了<code>StreamBase</code>，包含了以下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div></pre></td><td class="code"><pre><div class="line"><span class="function">ReadStream&lt;T&gt; <span class="title">exceptionHandler</span><span class="params">(Handler&lt;Throwable&gt; handler)</span></span>;</div><div class="line"></div><div class="line"><span class="function">ReadStream&lt;T&gt; <span class="title">handler</span><span class="params">(@Nullable Handler&lt;T&gt; handler)</span></span>;</div><div class="line"></div><div class="line"><span class="function">ReadStream&lt;T&gt; <span class="title">pause</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="function">ReadStream&lt;T&gt; <span class="title">resume</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="function">ReadStream&lt;T&gt; <span class="title">endHandler</span><span class="params">(@Nullable Handler&lt;Void&gt; endHandler)</span></span>;</div></pre></td></tr></table></figure>
+<p><code>exceptionHandler</code>方法设置流读取数据遇到异常时执行的handler，<code>handler</code>方法设置这个流读到一条数据后执行的handler,<code>pause</code>表示暂停读取数据，<code>resume</code>表示继续读取数据，<code>endHandler</code>表示流结束了并且所有数据读取完了之后执行的handler。</p>
+<p>官方文档已经说明了一些实现了<code>ReadStream</code>接口的API，之前在<a href="http://billyyccc.com/2017/12/25/%E6%B7%B1%E5%85%A5%E7%90%86%E8%A7%A3Vert.x%20Core(5)-Vertx(II)/#timerStream%E4%B8%8EperiodicStream" target="_blank" rel="external">这篇文章</a>中提及到了<code>TimeoutStream</code>的使用。</p>
+<h3 id="WriteStream"><a href="#WriteStream" class="headerlink" title="WriteStream"></a>WriteStream</h3><p>与<code>ReadStream</code>相对应，实现了<code>WriteStream</code>的类产生的对象代表着可以写入数据的流，<code>WriteStream</code>有以下方法：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line"><span class="function">WriteStream&lt;T&gt; <span class="title">exceptionHandler</span><span class="params">(Handler&lt;Throwable&gt; handler)</span></span>;</div><div class="line"></div><div class="line"><span class="function">WriteStream&lt;T&gt; <span class="title">write</span><span class="params">(T data)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">void</span> <span class="title">end</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">default</span> <span class="keyword">void</span> <span class="title">end</span><span class="params">(T t)</span> </span>&#123;</div><div class="line">    write(t);</div><div class="line">    end();</div><div class="line">  &#125;</div><div class="line"></div><div class="line"><span class="function">WriteStream&lt;T&gt; <span class="title">setWriteQueueMaxSize</span><span class="params">(<span class="keyword">int</span> maxSize)</span></span>;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">boolean</span> <span class="title">writeQueueFull</span><span class="params">()</span></span>;</div><div class="line"></div><div class="line"><span class="function">WriteStream&lt;T&gt; <span class="title">drainHandler</span><span class="params">(@Nullable Handler&lt;Void&gt; handler)</span></span>;</div></pre></td></tr></table></figure>
+<p><code>exceptionHandler</code>设置写入数据时产生异常执行的handler，<code>write</code>方法表示将一个数据元素写入流中，<code>write</code>方法是非阻塞的，一旦调用立即返回，然后将需要写入的数据加入一个队列，然后这个真正的写入流的过程会异步发生。需要注意的是，如果需要写入的数据太多产生堆积，很可能会导致内存被耗尽。<code>setWriteQueueMaxSize</code>可以设置写入队列最大的长度，这个长度是由具体实现去做决定的，而<code>writeQueueFull</code>被用来检查写入队列是否已经排队排满了。<code>end</code>表示结束这个流。<code>drainHandler</code>表示当写入队列发生拥塞时，设置这个handler会进行以下操作：如果队列不再拥塞时，流接下来进行处理这个<code>drainHandler</code>的逻辑。</p>
+<p>同样，官方文档也给出了一些实现了<code>WriteStream</code>接口的API。</p>
+<h3 id="Pump"><a href="#Pump" class="headerlink" title="Pump"></a>Pump</h3><p><a href="https://vertx.io/docs/vertx-core/java/#streams" target="_blank" rel="external">官方文档</a>给出了一个示例，介绍了如何将一个<code>NetSocket</code>所有读取到的入数据写到出口中，如下代码<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div></pre></td><td class="code"><pre><div class="line">server.connectHandler(sock -&gt; &#123;</div><div class="line">  sock.handler(buffer -&gt; &#123;</div><div class="line">    sock.write(buffer);</div><div class="line">    <span class="keyword">if</span> (sock.writeQueueFull()) &#123;</div><div class="line">      sock.pause();</div><div class="line">      sock.drainHandler(done -&gt; &#123;</div><div class="line">        sock.resume();</div><div class="line">      &#125;);</div><div class="line">    &#125;</div><div class="line">  &#125;);</div><div class="line">&#125;).listen();</div></pre></td></tr></table></figure></p>
+<p><code>NetSocket</code>收到数据后首先将读到的数据写到出口，并且检查写队列是否拥塞，如果拥塞就暂停下次读入，直到写队列不再拥塞，此时恢复socket的读取数据，并一直这样循环操作。上段代码其实实现了一段手动控制流量的机制，而Vert.x官方又提供了一种开箱即用的实现，只需要<code>Pump.pump(sock, sock).start();</code>，即可将<code>sock</code>读取到的数据控制地写入到<code>sock</code>出口中。Pump中文即泵的意思，好比用泵将读取的数据流抽取到写入的数据流中，而这个泵可以控制抽取的节奏(Flow Control流控)。下图就是一个流程图</p>
+<p><img src="/2018/04/15/深入理解Vert.x Core(7)-Streams/stream4.png" alt="ShowImage"></p>
+<p>直接看<code>Pump</code>接口与<code>PumpImpl</code>实现代码，使用<code>Pump</code>中静态方法创建一个泵，可以指定输入流<code>ReadStream</code>与输出流<code>WriteStream</code>，并且还可以指定输出流的写队列的最大长度。可以看到这里代码和刚才手动流控的代码基本是相似的，<br><figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div></pre></td><td class="code"><pre><div class="line">PumpImpl(ReadStream&lt;T&gt; rs, WriteStream&lt;T&gt; ws) &#123;</div><div class="line">  <span class="keyword">this</span>.readStream = rs;</div><div class="line">  <span class="keyword">this</span>.writeStream = ws;</div><div class="line">  drainHandler = v-&gt; readStream.resume();</div><div class="line">  dataHandler = data -&gt; &#123;</div><div class="line">    writeStream.write(data);</div><div class="line">    incPumped();</div><div class="line">    <span class="keyword">if</span> (writeStream.writeQueueFull()) &#123;</div><div class="line">      readStream.pause();</div><div class="line">      writeStream.drainHandler(drainHandler);</div><div class="line">    &#125;</div><div class="line">  &#125;;</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
+<p>不过这里多了一个<code>incPumped</code>方法，用来对抽取出去的数据进行计数，可以调用<code>numberPumped</code>获取已经抽取出去数据的数量。初始化好<code>Pump</code>之后，需要使用<code>start</code>与<code>stop</code>方法进行开关，然后就可以由<code>Pump</code>去自动控制整个过程了。</p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>Vert.x已经为我们提供了内建Streams的支持，并且调用Rxi-fied API(或者通过Rxjava helper将内建stream转换为对应的rxjava实现)也能提供反应式支持，除此之外，Vert.x也支持了Reactive Streams规范标准，可以在Vert.x中使用多种方式来让你的API streaming化。</p>
+
+      
+    </div>
+    
+    
+    
+
+    <div>
+       
+         
+<div style="text-align:center;color: #ccc;font-size:15px;">
+------ 本文结束 ------</div>
+<br/>
+
+<h1>版权声明</h1>
+<a href="https://creativecommons.org/licenses/by-nc-sa/4.0/"><img src="http://pic01-1253683104.cosgz.myqcloud.com/cc%20by-nc-sa4.0.png"></a>
+<br/>
+<p style="font-size: 15px;line-height: 30px"><a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's blog</a> by Billy Yuan is licensed under a <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" style="color:#258FC6">Creative Commons BY-NC-SA 4.0 International License</a>.
+<br>本文原创于<a href="http://www.billyyccc.com" style="color:#258FC6">BillyYccc's Blog</a>，转载请注明原作者及出处！</br></p>
+
+
+
+       
+    </div>
+
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java/" rel="tag"># Java</a>
+          
+            <a href="/tags/Vert-x/" rel="tag"># Vert.x</a>
+          
+            <a href="/tags/Reactive-Streams/" rel="tag"># Reactive Streams</a>
+          
+        </div>
+      
+
+      
+      
+        <div class="post-widgets">
+        
+
+        
+
+        
+          
+          <div id="needsharebutton-postbottom">
+            <span class="btn">
+              <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </span>
+          </div>
+        
+        </div>
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/04/02/深入理解Vert.x Core(6)-SharedData/" rel="next" title="深入理解Vert.x Core(6)-SharedData">
+                <i class="fa fa-chevron-left"></i> 深入理解Vert.x Core(6)-SharedData
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+
+  
+    <div class="comments" id="comments">
+      <div id="lv-container" data-id="city" data-uid="MTAyMC8yODQ1MC81MDIx"></div>
+    </div>
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <img class="site-author-image" itemprop="image"
+                src="/images/avatar.png"
+                alt="Billy Yuan" />
+            
+              <p class="site-author-name" itemprop="name">Billy Yuan</p>
+              <p class="site-description motion-element" itemprop="description"></p>
+          </div>
+
+          <nav class="site-state motion-element">
+
+            
+              <div class="site-state-item site-state-posts">
+              
+                <a href="/archives/">
+              
+                  <span class="site-state-item-count">48</span>
+                  <span class="site-state-item-name">日志</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-categories">
+                <a href="/categories/index.html">
+                  <span class="site-state-item-count">6</span>
+                  <span class="site-state-item-name">分类</span>
+                </a>
+              </div>
+            
+
+            
+              
+              
+              <div class="site-state-item site-state-tags">
+                <a href="/tags/index.html">
+                  <span class="site-state-item-count">15</span>
+                  <span class="site-state-item-name">标签</span>
+                </a>
+              </div>
+            
+
+          </nav>
+
+          
+
+          <div class="links-of-author motion-element">
+            
+              
+                <span class="links-of-author-item">
+                  <a href="https://github.com/BillyYccc" target="_blank" title="GitHub">
+                    
+                      <i class="fa fa-fw fa-github"></i>GitHub</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="mailto:billy112487983@gmail.com" target="_blank" title="E-Mail">
+                    
+                      <i class="fa fa-fw fa-envelope"></i>E-Mail</a>
+                </span>
+              
+                <span class="links-of-author-item">
+                  <a href="https://twitter.com/billyyccc" target="_blank" title="Twitter">
+                    
+                      <i class="fa fa-fw fa-twitter"></i>Twitter</a>
+                </span>
+              
+            
+          </div>
+
+          
+          
+
+          
+          
+
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Reactive-Programming"><span class="nav-number">1.</span> <span class="nav-text">Reactive Programming</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Vert-x中的流式处理"><span class="nav-number">2.</span> <span class="nav-text">Vert.x中的流式处理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#StreamBase"><span class="nav-number">2.1.</span> <span class="nav-text">StreamBase</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ReadStream"><span class="nav-number">2.2.</span> <span class="nav-text">ReadStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#WriteStream"><span class="nav-number">2.3.</span> <span class="nav-text">WriteStream</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Pump"><span class="nav-number">2.4.</span> <span class="nav-text">Pump</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heartbeat"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Billy Yuan</span>
+
+  
+</div>
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/BillyYccc/hexo-theme-next">NexT.Muse</a> v5.1.3</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/canvas-nest/canvas-nest.min.js"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.3"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.3"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.3"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.3"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+    <script type="text/javascript">
+      (function(d, s) {
+        var j, e = d.getElementsByTagName(s)[0];
+        if (typeof LivereTower === 'function') { return; }
+        j = d.createElement(s);
+        j.src = 'https://cdn-city.livere.com/js/embed.dist.js';
+        j.async = true;
+        e.parentNode.insertBefore(j, e);
+      })(document, 'script');
+    </script>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+  
+  
+  <link rel="stylesheet" href="/lib/needsharebutton/needsharebutton.css">
+
+  
+  
+  <script src="/lib/needsharebutton/needsharebutton.js"></script>
+
+  <script>
+    
+      pbOptions = {};
+      
+          pbOptions.iconStyle = "box";
+      
+          pbOptions.boxForm = "horizontal";
+      
+          pbOptions.position = "middleRight";
+      
+          pbOptions.networks = "Weibo,Wechat,Douban,QQZone,Twitter,Facebook";
+      
+      new needShareButton('#needsharebutton-postbottom', pbOptions);
+    
+    
+  </script>
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
